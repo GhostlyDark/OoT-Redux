@@ -24,15 +24,15 @@
 
 .include "boot.asm"
 .include "hacks.asm"
-.include "malon.asm"
-.include "mido.asm"
-.include "weather.asm"
+;.include "malon.asm"
+;.include "mido.asm"
+;.include "weather.asm"
 
 ;==================================================================================================
 ; New code region
 ;==================================================================================================
 
-.headersize (0x80400000 - 0x03480000)
+.headersize (0x80400000 - 0x03680000)
 
 .org    0x80400000
 .area   0x00200000 //payload max memory

@@ -3,7 +3,9 @@
 
 #include "dungeon_info.h"
 #include "z64.h"
+#include "z64_extended.h"
 
+//<<<<<<< HEAD
 // PLAYER_STATE1_0 : Scene transition
 // PLAYER_STATE1_SWINGING_BOTTLE
 // PLAYER_STATE1_7 : Death
@@ -63,8 +65,17 @@ extern uint16_t CFG_CHILD_TRADE_SHUFFLE;
                             z64_game.shootingGalleryStatus == 0)
 
 #define CAN_USE_CHILD_TRADE (z64_game.pause_ctxt.state == 0 && z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH && !z64_game.restriction_flags.trade_items && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
+//=======
+#include <string.h>
+#include <stdio.h>
+
+/* Functions */
+#define z64_playsfx						((playsfx_t)			0x800C806C)
+//>>>>>>> a22ed401 (Redux (2023-04-04))
 
 void handle_dpad();
+void handle_dpad_ingame();
 void draw_dpad();
+void draw_dpad_icons(z64_disp_buf_t *db);
 
 #endif

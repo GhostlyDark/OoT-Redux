@@ -108,11 +108,11 @@ for (name, sym) in symbols.items():
     if sym['type'] == 'data':
         addr = int(sym['address'], 16)
         if PAYLOAD_START <= addr < PAYLOAD_END:
-            addr = addr - 0x80400000 + 0x03480000
+            addr = addr - 0x80400000 + 0x03680000
         else:
             continue
         data_symbols[name] = '{0:08X}'.format(addr)
-with open('../data/generated/symbols.json', 'w') as f:
+with open('roms/symbols.json', 'w') as f:
     json.dump(data_symbols, f, indent=4, sort_keys=True)
 
 if pj64_sym_path:

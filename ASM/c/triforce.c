@@ -8,6 +8,8 @@ static uint32_t render_triforce_flag = 0;
 #define TRIFORCE_FRAMES_FADE_AWAY 80
 #define TRIFORCE_FRAMES_FADE_INTO 5
 
+extern uint8_t CFG_WS;
+
 void set_triforce_render() {
     render_triforce_flag = 1;
     frames = frames > TRIFORCE_FRAMES_FADE_INTO ? TRIFORCE_FRAMES_FADE_INTO : frames;
@@ -89,6 +91,9 @@ void draw_triforce_count(z64_disp_buf_t *db) {
     gDPPipeSync(db->p++);
     gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
     gDPSetPrimColor(db->p++, 0, 0, 0xDA, 0xD3, 0x0B, alpha);
+
+    if (CFG_WS)
+		draw_x = (Z64_SCREEN_WIDTH + 104) / 2 - total_w / 2;
 
     text_print(text , draw_x, draw_y_text);
     draw_x += str_len * font_sprite.tile_w;

@@ -8,6 +8,8 @@
 #include "z64.h"
 
 
+extern uint8_t CFG_WS;
+
 sprite_t *hash_sprites[2] = {
     &items_sprite,
     &quest_items_sprite,
@@ -67,23 +69,26 @@ void draw_file_select_hash(uint32_t fade_out_alpha, z64_menudata_t* menu_data) {
     int width = (icon_count * icon_size) + ((icon_count - 1) * padding);
     int left = (Z64_SCREEN_WIDTH - width) / 2;
     int top = 12;
+	
+	if (CFG_WS)
+		left = (Z64_SCREEN_WIDTH + 104 - width) / 2;
 
     gDPPipeSync(db->p++);
     gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
     gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
 
-    for (int i = 0; i < icon_count; i++) {
-        uint8_t sym_index = CFG_FILE_SELECT_HASH[i];
-        hash_symbol_t *sym_desc = &(hash_symbols[sym_index]);
-        sprite_t *sym_sprite = hash_sprites[sym_desc->sprite_index];
+//    for (int i = 0; i < icon_count; i++) {
+//        uint8_t sym_index = CFG_FILE_SELECT_HASH[i];
+//        hash_symbol_t *sym_desc = &(hash_symbols[sym_index]);
+//        sprite_t *sym_sprite = hash_sprites[sym_desc->sprite_index];
 
-        sprite_load(db, sym_sprite, sym_desc->tile_index, 1);
-        sprite_draw(db, sym_sprite, 0, left, top, icon_size, icon_size);
+//        sprite_load(db, sym_sprite, sym_desc->tile_index, 1);
+//        sprite_draw(db, sym_sprite, 0, left, top, icon_size, icon_size);
 
-        left += icon_size + padding;
-    }
+//        left += icon_size + padding;
+//    }
 
-    draw_file_message(db, menu_data);
+//    draw_file_message(db, menu_data);
     draw_file_icons(db, menu_data);
 
     // Fade out once a file is selected
@@ -91,10 +96,19 @@ void draw_file_select_hash(uint32_t fade_out_alpha, z64_menudata_t* menu_data) {
     gDPPipeSync(db->p++);
     gDPSetCombineMode(db->p++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
     gDPSetPrimColor(db->p++, 0, 0, 0x00, 0x00, 0x00, fade_out_alpha);
-    gSPTextureRectangle(db->p++,
+	if (CFG_WS)
+		gSPTextureRectangle(db->p++,
+            0, 0,
+            Z64_SCREEN_WIDTH+104<<2, Z64_SCREEN_HEIGHT<<2,
+            0,
+            0, 0,
+            1<<10, 1<<10);
+	else {
+        gSPTextureRectangle(db->p++,
             0, 0,
             Z64_SCREEN_WIDTH<<2, Z64_SCREEN_HEIGHT<<2,
             0,
             0, 0,
             1<<10, 1<<10);
+	}
 }

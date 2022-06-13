@@ -6,6 +6,7 @@
 extern uint8_t FONT_TEXTURE[];
 extern uint8_t DPAD_TEXTURE[];
 extern uint8_t TRIFORCE_ICON_TEXTURE[];
+extern uint8_t CFG_WS;
 
 Gfx setup_db[] =
 {
@@ -88,6 +89,37 @@ sprite_t heart_sprite = {
     G_IM_FMT_IA, G_IM_SIZ_8b, 1
 };
 
+sprite_t button_sprite = {
+    NULL, 32, 32, 5,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
+
+sprite_t counter_digit_sprite = {
+    NULL, 8, 16, 10,
+    G_IM_FMT_I, G_IM_SIZ_8b, 1
+};
+
+sprite_t ammo_digit_sprite = {
+    NULL, 8, 8, 10,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
+
+sprite_t subscreen_sprite = {
+    NULL, 80, 32, 67,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
+
+sprite_t item_name_sprite = {
+    NULL, 128, 16, 9,
+    G_IM_FMT_IA, G_IM_SIZ_4b, 1
+};
+
+sprite_t title_sprite = {
+    NULL, 128, 16, 10,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
+
+
 int sprite_bytes_per_tile(sprite_t *sprite) {
     return sprite->tile_w * sprite->tile_h * sprite->bytes_per_texel;
 }
@@ -126,6 +158,9 @@ void sprite_draw(z64_disp_buf_t *db, sprite_t *sprite, int tile_index,
 }
 
 void gfx_init() {
+	if (CFG_WS)
+        setup_db[2] = gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, Z64_SCREEN_WIDTH + 104, Z64_SCREEN_HEIGHT);
+	
     file_t title_static = {
         NULL, z64_file_select_static_vaddr, z64_file_select_static_vsize
     };
@@ -150,7 +185,17 @@ void gfx_init() {
         NULL, z64_icon_item_dungeon_static_vaddr, z64_icon_item_dungeon_static_vsize
     };
     file_init(&icon_item_dungeon_static);
-
+	
+    file_t subscreen_static = {
+        NULL, 0x008193C0, 0x29E00
+    };
+    file_init(&subscreen_static);
+	
+	file_t item_name_static = {
+        NULL, 0x00880000, 0x03D800
+    };
+    file_init(&item_name_static);
+	
     stones_sprite.buf = title_static.buf + 0x2A300;
     medals_sprite.buf = title_static.buf + 0x2980;
     items_sprite.buf = icon_item_static.buf;
@@ -162,11 +207,18 @@ void gfx_init() {
     item_digit_sprite.buf = parameter_static.buf + 0x000035C0;
     linkhead_skull_sprite.buf = icon_item_dungeon_static.buf + 0x00001980;
     heart_sprite.buf = parameter_static.buf;
-
+    button_sprite.buf = parameter_static.buf + 0xA00;
+    counter_digit_sprite.buf = parameter_static.buf + 0x3040;
+    ammo_digit_sprite.buf = parameter_static.buf + 0x35C0;
+    subscreen_sprite.buf = subscreen_static.buf;
+	item_name_sprite.buf = item_name_static.buf + 0x38400;
+    title_sprite.buf = title_static.buf + 0x2D700;
+	
     int font_bytes = sprite_bytes(&font_sprite);
     font_sprite.buf = heap_alloc(font_bytes);
     for (int i = 0; i < font_bytes / 2; i++) {
         font_sprite.buf[2*i] = (FONT_TEXTURE[i] >> 4) | 0xF0;
         font_sprite.buf[2*i + 1] = FONT_TEXTURE[i] | 0xF0;
     }
+	
 }
