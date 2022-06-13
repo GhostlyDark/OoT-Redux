@@ -24,9 +24,9 @@
 
 .include "boot.asm"
 .include "hacks.asm"
-.include "malon.asm"
-.include "mido.asm"
-.include "weather.asm"
+;.include "malon.asm"
+;.include "mido.asm"
+;.include "weather.asm"
 
 ;==================================================================================================
 ; New code region
@@ -106,23 +106,23 @@ RANDO_CONTEXT:
 .importobj "../build/bundle.o"
 .align 8
 FONT_TEXTURE:
-.incbin("../resources/font.bin")
+;.incbin("../resources/font.bin")
 DPAD_TEXTURE:
 .incbin("../resources/dpad.bin")
 TRIFORCE_ICON_TEXTURE:
-.incbin("../resources/triforce_sprite.bin")
+;.incbin("../resources/triforce_sprite.bin")
 GILDED_CHEST_FRONT_TEXTURE:
-.incbin("../resources/gilded_chest_front.bin")
+;.incbin("../resources/gilded_chest_front.bin")
 GILDED_CHEST_BASE_TEXTURE:
-.incbin("../resources/gilded_chest_base.bin")
+;.incbin("../resources/gilded_chest_base.bin")
 SILVER_CHEST_FRONT_TEXTURE:
-.incbin("../resources/silver_chest_front.bin")
+;.incbin("../resources/silver_chest_front.bin")
 SILVER_CHEST_BASE_TEXTURE:
-.incbin("../resources/silver_chest_base.bin")
+;.incbin("../resources/silver_chest_base.bin")
 SKULL_CHEST_FRONT_TEXTURE:
-.incbin("../resources/skull_chest_front.bin")
+;.incbin("../resources/skull_chest_front.bin")
 SKULL_CHEST_BASE_TEXTURE:
-.incbin("../resources/skull_chest_base.bin")
+;.incbin("../resources/skull_chest_base.bin")
 
 .align 0x10
 PAYLOAD_END:
