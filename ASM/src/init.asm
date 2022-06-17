@@ -2,8 +2,8 @@ init:
     addiu   sp, sp, -0x18
     sw      ra, 0x10 (sp)
 
-    jal     c_init
-    nop
+;    jal     c_init
+;    nop
 
     ; Displaced code
     lui     v0, 0x8012
@@ -18,9 +18,9 @@ init:
     addiu   sp, sp, 0x18
 
 
-Static_ctxt_Init:
-    li      t0, RANDO_CONTEXT
-    sw      t0, 0x15D4(v0)
-    jr      ra    
+;Static_ctxt_Init:
+;    li      t0, RANDO_CONTEXT
+;    sw      t0, 0x15D4(v0)
+;    jr      ra    
     ; Displaced code
-    li      v0, 0x15C0
+;    li      v0, 0x15C0

@@ -1093,6 +1093,7 @@ typedef struct
     uint8_t        trade_items;
     uint8_t        hookshot;
     uint8_t        ocarina;
+    uint8_t        lens;
     uint8_t        warp_songs;
     uint8_t        suns_song;
     uint8_t        farores_wind;
