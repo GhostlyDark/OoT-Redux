@@ -1,115 +1,107 @@
 #include "gfx.h"
 #include "dpad.h"
+#include "dpad_paused.h"
+#include "dpad_actions.h"
+#include "buttons.h"
+#include "l_button.h"
 
 extern uint8_t CFG_DISPLAY_DPAD;
+extern uint8_t CFG_DPAD_ENABLED;
+extern uint8_t CFG_HUD_LAYOUT;
+extern uint8_t CFG_KEEP_MASK;
 
-//unknown 00 is a pointer to some vector transformation when the sound is tied to an actor. actor + 0x3E, when not tied to an actor (map), always 80104394
-//unknown 01 is always 4 in my testing
-//unknown 02 is a pointer to some kind of audio configuration Always 801043A0 in my testing
-//unknown 03 is always a3 in my testing
-//unknown 04 is always a3 + 0x08 in my testing (801043A8)
-typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
-typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uint8_t button);
-
-#define z64_playsfx   ((playsfx_t)      0x800C806C)
-#define z64_usebutton ((usebutton_t)    0x8038C9A0)
+uint8_t DPAD_ALT			= 0;
+uint16_t DPAD_X				= 0;
+uint16_t DPAD_Y				= 0;
+uint16_t LAST_MASK			= 0;
+uint16_t LAST_MASK_SCENE	= 0xFFFF;
 
 void handle_dpad() {
-
-    pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
-
-    if (CAN_USE_DPAD && DISPLAY_DPAD) {
-        if (z64_file.link_age == 0) {
-            if (pad_pressed.dl && z64_file.iron_boots) {
-                if (z64_file.equip_boots == 2) z64_file.equip_boots = 1;
-                else z64_file.equip_boots = 2;
-                z64_UpdateEquipment(&z64_game, &z64_link);
-                z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-            }
-
-            if (pad_pressed.dr && z64_file.hover_boots) {
-                if (z64_file.equip_boots == 3) z64_file.equip_boots = 1;
-                else z64_file.equip_boots = 3;
-                z64_UpdateEquipment(&z64_game, &z64_link);
-                z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-            }
-        }
-
-        if (z64_file.link_age == 1) {
-            if (pad_pressed.dr && CAN_USE_CHILD_TRADE) {
-                z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_CHILD_TRADE], 2);
-            }
-        }
-
-        if (pad_pressed.dd && CAN_USE_OCARINA) {
-            z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_OCARINA], 2);
-        }
-    }
+	handle_layout();
+	handle_buttons();
+	handle_dpad_ingame();
+	handle_dpad_paused();
+    handle_hud();
+	handle_l_button();
+	
+	if (CFG_KEEP_MASK) {
+		if (z64_mask_equipped > 0)
+			LAST_MASK = z64_mask_equipped;
+		if (z64_game.scene_index != LAST_MASK_SCENE && LAST_MASK > 0) {
+			z64_mask_equipped = LAST_MASK;
+			LAST_MASK_SCENE = z64_game.scene_index;
+		}
+	}
 }
+
+void handle_dpad_ingame() {
+	if (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 0 || z64_camera_view != 0 || CFG_DPAD_ENABLED == 0) 
+		return;
+    pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
+	
+	if (CFG_DPAD_ENABLED == 2) {
+		if ( (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.r) || (z64_game.common.input[0].raw.pad.r && z64_game.common.input[0].pad_pressed.l) )
+			DPAD_ALT ^= 1;
+	}
+	
+	run_dpad_actions(pad_pressed);
+}
+
 void draw_dpad() {
-    z64_disp_buf_t *db = &(z64_ctxt.gfx->overlay);
-    if (CAN_DRAW_DUNGEON_INFO || (DISPLAY_DPAD && CFG_DISPLAY_DPAD)) {
-        gSPDisplayList(db->p++, &setup_db);
-        gDPPipeSync(db->p++);
-        gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
-        uint16_t alpha = z64_game.hud_alpha_channels.rupees_keys_magic;
-
-        gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
-        sprite_load(db, &dpad_sprite, 0, 1);
-        sprite_draw(db, &dpad_sprite, 0, 271, 64, 16, 16);
-
-        if (CAN_DRAW_DUNGEON_INFO) {
-            // Zora sapphire on D-down
-            sprite_load(db, &stones_sprite, 2, 1);
-            sprite_draw(db, &stones_sprite, 0, 273, 77, 12, 12);
-
-            // small key on D-right
-            sprite_load(db, &quest_items_sprite, 17, 1);
-            sprite_draw(db, &quest_items_sprite, 0, 285, 66, 12, 12);
-
-            // map on D-left
-            sprite_load(db, &quest_items_sprite, 16, 1);
-            sprite_draw(db, &quest_items_sprite, 0, 260, 66, 12, 12);
-        } else {
-            if (!CAN_USE_DPAD)
-                gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha * 0x46 / 0xFF);
-
-            if (z64_file.iron_boots && z64_file.link_age==0) {
-                sprite_load(db, &items_sprite, 69, 1);
-                if (z64_file.equip_boots == 2) {
-                    sprite_draw(db, &items_sprite, 0, 258, 64, 16, 16);
-                }
-                else {
-                    sprite_draw(db, &items_sprite, 0, 260, 66, 12, 12);
-                }
-            }
-
-            if (z64_file.hover_boots && z64_file.link_age == 0) {
-                sprite_load(db, &items_sprite, 70, 1);
-                if (z64_file.equip_boots == 3) {
-                    sprite_draw(db, &items_sprite, 0, 283, 64, 16, 16);
-                }
-                else {
-                    sprite_draw(db, &items_sprite, 0, 285, 66, 12, 12);
-                }
-            }
-
-            if (z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH && z64_file.link_age == 1) {
-                if(!CAN_USE_DPAD || !CAN_USE_CHILD_TRADE) gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha * 0x46 / 0xFF);
-                else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
-                sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_CHILD_TRADE], 1);
-                sprite_draw(db, &items_sprite, 0, 285, 66, 12, 12);
-            }
-
-            if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA || z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME) {
-                if(!CAN_USE_DPAD || !CAN_USE_OCARINA) gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha * 0x46 / 0xFF);
-                else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
-                sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_OCARINA], 1);
-                sprite_draw(db, &items_sprite, 0, 273, 77, 12,12);
-            }
-        }
-
-        gDPPipeSync(db->p++);
-    }
+    if (CFG_DISPLAY_DPAD == 0 || CFG_DPAD_ENABLED == 0)
+		return;
+	
+	uint8_t *dpad_active  = check_dpad_actions();
+	if (!dpad_active[0] && !dpad_active[1] && !dpad_active[2] && !dpad_active[3])
+		return;
+	
+	z64_disp_buf_t *db = &(z64_ctxt.gfx->overlay);
+	
+	if (CFG_DISPLAY_DPAD == 1) {
+		DPAD_X = 21;
+		DPAD_Y = 44;
+		if (z64_file.magic_acquired && z64_file.energy_capacity > 0xA0)
+			DPAD_Y += 23;
+		else if (z64_file.energy_capacity > 0xA0)
+			DPAD_Y += 10;
+		else if (z64_file.magic_acquired)
+			DPAD_Y += 14;
+	}
+	else {
+		DPAD_X = 271;
+		DPAD_Y = 64;
+		if (CFG_HUD_LAYOUT == 2 || CFG_HUD_LAYOUT == 3) {
+			DPAD_X += 10;
+			DPAD_Y += 14;
+		}
+		else if (CFG_HUD_LAYOUT == 4 || CFG_HUD_LAYOUT == 5)
+			DPAD_Y += 15;
+		if (Z64_SCREEN_WIDTH == 424)
+			DPAD_X += 104;
+	}
+	if (CFG_DISPLAY_DPAD == 3) {
+		DPAD_X = 35;
+		DPAD_Y = 175;
+		if (z64_dungeon_scene != 0xFF)
+			if (z64_file.dungeon_keys[z64_dungeon_scene] > 0)
+				DPAD_Y = 158;
+	}
+	
+	gSPDisplayList(db->p++, &setup_db);
+	gDPPipeSync(db->p++);
+	gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
+	uint16_t alpha = z64_game.hud_alpha_channels.minimap;
+	
+	if (alpha == 0xAA)
+		alpha = 0xFF;
+	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
+	sprite_load(db, &dpad_sprite, 0, 1);
+	sprite_draw(db, &dpad_sprite, 0, DPAD_X, DPAD_Y, 16, 16);
+	
+	if (alpha == 0xFF && z64_game.pause_ctxt.state != 0)
+		gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
+	
+	draw_dpad_actions(db, alpha);
+	gDPPipeSync(db->p++);
 }
 

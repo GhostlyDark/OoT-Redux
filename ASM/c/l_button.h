@@ -1,5 +1,5 @@
-#ifndef DPAD_H
-#define DPAD_H
+#ifndef L_BUTTON_H
+#define L_BUTTON_H
 
 #include "z64.h"
 #include "z64_extended.h"
@@ -15,12 +15,8 @@
                             ((uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && \
                             (z64_file.game_mode == 0) && \
                             ((z64_event_state_1 & 0x20) == 0))
-void handle_dpad();
-void handle_dpad_buttons();
-void handle_dpad_ingame();
-void handle_dpad_paused();
-void handle_hud();
+
+void toggle_minimap();
 void handle_l_button();
-void draw_dpad();
 
 #endif
