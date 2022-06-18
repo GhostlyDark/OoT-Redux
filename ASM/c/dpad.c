@@ -19,103 +19,139 @@ void handle_dpad() {
     pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 
     if (CAN_USE_DPAD && DISPLAY_DPAD) {
-        if (z64_file.link_age == 0) {
-            if (pad_pressed.dl && z64_file.iron_boots) {
-                if (z64_file.equip_boots == 2) z64_file.equip_boots = 1;
-                else z64_file.equip_boots = 2;
-                z64_UpdateEquipment(&z64_game, &z64_link);
-                z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-            }
-
-            if (pad_pressed.dr && z64_file.hover_boots) {
-                if (z64_file.equip_boots == 3) z64_file.equip_boots = 1;
-                else z64_file.equip_boots = 3;
-                z64_UpdateEquipment(&z64_game, &z64_link);
-                z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-            }
-        }
-
-        if (z64_file.link_age == 1) {
-            if (pad_pressed.dr && CAN_USE_CHILD_TRADE) {
-                z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_CHILD_TRADE], 2);
-            }
-        }
-
-        if (pad_pressed.dd && CAN_USE_OCARINA) {
-            z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_OCARINA], 2);
-        }
 		
-		if (pad_pressed.du && z64_game.pause_ctxt.state == 0) {
-			if (z64_game.hud_alpha_channels.hearts_navi != 0) { // Hide
-				z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-				
-				z64_game.hud_alpha_channels.a_button_carots   = 0;
-				z64_game.hud_alpha_channels.b_button          = 0;
-				z64_game.hud_alpha_channels.cl_button         = 0;
-				z64_game.hud_alpha_channels.cd_button         = 0;
-				z64_game.hud_alpha_channels.cr_button         = 0;
-				z64_game.hud_alpha_channels.a_button_carots   = 0;
-				z64_game.hud_alpha_channels.hearts_navi       = 0;
-				z64_game.hud_alpha_channels.rupees_keys_magic = 0;
-				z64_game.hud_alpha_channels.minimap           = 0;
+		if (z64_game.pause_ctxt.state == 6) {
+			
+			if (pad_pressed.du) {
+				if (z64_game.pause_ctxt.screen_idx == 3) {
+					if (z64_game.pause_ctxt.equip_cursor == 1 && z64_file.equip_sword == 1) {
+						z64_file.equip_sword     = 0;
+						z64_file.inf_table[29]   = 1;
+						z64_file.button_items[0] = -1;
+					}
+					if (z64_game.pause_ctxt.equip_cursor == 2 && z64_file.equip_sword == 2) {
+						z64_file.equip_sword     = 0;
+						z64_file.button_items[0] = -1;
+					}
+					if (z64_game.pause_ctxt.equip_cursor == 3 && z64_file.equip_sword == 3) {
+						z64_file.equip_sword     = 0;
+						z64_file.button_items[0] = -1;
+					}
+					
+					if (z64_game.pause_ctxt.equip_cursor == 5 && z64_file.equip_shield == 1) {
+						z64_file.equip_shield = 0;
+					}
+					if (z64_game.pause_ctxt.equip_cursor == 6 && z64_file.equip_shield == 2) {
+						z64_file.equip_shield = 0;
+					}
+					if (z64_game.pause_ctxt.equip_cursor == 7 && z64_file.equip_shield == 3) {
+						z64_file.equip_shield = 0;
+					}
+				}
 			}
-			else { // Show
-				z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+			
+		}
+		
+		if (z64_game.pause_ctxt.state == 0) {
+			
+			if (z64_file.link_age == 0) {
+				if (pad_pressed.dl && z64_file.iron_boots) {
+					if (z64_file.equip_boots == 2) z64_file.equip_boots = 1;
+					else z64_file.equip_boots = 2;
+					z64_UpdateEquipment(&z64_game, &z64_link);
+					z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+				}
 
-				if (z64_game.restriction_flags.b_button) { z64_game.hud_alpha_channels.b_button = 70; } else { z64_game.hud_alpha_channels.b_button = 255; }
+				if (pad_pressed.dr && z64_file.hover_boots) {
+					if (z64_file.equip_boots == 3) z64_file.equip_boots = 1;
+					else z64_file.equip_boots = 3;
+					z64_UpdateEquipment(&z64_game, &z64_link);
+					z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+				}	
+			}
+
+			if (z64_file.link_age == 1) {
+				if (pad_pressed.dr && CAN_USE_CHILD_TRADE) {
+					z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_CHILD_TRADE], 2);
+				}
+			}
+
+			if (pad_pressed.dd && CAN_USE_OCARINA) {
+				z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_OCARINA], 2);
+			}
+		
+			if (pad_pressed.du) {
+				if (z64_game.hud_alpha_channels.hearts_navi != 0) { // Hide
+					z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 				
-				// C-Left
-				if (z64_file.c_button_slots[0] == Z64_ITEM_NULL) { z64_game.hud_alpha_channels.cl_button = 255; }
-				else if (z64_file.c_button_slots[0] >= Z64_ITEM_BOTTLE && z64_file.c_button_slots[0] <= Z64_ITEM_POE) {
-					if (z64_game.restriction_flags.bottles) { z64_game.hud_alpha_channels.cl_button = 70; } else { z64_game.hud_alpha_channels.cl_button = 255; }
+					z64_game.hud_alpha_channels.a_button_carots   = 0;
+					z64_game.hud_alpha_channels.b_button          = 0;
+					z64_game.hud_alpha_channels.cl_button         = 0;
+					z64_game.hud_alpha_channels.cd_button         = 0;
+					z64_game.hud_alpha_channels.cr_button         = 0;
+					z64_game.hud_alpha_channels.a_button_carots   = 0;
+					z64_game.hud_alpha_channels.hearts_navi       = 0;
+					z64_game.hud_alpha_channels.rupees_keys_magic = 0;
+					z64_game.hud_alpha_channels.minimap           = 0;
 				}
-				else if (z64_file.c_button_slots[0] >= Z64_ITEM_WEIRD_EGG && z64_file.c_button_slots[0] <= Z64_ITEM_CLAIM_CHECK) {
-					if (z64_game.restriction_flags.trade_items) { z64_game.hud_alpha_channels.cl_button = 70; } else { z64_game.hud_alpha_channels.cl_button = 255; }
-				}
-				else if (z64_file.c_button_slots[0] >= Z64_ITEM_HOOKSHOT && z64_file.c_button_slots[0] <= Z64_ITEM_LONGSHOT) {
-					if (z64_game.restriction_flags.hookshot) { z64_game.hud_alpha_channels.cl_button = 70; } else { z64_game.hud_alpha_channels.cl_button = 255; }
-				}
-				else if (z64_file.c_button_slots[0] >= Z64_ITEM_FAIRY_OCARINA && z64_file.c_button_slots[0] <= Z64_ITEM_OCARINA_OF_TIME) {
-					if (z64_game.restriction_flags.ocarina) { z64_game.hud_alpha_channels.cl_button = 70; } else { z64_game.hud_alpha_channels.cl_button = 255; }
-				}
-				else if (z64_game.restriction_flags.all) { z64_game.hud_alpha_channels.cl_button = 70; } else { z64_game.hud_alpha_channels.cl_button = 255; }
+				else { // Show
+					z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+					
+					if (z64_game.restriction_flags.b_button) { z64_game.hud_alpha_channels.b_button = 70; } else { z64_game.hud_alpha_channels.b_button = 255; }
+					
+					// C-Left
+					if (z64_file.c_button_slots[0] == Z64_ITEM_NULL) { z64_game.hud_alpha_channels.cl_button = 255; }
+					else if (z64_file.c_button_slots[0] >= Z64_ITEM_BOTTLE && z64_file.c_button_slots[0] <= Z64_ITEM_POE) {
+						if (z64_game.restriction_flags.bottles) { z64_game.hud_alpha_channels.cl_button = 70; } else { z64_game.hud_alpha_channels.cl_button = 255; }
+					}
+					else if (z64_file.c_button_slots[0] >= Z64_ITEM_WEIRD_EGG && z64_file.c_button_slots[0] <= Z64_ITEM_CLAIM_CHECK) {
+						if (z64_game.restriction_flags.trade_items) { z64_game.hud_alpha_channels.cl_button = 70; } else { z64_game.hud_alpha_channels.cl_button = 255; }
+					}
+					else if (z64_file.c_button_slots[0] >= Z64_ITEM_HOOKSHOT && z64_file.c_button_slots[0] <= Z64_ITEM_LONGSHOT) {
+						if (z64_game.restriction_flags.hookshot) { z64_game.hud_alpha_channels.cl_button = 70; } else { z64_game.hud_alpha_channels.cl_button = 255; }
+					}
+					else if (z64_file.c_button_slots[0] >= Z64_ITEM_FAIRY_OCARINA && z64_file.c_button_slots[0] <= Z64_ITEM_OCARINA_OF_TIME) {
+						if (z64_game.restriction_flags.ocarina) { z64_game.hud_alpha_channels.cl_button = 70; } else { z64_game.hud_alpha_channels.cl_button = 255; }
+					}
+					else if (z64_game.restriction_flags.all) { z64_game.hud_alpha_channels.cl_button = 70; } else { z64_game.hud_alpha_channels.cl_button = 255; }
 				
-				// C-Down
-				if (z64_file.c_button_slots[1] == Z64_ITEM_NULL) { z64_game.hud_alpha_channels.cd_button = 255; }
-				else if (z64_file.c_button_slots[1] >= Z64_ITEM_BOTTLE && z64_file.c_button_slots[1] <= Z64_ITEM_POE) {
-					if (z64_game.restriction_flags.bottles) { z64_game.hud_alpha_channels.cd_button = 70; } else { z64_game.hud_alpha_channels.cd_button = 255; }
-				}
-				else if (z64_file.c_button_slots[1] >= Z64_ITEM_WEIRD_EGG && z64_file.c_button_slots[1] <= Z64_ITEM_CLAIM_CHECK) {
-					if (z64_game.restriction_flags.trade_items) { z64_game.hud_alpha_channels.cd_button = 70; } else { z64_game.hud_alpha_channels.cd_button = 255; }
-				}
-				else if (z64_file.c_button_slots[1] >= Z64_ITEM_HOOKSHOT && z64_file.c_button_slots[1] <= Z64_ITEM_LONGSHOT) {
-					if (z64_game.restriction_flags.hookshot) { z64_game.hud_alpha_channels.cd_button = 70; } else { z64_game.hud_alpha_channels.cd_button = 255; }
-				}
-				else if (z64_file.c_button_slots[1] >= Z64_ITEM_FAIRY_OCARINA && z64_file.c_button_slots[1] <= Z64_ITEM_OCARINA_OF_TIME) {
-					if (z64_game.restriction_flags.ocarina) { z64_game.hud_alpha_channels.cd_button = 70; } else { z64_game.hud_alpha_channels.cd_button = 255; }
-				}
-				else if (z64_game.restriction_flags.all) { z64_game.hud_alpha_channels.cd_button = 70; } else { z64_game.hud_alpha_channels.cd_button = 255; }
+					// C-Down
+					if (z64_file.c_button_slots[1] == Z64_ITEM_NULL) { z64_game.hud_alpha_channels.cd_button = 255; }
+					else if (z64_file.c_button_slots[1] >= Z64_ITEM_BOTTLE && z64_file.c_button_slots[1] <= Z64_ITEM_POE) {
+						if (z64_game.restriction_flags.bottles) { z64_game.hud_alpha_channels.cd_button = 70; } else { z64_game.hud_alpha_channels.cd_button = 255; }
+					}
+					else if (z64_file.c_button_slots[1] >= Z64_ITEM_WEIRD_EGG && z64_file.c_button_slots[1] <= Z64_ITEM_CLAIM_CHECK) {
+						if (z64_game.restriction_flags.trade_items) { z64_game.hud_alpha_channels.cd_button = 70; } else { z64_game.hud_alpha_channels.cd_button = 255; }
+					}
+					else if (z64_file.c_button_slots[1] >= Z64_ITEM_HOOKSHOT && z64_file.c_button_slots[1] <= Z64_ITEM_LONGSHOT) {
+						if (z64_game.restriction_flags.hookshot) { z64_game.hud_alpha_channels.cd_button = 70; } else { z64_game.hud_alpha_channels.cd_button = 255; }
+					}
+					else if (z64_file.c_button_slots[1] >= Z64_ITEM_FAIRY_OCARINA && z64_file.c_button_slots[1] <= Z64_ITEM_OCARINA_OF_TIME) {
+						if (z64_game.restriction_flags.ocarina) { z64_game.hud_alpha_channels.cd_button = 70; } else { z64_game.hud_alpha_channels.cd_button = 255; }
+					}
+					else if (z64_game.restriction_flags.all) { z64_game.hud_alpha_channels.cd_button = 70; } else { z64_game.hud_alpha_channels.cd_button = 255; }
 				
-				// C-Right
-				if (z64_file.c_button_slots[2] == Z64_ITEM_NULL) { z64_game.hud_alpha_channels.cr_button = 255; }
-				else if (z64_file.c_button_slots[2] >= Z64_ITEM_BOTTLE && z64_file.c_button_slots[2] <= Z64_ITEM_POE) {
-					if (z64_game.restriction_flags.bottles) { z64_game.hud_alpha_channels.cr_button = 70; } else { z64_game.hud_alpha_channels.cr_button = 255; }
+					// C-Right
+					if (z64_file.c_button_slots[2] == Z64_ITEM_NULL) { z64_game.hud_alpha_channels.cr_button = 255; }
+					else if (z64_file.c_button_slots[2] >= Z64_ITEM_BOTTLE && z64_file.c_button_slots[2] <= Z64_ITEM_POE) {
+						if (z64_game.restriction_flags.bottles) { z64_game.hud_alpha_channels.cr_button = 70; } else { z64_game.hud_alpha_channels.cr_button = 255; }
+					}
+					else if (z64_file.c_button_slots[2] >= Z64_ITEM_WEIRD_EGG && z64_file.c_button_slots[2] <= Z64_ITEM_CLAIM_CHECK) {
+						if (z64_game.restriction_flags.trade_items) { z64_game.hud_alpha_channels.cr_button = 70; } else { z64_game.hud_alpha_channels.cr_button = 255; }
+					}
+					else if (z64_file.c_button_slots[2] >= Z64_ITEM_HOOKSHOT && z64_file.c_button_slots[2] <= Z64_ITEM_LONGSHOT) {
+						if (z64_game.restriction_flags.hookshot) { z64_game.hud_alpha_channels.cr_button = 70; } else { z64_game.hud_alpha_channels.cr_button = 255; }
+					}
+					else if (z64_file.c_button_slots[2] >= Z64_ITEM_FAIRY_OCARINA && z64_file.c_button_slots[2] <= Z64_ITEM_OCARINA_OF_TIME) {
+						if (z64_game.restriction_flags.ocarina) { z64_game.hud_alpha_channels.cr_button = 70; } else { z64_game.hud_alpha_channels.cr_button = 255; }
+					}
+					else if (z64_game.restriction_flags.all) { z64_game.hud_alpha_channels.cr_button = 70; } else { z64_game.hud_alpha_channels.cr_button = 255; }
+					
+					z64_game.hud_alpha_channels.a_button_carots   = 255;
+					z64_game.hud_alpha_channels.hearts_navi       = 255;
+					z64_game.hud_alpha_channels.rupees_keys_magic = 255;
+					z64_game.hud_alpha_channels.minimap           = 170;
 				}
-				else if (z64_file.c_button_slots[2] >= Z64_ITEM_WEIRD_EGG && z64_file.c_button_slots[2] <= Z64_ITEM_CLAIM_CHECK) {
-					if (z64_game.restriction_flags.trade_items) { z64_game.hud_alpha_channels.cr_button = 70; } else { z64_game.hud_alpha_channels.cr_button = 255; }
-				}
-				else if (z64_file.c_button_slots[2] >= Z64_ITEM_HOOKSHOT && z64_file.c_button_slots[2] <= Z64_ITEM_LONGSHOT) {
-					if (z64_game.restriction_flags.hookshot) { z64_game.hud_alpha_channels.cr_button = 70; } else { z64_game.hud_alpha_channels.cr_button = 255; }
-				}
-				else if (z64_file.c_button_slots[2] >= Z64_ITEM_FAIRY_OCARINA && z64_file.c_button_slots[2] <= Z64_ITEM_OCARINA_OF_TIME) {
-					if (z64_game.restriction_flags.ocarina) { z64_game.hud_alpha_channels.cr_button = 70; } else { z64_game.hud_alpha_channels.cr_button = 255; }
-				}
-				else if (z64_game.restriction_flags.all) { z64_game.hud_alpha_channels.cr_button = 70; } else { z64_game.hud_alpha_channels.cr_button = 255; }
-				
-				z64_game.hud_alpha_channels.a_button_carots   = 255;
-				z64_game.hud_alpha_channels.hearts_navi       = 255;
-				z64_game.hud_alpha_channels.rupees_keys_magic = 255;
-				z64_game.hud_alpha_channels.minimap           = 170;
 			}
 		}
     }
