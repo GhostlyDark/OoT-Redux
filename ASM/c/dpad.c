@@ -68,6 +68,7 @@ void handle_buttons() {
 				else if	(z64_file.link_age == 1)
 					z64_file.child_button_items[0] = item;
 				z64_UpdateItemButton(&z64_game, 0);
+				z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 			}
 		}
 	}
