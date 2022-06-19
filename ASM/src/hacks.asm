@@ -234,3 +234,37 @@ Gameplay_InitSkybox:
 ;==================================================================================================
 .orga 0xBCF8CC
     jal     mask_check_trade_slot   ; sb      zero, 0x014F(t0)
+
+;==================================================================================================
+; Override Collectible 05 to be a Bombchus (5) drop instead of the unused Arrow (1) drop
+;==================================================================================================
+; Replaces: lbu     t7, 0x0002(a1)
+;           addiu   v1, zero, 0x00FF
+;           addu    t8, v0, t7
+;           lbu     t9, 0x0074(t8)
+;           beq     v1, t9, 0x80013640
+.orga 0xA89518
+    sw      ra, 0(sp)
+    jal     bomb_drop_convert
+    nop
+    lw      ra, 0(sp)
+    beqz    v1, @drop_nothing
+
+.orga 0xA895A0
+@drop_nothing:
+
+; Replaces: 0x80011D30
+.orga 0xB7BD24
+    .word 0x80011D88
+
+; Replaces: li   a1, 0x03
+.orga 0xA8801C
+    li      a1, 0x96 ; Give Item Bombchus (5)
+.orga 0xA88CCC
+    li      a1, 0x96 ; Give Item Bombchus (5)
+
+; Replaces: lui     t5, 0x8012
+;           lui     at, 0x00FF
+.orga 0xA89268
+    jal     chu_drop_draw
+    lui     t5, 0x8012
