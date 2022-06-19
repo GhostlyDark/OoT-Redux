@@ -492,3 +492,9 @@ Gameplay_InitSkybox:
 .orga 0xA89268
     jal     chu_drop_draw
     lui     t5, 0x8012
+
+;===================================================================================================
+; Allow ice arrows to melt red ice
+;===================================================================================================
+;.orga 0xDB32C8
+;    jal blue_fire_arrows ; replaces addiu at, zero, 0x00F0
