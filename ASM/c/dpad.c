@@ -21,9 +21,8 @@ char HUD_COUNTER     = 0;
 void handle_hud() {
 	
 	if (HUD_HIDE == 1 && (z64_game.pause_ctxt.state == 0 || z64_game.pause_ctxt.state == 0x1A || z64_game.pause_ctxt.state == 0x1B) ) {
-		
 		if (z64_game.hud_alpha_channels.hearts_navi != 0) {
-			if (HUD_COUNTER < 5) {
+			if (HUD_COUNTER < 8) {
 				HUD_COUNTER++;
 				return;
 			}
@@ -42,11 +41,10 @@ void handle_hud() {
 			if (z64_game.hud_alpha_channels.rupees_keys_magic > 40)   { z64_game.hud_alpha_channels.rupees_keys_magic -= 40; } else { z64_game.hud_alpha_channels.rupees_keys_magic = 0; }
 		}
 		else {
-			if (z64_game.hud_alpha_channels.hearts_navi       < 210)   { z64_game.hud_alpha_channels.hearts_navi       += 40; } else { z64_game.hud_alpha_channels.hearts_navi       = 255; }
-			if (z64_game.hud_alpha_channels.rupees_keys_magic < 210)   { z64_game.hud_alpha_channels.rupees_keys_magic += 40; } else { z64_game.hud_alpha_channels.rupees_keys_magic = 255; }
+			if (z64_game.hud_alpha_channels.hearts_navi       < 215)   { z64_game.hud_alpha_channels.hearts_navi       += 40; } else { z64_game.hud_alpha_channels.hearts_navi       = 255; }
+			if (z64_game.hud_alpha_channels.rupees_keys_magic < 215)   { z64_game.hud_alpha_channels.rupees_keys_magic += 40; } else { z64_game.hud_alpha_channels.rupees_keys_magic = 255; }
 		}
 	}
-	
 }
 
 void handle_dpad() {
@@ -68,7 +66,7 @@ void handle_dpad() {
 				}
 			}
 			
-			if (pad_pressed.du) {
+			if (pad_pressed.du && z64_game.pause_ctxt.cursor_pos != 0x0A && z64_game.pause_ctxt.cursor_pos != 0x0B) {
 				if (z64_game.pause_ctxt.screen_idx == 3) {
 					if (z64_game.pause_ctxt.equip_cursor == 1 && z64_file.equip_sword == 1) {
 						z64_file.equip_sword     = 0;
@@ -104,10 +102,96 @@ void handle_dpad() {
 				}
 			}
 			
-			if (pad_pressed.dd) {
+			if (pad_pressed.dd && z64_game.pause_ctxt.cursor_pos != 0x0A && z64_game.pause_ctxt.cursor_pos != 0x0B) {
 				if (z64_game.pause_ctxt.screen_idx == 3) {
-					if (z64_game.pause_ctxt.equip_cursor == 3 && z64_file.items[Z64_SLOT_ADULT_TRADE] == Z64_ITEM_CLAIM_CHECK) {
+					if (z64_game.pause_ctxt.equip_cursor == 3 && (z64_file.ammo[4] == 1 || z64_file.bgs_flag == 1) ) {
+						z64_file.ammo[4] = 1;
 						if (z64_file.bgs_flag == 1) { z64_file.bgs_flag = 0; } else { z64_file.bgs_flag = 1; }
+						z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+					}
+				}
+				
+				if (z64_game.pause_ctxt.screen_idx == 0) {
+					if (z64_game.pause_ctxt.item_cursor == 7 && (z64_file.ammo[5] == 1 || z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME) ) {
+						z64_file.ammo[5] = 1;
+						if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME) {
+							for (char i=0; i<4; i++) {
+								if (z64_file.button_items[i] == Z64_ITEM_OCARINA_OF_TIME) {
+									                                        z64_file.button_items[i]           = Z64_ITEM_FAIRY_OCARINA;
+									if         (i > 0)  {                   z64_file.c_button_slots[i-1]       = Z64_SLOT_OCARINA; }
+									if         (z64_file.link_age == 0) {
+																			z64_file.adult_button_items[i]     = Z64_ITEM_FAIRY_OCARINA;
+										if     (i > 0) {					z64_file.adult_c_button_slots[i-1] = Z64_SLOT_OCARINA; }
+									}
+									else if    (z64_file.link_age == 1) {
+																			z64_file.child_button_items[i]     = Z64_ITEM_FAIRY_OCARINA;
+										if     (i > 0) {					z64_file.child_c_button_slots[i-1] = Z64_SLOT_OCARINA; }
+									}
+									z64_UpdateItemButton(&z64_game, i);
+								}
+							}
+							z64_file.items[Z64_SLOT_OCARINA] = Z64_ITEM_FAIRY_OCARINA;
+						}
+						else if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA) {
+							for (char i=0; i<4; i++) {
+								if (z64_file.button_items[i] == Z64_ITEM_FAIRY_OCARINA) {
+									                                        z64_file.button_items[i]           = Z64_ITEM_OCARINA_OF_TIME;
+									if         (i > 0) {                    z64_file.c_button_slots[i-1]       = Z64_SLOT_OCARINA; }
+									if         (z64_file.link_age == 0) {
+																			z64_file.adult_button_items[i]     = Z64_ITEM_OCARINA_OF_TIME;
+										if     (i > 0) {					z64_file.adult_c_button_slots[i-1] = Z64_SLOT_OCARINA; }
+									}
+									else if    (z64_file.link_age == 1) {
+																			z64_file.child_button_items[i]     = Z64_ITEM_OCARINA_OF_TIME;
+										if     (i > 0) {					z64_file.child_c_button_slots[i-1] = Z64_SLOT_OCARINA; }
+									}
+									z64_UpdateItemButton(&z64_game, i);
+								}
+							}
+							z64_file.items[Z64_SLOT_OCARINA] = Z64_ITEM_OCARINA_OF_TIME;
+						}
+						z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+					}
+					
+					if (z64_game.pause_ctxt.item_cursor == 9 && (z64_file.ammo[7] == 1 || z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_LONGSHOT) ) {
+						z64_file.ammo[7] = 1;
+						if (z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_LONGSHOT) {
+							for (char i=0; i<4; i++) {
+								if (z64_file.button_items[i] == Z64_ITEM_LONGSHOT) {
+									                                        z64_file.button_items[i]           = Z64_ITEM_HOOKSHOT;
+									if         (i > 0)  {                   z64_file.c_button_slots[i-1]       = Z64_SLOT_HOOKSHOT; }
+									if         (z64_file.link_age == 0) {
+																			z64_file.adult_button_items[i]     = Z64_ITEM_HOOKSHOT;
+										if     (i > 0) {					z64_file.adult_c_button_slots[i-1] = Z64_SLOT_HOOKSHOT; }
+									}
+									else if    (z64_file.link_age == 1) {
+																			z64_file.child_button_items[i]     = Z64_ITEM_HOOKSHOT;
+										if     (i > 0) {					z64_file.child_c_button_slots[i-1] = Z64_SLOT_HOOKSHOT; }
+									}
+									z64_UpdateItemButton(&z64_game, i);
+								}
+							}
+							z64_file.items[Z64_SLOT_HOOKSHOT] = Z64_ITEM_HOOKSHOT;
+						}
+						else if (z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_HOOKSHOT) {
+							for (char i=0; i<4; i++) {
+								if (z64_file.button_items[i] == Z64_ITEM_HOOKSHOT) {
+									                                        z64_file.button_items[i]           = Z64_ITEM_LONGSHOT;
+									if         (i > 0) {                    z64_file.c_button_slots[i-1]       = Z64_SLOT_HOOKSHOT; }
+									if         (z64_file.link_age == 0) {
+																			z64_file.adult_button_items[i]     = Z64_ITEM_LONGSHOT;
+										if     (i > 0) {					z64_file.adult_c_button_slots[i-1] = Z64_SLOT_HOOKSHOT; }
+									}
+									else if    (z64_file.link_age == 1) {
+																			z64_file.child_button_items[i]     = Z64_ITEM_LONGSHOT;
+										if     (i > 0) {					z64_file.child_c_button_slots[i-1] = Z64_SLOT_HOOKSHOT; }
+									}
+									z64_UpdateItemButton(&z64_game, i);
+								}
+							}
+							z64_file.items[Z64_SLOT_HOOKSHOT] = Z64_ITEM_LONGSHOT;
+						}
+						
 						z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 					}
 				}
@@ -139,7 +223,7 @@ void handle_dpad() {
 					z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 				}
 				
-				if (pad_pressed.r && z64_camera_view == 2 && z64_file.items[Z64_SLOT_BOW] == Z64_ITEM_BOW) {
+				/*if (pad_pressed.r && z64_camera_view == 2 && z64_file.items[Z64_SLOT_BOW] == Z64_ITEM_BOW) {
 					for (char i=0; i<3; i++) {
 						if (z64_file.c_button_slots[i] == Z64_ITEM_BOW || z64_file.c_button_slots[i] == Z64_ITEM_FIRE_ARROW || z64_file.c_button_slots[i] == Z64_ITEM_ICE_ARROW || z64_file.c_button_slots[i] == Z64_ITEM_LIGHT_ARROW) {
 							if (z64_file.c_button_slots[i] == Z64_ITEM_BOW && z64_file.items[Z64_SLOT_FIRE_ARROW] == Z64_ITEM_FIRE_ARROW) { // Regular -> Fire
@@ -162,10 +246,10 @@ void handle_dpad() {
 								z64_file.button_items[i+1]   = Z64_ITEM_BOW;
 								z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 							}
-							z64_UpdateItemButton(&z64_game, 1);
+							z64_UpdateItemButton(&z64_game, i);
 						}
 					}
-				}					
+				}*/				
 			}
 
 			if (z64_file.link_age == 1) {
