@@ -11,23 +11,30 @@ extern uint8_t CFG_DISPLAY_DPAD;
 typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uint8_t button);
 
-char HUD_HIDE = 0;
+char HUD_HIDE        = 0;
+char HUD_HEARTS_HIDE = 1;
 
 #define z64_playsfx   ((playsfx_t)      0x800C806C)
 #define z64_usebutton ((usebutton_t)    0x8038C9A0)
 
 void handle_hud() {
 	
-	if (HUD_HIDE == 1 && z64_game.pause_ctxt.state == 0) {	
-		z64_game.hud_alpha_channels.a_button_carots   = 0;
-		z64_game.hud_alpha_channels.b_button          = 0;
-		z64_game.hud_alpha_channels.cl_button         = 0;
-		z64_game.hud_alpha_channels.cd_button         = 0;
-		z64_game.hud_alpha_channels.cr_button         = 0;
-		z64_game.hud_alpha_channels.a_button_carots   = 0;
-		z64_game.hud_alpha_channels.hearts_navi       = 0;
-		z64_game.hud_alpha_channels.rupees_keys_magic = 0;
-		z64_game.hud_alpha_channels.minimap           = 0;
+	if (HUD_HIDE == 1 && (z64_game.pause_ctxt.state == 0 || z64_game.pause_ctxt.state == 0x1A || z64_game.pause_ctxt.state == 0x1B) ) {
+		if (z64_game.hud_alpha_channels.b_button          > 40)   { z64_game.hud_alpha_channels.b_button          -= 40; } else { z64_game.hud_alpha_channels.b_button          = 0; }
+		if (z64_game.hud_alpha_channels.cl_button         > 40)   { z64_game.hud_alpha_channels.cl_button         -= 40; } else { z64_game.hud_alpha_channels.cl_button         = 0; }
+		if (z64_game.hud_alpha_channels.cd_button         > 40)   { z64_game.hud_alpha_channels.cd_button         -= 40; } else { z64_game.hud_alpha_channels.cd_button         = 0; }
+		if (z64_game.hud_alpha_channels.cr_button         > 40)   { z64_game.hud_alpha_channels.cr_button         -= 40; } else { z64_game.hud_alpha_channels.cr_button         = 0; }
+		if (z64_game.hud_alpha_channels.a_button_carots   > 40)   { z64_game.hud_alpha_channels.a_button_carots   -= 40; } else { z64_game.hud_alpha_channels.a_button_carots   = 0; }
+		if (z64_game.hud_alpha_channels.minimap           > 40)   { z64_game.hud_alpha_channels.minimap           -= 40; } else { z64_game.hud_alpha_channels.minimap           = 0; }
+		
+		if (HUD_HEARTS_HIDE == 1) {
+			if (z64_game.hud_alpha_channels.hearts_navi       > 40)   { z64_game.hud_alpha_channels.hearts_navi       -= 40; } else { z64_game.hud_alpha_channels.hearts_navi       = 0; }
+			if (z64_game.hud_alpha_channels.rupees_keys_magic > 40)   { z64_game.hud_alpha_channels.rupees_keys_magic -= 40; } else { z64_game.hud_alpha_channels.rupees_keys_magic = 0; }
+		}
+		else {
+			if (z64_game.hud_alpha_channels.hearts_navi       < 210)   { z64_game.hud_alpha_channels.hearts_navi       += 40; } else { z64_game.hud_alpha_channels.hearts_navi       = 255; }
+			if (z64_game.hud_alpha_channels.rupees_keys_magic < 210)   { z64_game.hud_alpha_channels.rupees_keys_magic += 40; } else { z64_game.hud_alpha_channels.rupees_keys_magic = 255; }
+		}
 	}
 	
 }
@@ -148,10 +155,6 @@ void handle_dpad() {
 							z64_UpdateItemButton(&z64_game, 1);
 						}
 					}
-					
-					
-					
-					
 				}					
 			}
 
@@ -170,6 +173,10 @@ void handle_dpad() {
 
 			if (pad_pressed.dd && CAN_USE_OCARINA && z64_camera_view == 0) {
 				z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_OCARINA], 2);
+			}
+			
+			if (pad_pressed.l && HUD_HIDE == 1) {
+				if (HUD_HEARTS_HIDE == 0) { HUD_HEARTS_HIDE = 1; } else { HUD_HEARTS_HIDE = 0; }
 			}
 			
 		}
