@@ -13,6 +13,7 @@ typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uin
 
 char HUD_HIDE        = 0;
 char HUD_HEARTS_HIDE = 1;
+char HUD_COUNTER     = 0;
 
 #define z64_playsfx   ((playsfx_t)      0x800C806C)
 #define z64_usebutton ((usebutton_t)    0x8038C9A0)
@@ -20,6 +21,15 @@ char HUD_HEARTS_HIDE = 1;
 void handle_hud() {
 	
 	if (HUD_HIDE == 1 && (z64_game.pause_ctxt.state == 0 || z64_game.pause_ctxt.state == 0x1A || z64_game.pause_ctxt.state == 0x1B) ) {
+		
+		if (z64_game.hud_alpha_channels.hearts_navi != 0) {
+			if (HUD_COUNTER < 5) {
+				HUD_COUNTER++;
+				return;
+			}
+		}
+		else { HUD_COUNTER = 0; }
+		
 		if (z64_game.hud_alpha_channels.b_button          > 40)   { z64_game.hud_alpha_channels.b_button          -= 40; } else { z64_game.hud_alpha_channels.b_button          = 0; }
 		if (z64_game.hud_alpha_channels.cl_button         > 40)   { z64_game.hud_alpha_channels.cl_button         -= 40; } else { z64_game.hud_alpha_channels.cl_button         = 0; }
 		if (z64_game.hud_alpha_channels.cd_button         > 40)   { z64_game.hud_alpha_channels.cd_button         -= 40; } else { z64_game.hud_alpha_channels.cd_button         = 0; }
