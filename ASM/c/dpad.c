@@ -6,6 +6,7 @@ extern uint8_t CFG_DPAD_ENABLED;
 extern uint8_t CFG_HIDE_HUD_ENABLED;
 extern uint8_t CFG_UNEQUIP_GEAR_ENABLED;
 extern uint8_t CFG_SWAP_ITEMS_ENABLED;
+extern uint8_t CFG_SWAP_SHIELD_ENABLED;
 extern uint8_t CFG_B_BUTTON_ITEMS_ENABLED;
 extern uint8_t CFG_ARROW_TOGGLING_ENABLED;
 
@@ -321,7 +322,7 @@ void handle_dpad() {
 				z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 			}
 			
-			if (pad_pressed.du && z64_file.hylian_shield && z64_file.mirror_shield && z64_camera_view == 0) {
+			if (pad_pressed.du && z64_file.hylian_shield && z64_file.mirror_shield && z64_camera_view == 0 && CFG_SWAP_SHIELD_ENABLED) {
 				if (z64_file.equip_shield == 2)
 					z64_file.equip_shield = 3;
 				else z64_file.equip_shield = 2;
@@ -331,10 +332,13 @@ void handle_dpad() {
 		}
 			
 		if (z64_file.link_age == 1) {
+			if (pad_pressed.dl && z64_file.items[Z64_SLOT_BEANS] == Z64_ITEM_BEANS && z64_file.ammo[Z64_ITEM_BEANS] > 0 && z64_camera_view == 0)
+				z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_BEANS], 2);
+			
 			if (pad_pressed.dr && CAN_USE_CHILD_TRADE && z64_camera_view == 0)
 				z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_CHILD_TRADE], 2);
-				
-			if (pad_pressed.du && z64_file.deku_shield && z64_file.hylian_shield && z64_camera_view == 0) {
+			
+			if (pad_pressed.du && z64_file.deku_shield && z64_file.hylian_shield && z64_camera_view == 0 && CFG_SWAP_SHIELD_ENABLED) {
 				if (z64_file.equip_shield == 2)
 					z64_file.equip_shield = 1;
 				else z64_file.equip_shield = 2;
@@ -379,6 +383,11 @@ void draw_dpad() {
 		else sprite_draw(db, &items_sprite, 0, 285, 66, 12, 12);
 	}
 
+	if (z64_file.items[Z64_SLOT_BEANS] == Z64_ITEM_BEANS && z64_file.ammo[Z64_ITEM_BEANS] > 0 && z64_file.link_age == 1) {
+		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_BEANS], 1);
+		sprite_draw(db, &items_sprite, 0, 260, 66, 12, 12);
+	}
+
 	if (z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH && z64_file.link_age == 1) {
 		if(alpha==0xFF && !CAN_USE_CHILD_TRADE) gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
@@ -392,18 +401,20 @@ void draw_dpad() {
 		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_OCARINA], 1);
 		sprite_draw(db, &items_sprite, 0, 273, 77, 12,12);
 	}
-		
-	if (z64_file.equip_shield == 1) {
-		sprite_load(db, &items_sprite, 62, 1);
-		sprite_draw(db, &items_sprite, 0, 273, 53, 12, 12);
-	}
-	else if (z64_file.equip_shield == 2) {
-		sprite_load(db, &items_sprite, 63, 1);
-		sprite_draw(db, &items_sprite, 0, 273, 53, 12, 12);
-	}
-	else if (z64_file.equip_shield == 3) {
-		sprite_load(db, &items_sprite, 64, 1);
-		sprite_draw(db, &items_sprite, 0, 273, 53, 12, 12);
+	
+	if (CFG_SWAP_SHIELD_ENABLED) {
+		if (z64_file.equip_shield == 1) {
+			sprite_load(db, &items_sprite, 62, 1);
+			sprite_draw(db, &items_sprite, 0, 273, 53, 12, 12);
+		}
+		else if (z64_file.equip_shield == 2) {
+			sprite_load(db, &items_sprite, 63, 1);
+			sprite_draw(db, &items_sprite, 0, 273, 53, 12, 12);
+		}
+		else if (z64_file.equip_shield == 3) {
+			sprite_load(db, &items_sprite, 64, 1);
+			sprite_draw(db, &items_sprite, 0, 273, 53, 12, 12);
+		}
 	}
 
 	gDPPipeSync(db->p++);
