@@ -28,7 +28,7 @@ char KNIFE_COUNTER   = 0xFF;
 void handle_hud() {
 	
 	if (HUD_HIDE == 1 && (z64_game.pause_ctxt.state == 0 || z64_game.pause_ctxt.state == 0x1A || z64_game.pause_ctxt.state == 0x1B) ) {
-		if (z64_game.hud_alpha_channels.hearts_navi != 0) {
+		if (z64_game.hud_alpha_channels.minimap != 0) {
 			if (HUD_COUNTER < 8) {
 				HUD_COUNTER++;
 				return;
