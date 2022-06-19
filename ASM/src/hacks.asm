@@ -35,6 +35,229 @@ Gameplay_InitSkybox:
     nop
 
 ;==================================================================================================
+; File select hash
+;==================================================================================================
+
+; Runs after the file select menu is rendered
+; Replaces: code that draws the fade-out rectangle on file load
+;.orga 0xBAF738 ; In memory: 0x803B3538
+;.area 0x60, 0
+;    or      a1, r0, s0   ; menu data
+;    jal     draw_file_select_hash
+;    andi    a0, t8, 0xFF ; a0 = alpha channel of fade-out rectangle
+
+;    lw      s0, 0x18 (sp)
+;    lw      ra, 0x1C (sp)
+;    jr      ra
+;    addiu   sp, sp, 0x88
+;.endarea
+
+;==================================================================================================
+; Hide file details panel
+;==================================================================================================
+; keep death count alpha at 0 instead of using file_detail alpha
+;.orga 0xBAC064 ; In memory: 0x803AFE64
+;    move    t7, r0 ; was: lh t7, 0x4A7E (t4)
+
+; keep hearts alpha at 0 instead of using file_detail alpha
+;.orga 0xBAC1BC ; In memory: 0x803AFFBC
+;    move    t7, r0 ; was: lh t7, 0x4A7E (t4)
+
+; keep stones/medals alpha at 0 instead of using file_detail alpha
+;.orga 0xBAC3EC ; In memory: 0x803B01EC
+;    move    t9, r0 ; was: lh t9, 0x4A7E (t3)
+
+; keep detail panel alpha at 0 instead of using file_detail alpha
+;.orga 0xBAC94C ; In memory: 0x803B074C
+;    move    t9, r0 ; was: lh t9, 0x4A7E (t9)
+
+; keep file tag alpha at 0xC8 instead of subtracting 0x19 each transition frame
+;.orga 0xBAE5A4 ; In memory: 0x803B23A4
+;    sh      t3, 0x4A6C (v1) ; was: sh t5, 0x4A6C (v1)
+
+; prevent setting file tag alpha to 0x00 when transition is finished
+;.orga 0xBAE5C8 ; In memory: 0x803B23C8
+;    nop ; was: sh r0, 0x4A6C (v1)
+
+; prevent increasing alpha when transitioning away from file
+;.orga 0xBAE864 ; In memory: 0x803B2664
+;    nop ; was: sh t5, 0x4A6C (v1)
+
+; change file positions in copy menu
+;.orga 0xBB05FC ; In memory: 0x803B43FC
+;    .word 0x0000FFC0
+;    .word 0xFFB0FFB0
+
+; keep file tag alpha at 0xC8 in copy menu
+;.orga 0xBA18C4 ; In memory: 0x803A56C4
+;    ori     t4, r0, 0x00C8 ; was: addiu t4, t9, 0xFFE7
+
+;.orga 0xBA1980 ; In memory: 0x803A5780
+;    ori     t0, r0, 0x00C8 ; was: addiu t0, t9, 0xFFE7
+    
+;.orga 0xBA19DC ; In memory: 0x803A57DC
+;    nop ; was: sh r0, 0x4A6C (t2)
+    
+;.orga 0xBA1E20 ; In memory: 0x803A5C20
+;    ori     t5, r0, 0x00C8 ; was: addiu t5, t4, 0x0019
+
+;.orga 0xBA18C4 ; In memory: 0x803A56C4
+;    ori     t4, r0, 0x00C8 ; was: ori t4, t4, 0x00C8
+
+; keep file tag alpha at 0xC8 in erase menu
+;.orga 0xBA34DC ; In memory: 0x803A72DC
+;    ori     t8, r0, 0x00C8 ; was: addiu t8, t7, 0xFFE7
+
+;.orga 0xBA3654
+;    nop ; was: sh r0, 0x4A6C (t6)
+
+;.orga 0xBA39D0
+;    ori     t5, r0, 0x00C8 ; was: addiu t5, t4, 0x0019
+
+;==================================================================================================
+; Initial save
+;==================================================================================================
+
+; Replaces:
+;   sb      t0, 32(s1)
+;   sb      a1, 33(s1)
+;.orga 0xB06C2C ; In memory: ???
+;    jal     write_initial_save
+;    sb      t0, 32(s1)
+
+;==================================================================================================
+; Empty Bomb Fix
+;==================================================================================================
+
+; Replaces:
+;sw      r0, 0x0428(v0)
+;sw      t5, 0x066C(v0)
+
+;.orga 0xC0E77C
+;    jal     empty_bomb
+;    sw      r0, 0x0428(v0)
+
+;==================================================================================================
+; Talon Cutscene Skip
+;==================================================================================================
+
+; Replaces: lw      a0, 0x0018(sp)
+;           addiu   t1, r0, 0x0041
+
+;.orga 0xCC0038
+;    jal    talon_break_free
+;    lw     a0, 0x0018(sp)
+
+;==================================================================================================
+; Pause menu
+;==================================================================================================
+
+; Don't display hover boots in the bullet bag/quiver slot if you haven't gotten a slingshot before becoming adult
+; Replaces:
+;   lbu     t4, 0x0000 (t7)
+;   and     t6, v1, t5
+.orga 0xBB6CF0
+    jal     equipment_menu_fix
+    nop
+
+;==================================================================================================
+; DPAD Display
+;==================================================================================================
+;
+; Replaces lw    t6, 0x1C44(s6)
+;          lui   t8, 0xDB06
+.orga 0xAEB67C ; In Memory: 0x8007571C
+    jal     dpad_draw
+    nop
+
+;==================================================================================================
+; Stone of Agony indicator
+;==================================================================================================
+
+; Replaces:
+;   c.lt.s  f0, f2
+;.orga 0xBE4A14
+;    jal     agony_distance_hook
+
+    ; Replaces:
+;   c.lt.s  f4, f6
+;.orga 0xBE4A40
+;    jal     agony_vibrate_hook
+
+; Replaces:
+;   addiu   sp, sp, 0x20
+;   jr      ra
+;.orga 0xBE4A60
+;    j       agony_post_hook
+;    nop
+
+;==================================================================================================
+; Cast Fishing Rod without B Item
+;==================================================================================================
+
+.orga 0xBCF914 ; 8038A904
+    jal     keep_fishing_rod_equipped
+    nop
+
+.orga 0xBCF73C ; 8038A72C
+    sw      ra, 0x0000(sp)
+    jal     cast_fishing_rod_if_equipped
+    nop
+    lw      ra, 0x0000(sp)
+
+;==================================================================================================
+; Big Goron Fix
+;==================================================================================================
+;
+;Replaces: beq     $zero, $zero, lbl_80B5AD64
+
+.orga 0xED645C
+    jal     bgs_fix
+    nop
+
+;==================================================================================================
+; Warp song speedup
+;==================================================================================================
+;
+;manually set next entrance and fade out type
+;.orga 0xBEA044 
+;   jal      warp_speedup
+;   nop
+
+;.orga 0xB10CC0 ;set fade in type after the warp
+;    jal     set_fade_in
+;    lui     at, 0x0001
+
+;==================================================================================================
+; Dampe Digging Fix
+;==================================================================================================
+;
+; Leaving without collecting dampe's prize won't lock you out from that prize
+.orga 0xCC4038
+    jal     dampe_fix
+    addiu   t4, r0, 0x0004
+
+.orga 0xCC453C
+    .word 0x00000806
+    
+;==================================================================================================
+; Make Bunny Hood like Majora's Mask
+;==================================================================================================
+
+; Replaces: mfc1    a1, f12
+;           mtc1    t7, f4
+.orga 0xBD9A04
+    jal bunny_hood
+    nop
+
+;==================================================================================================
+; Prevent hyrule guards from causing a softlock if they're culled 
+;==================================================================================================
+.orga 0xE24E7C
+    jal guard_catch
+    nop
+
+;==================================================================================================
 ; Never override Heart Colors
 ;==================================================================================================
 
@@ -77,81 +300,6 @@ Gameplay_InitSkybox:
     nop
 
 ;==================================================================================================
-; Pause menu
-;==================================================================================================
-
-; Don't display hover boots in the bullet bag/quiver slot if you haven't gotten a slingshot before becoming adult
-; Replaces:
-;   lbu     t4, 0x0000 (t7)
-;   and     t6, v1, t5
-.orga 0xBB6CF0
-    jal     equipment_menu_fix
-    nop
-
-;==================================================================================================
-; DPAD Display
-;==================================================================================================
-;
-; Replaces lw    t6, 0x1C44(s6)
-;          lui   t8, 0xDB06
-.orga 0xAEB67C ; In Memory: 0x8007571C
-    jal     dpad_draw
-    nop
-
-;==================================================================================================
-; Cast Fishing Rod without B Item
-;==================================================================================================
-
-.orga 0xBCF914 ; 8038A904
-    jal     keep_fishing_rod_equipped
-    nop
-
-.orga 0xBCF73C ; 8038A72C
-    sw      ra, 0x0000(sp)
-    jal     cast_fishing_rod_if_equipped
-    nop
-    lw      ra, 0x0000(sp)
-
-;==================================================================================================
-; Big Goron Fix
-;==================================================================================================
-;
-;Replaces: beq     $zero, $zero, lbl_80B5AD64
-
-.orga 0xED645C
-    jal     bgs_fix
-    nop
-
-;==================================================================================================
-; Dampe Digging Fix
-;==================================================================================================
-;
-; Leaving without collecting dampe's prize won't lock you out from that prize
-.orga 0xCC4038
-    jal     dampe_fix
-    addiu   t4, r0, 0x0004
-
-.orga 0xCC453C
-    .word 0x00000806
-    
-;==================================================================================================
-; Make Bunny Hood like Majora's Mask
-;==================================================================================================
-
-; Replaces: mfc1    a1, f12
-;           mtc1    t7, f4
-.orga 0xBD9A04
-    jal bunny_hood
-    nop
-
-;==================================================================================================
-; Prevent hyrule guards from causing a softlock if they're culled 
-;==================================================================================================
-.orga 0xE24E7C
-    jal guard_catch
-    nop
-
-;==================================================================================================
 ; Magic Meter Colors
 ;==================================================================================================
 ; Replaces: sh  r0, 0x0794 (t6)
@@ -165,6 +313,23 @@ Gameplay_InitSkybox:
     nop
     lw      ra, 0x0000 (sp)
     nop
+
+;==================================================================================================
+; HUD Rupee Icon color
+;==================================================================================================
+; Replaces: lui     at, 0xC8FF
+;           addiu   t8, s1, 0x0008
+;           sw      t8, 0x02B0(s4)
+;           sw      t9, 0x0000(s1)
+;           lhu     t4, 0x0252(s7)
+;           ori     at, at, 0x6400      ; at = HUD Rupee Icon Color
+;.orga 0xAEB764
+;    addiu   t8, s1, 0x0008
+;    sw      t8, 0x02B0(s4)
+;    jal     rupee_hud_color
+;    sw      t9, 0x0000(s1)
+;    lhu     t4, 0x0252(s7)
+;    move    at, v0
 
 ; ==================================================================================================
 ; HUD Button Colors
@@ -193,6 +358,58 @@ Gameplay_InitSkybox:
     jr      ra
     nop
 .endarea
+
+;==================================================================================================
+; Speed Up Gold Gauntlets Rock Throw
+;==================================================================================================
+;replace onepointdemo calls for the different cases so the cutscene never plays
+;for cases 0 and 4 set position so that the rock lands in the right place
+
+;case 1: light trial (breaks on impact)
+; Replaces: jal       0x8006B6FC
+;.orga 0xCDF3EC
+;    nop
+
+;case 0: fire trial
+; Replaces: jal       0x8006B6FC
+;.orga 0xCDF404
+;    nop
+
+;case 4: outside ganons castle
+; Replaces: jal       0x8006B6FC
+;.orga 0xCDF420 
+;    jal     heavy_block_set_switch
+
+;set links position and angle to the center of the block as its being lifted
+; Replaces: or         t9, t8, at
+;           sw         t9, 0x66C(s0)
+;.orga 0xBD5C58
+;    jal      heavy_block_posrot
+;    or       t9, t8, at
+
+;set links action to 7 so he can move again
+; Replaces: swc1      f4, 0x34(sp)
+;           lwc1      f6, 0x0C(s0)
+;.orga 0xCDF638
+;    jal     heavy_block_set_link_action
+;    swc1    f4, 0x34(sp)
+
+;reduce quake timer for case 1
+;Replaces: addiu      a1, r0, 0x03E7
+;.orga 0xCDF790
+;    addiu      a1, r0, 0x1E
+
+;skip parts of links lifting animation
+;Replaces: sw         a1, 0x34(sp)
+;          addiu      a1, s0, 0x01A4
+;.orga 0xBE1BC8
+;    jal    heavy_block_shorten_anim
+;    sw     a1, 0x34(sp)
+
+;slightly change rock throw trajectory to land in the right place
+;Replaces: lui        at, 0x4220
+;.orga 0xBE1C98
+;    lui    at, 0x4218
 
 ;==================================================================================================
 ; Use Sticks and Masks as Adult
@@ -228,6 +445,13 @@ Gameplay_InitSkybox:
 ; Replaces: sw      a0, 0x18(sp)
 .orga 0xC5A9F0
     jal     clear_boomerang_pointer
+
+;===================================================================================================
+;Kill Door of Time collision when the cutscene starts
+;===================================================================================================
+;.orga 0xCCE9A4
+;    jal     kill_door_of_time_col ; Replaces lui     $at, 0x3F80 
+;    lw      a0, 0x011C(s0) ; replaces mtc1    $at, $f6 
 
 ;==================================================================================================
 ; Prevent Mask de-equip if not on a C-button
