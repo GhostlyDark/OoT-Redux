@@ -199,6 +199,12 @@ void handle_dpad() {
 					if (z64_file.bgs_flag == 1)
 						z64_file.bgs_flag = 0;
 					else z64_file.bgs_flag = 1;
+					if (z64_file.equip_sword == 3) {
+						z64_file.equip_sword     = 0;
+						z64_file.inf_table[29]   = 1;
+						z64_file.button_items[0] = -1;
+					}
+					z64_UpdateEquipment(&z64_game, &z64_link);
 					z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 				}
 			}
