@@ -2,6 +2,12 @@
 #include "dpad.h"
 
 extern uint8_t CFG_DISPLAY_DPAD;
+extern uint8_t CFG_DPAD_ENABLED;
+extern uint8_t CFG_HIDE_HUD_ENABLED;
+extern uint8_t CFG_UNEQUIP_GEAR_ENABLED;
+extern uint8_t CFG_SWAP_ITEMS_ENABLED;
+extern uint8_t CFG_B_BUTTON_ITEMS_ENABLED;
+extern uint8_t CFG_ARROW_TOGGLING_ENABLED;
 
 //unknown 00 is a pointer to some vector transformation when the sound is tied to an actor. actor + 0x3E, when not tied to an actor (map), always 80104394
 //unknown 01 is always 4 in my testing
@@ -49,19 +55,35 @@ void handle_hud() {
 
 void handle_buttons() {
 	
-	if (!CAN_USE_DPAD || !DISPLAY_DPAD)
+	if (!CAN_USE_DPAD)
 		return;
 	pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 	
 	if (z64_game.pause_ctxt.state == 6 && pad_pressed.a && z64_game.pause_ctxt.screen_idx == 0 && z64_game.pause_ctxt.cursor_pos != 0x0A && z64_game.pause_ctxt.cursor_pos != 0x0B) {
-		if (z64_game.pause_ctxt.item_cursor >= Z64_SLOT_STICK && z64_game.pause_ctxt.item_cursor <= Z64_SLOT_CHILD_TRADE) {
+		if (z64_game.pause_ctxt.item_cursor >= Z64_SLOT_STICK && z64_game.pause_ctxt.item_cursor <= Z64_SLOT_CHILD_TRADE && CFG_B_BUTTON_ITEMS_ENABLED) {
 			z64_item_t item = 0xFF;
 			
 			for (char i=0; i<18; i++)
 				if (z64_game.pause_ctxt.item_cursor == i)
 					item = z64_file.items[i];
 			
-			if (item != Z64_ITEM_BOW && item <= Z64_ITEM_NAYRUS_LOVE) {
+			if (z64_file.link_age == 0) {
+				if		(item == Z64_ITEM_STICK)		item = 0xFF;
+				else if (item == Z64_ITEM_SLINGSHOT)	item = 0xFF;
+				else if (item == Z64_ITEM_BOOMERANG)	item = 0xFF;
+				else if (item == Z64_ITEM_BEANS)		item = 0xFF;
+			}
+			else {
+				if		(item == Z64_ITEM_BOW)			item = 0xFF;
+				else if (item == Z64_ITEM_FIRE_ARROW)	item = 0xFF;
+				else if (item == Z64_ITEM_ICE_ARROW)	item = 0xFF;
+				else if (item == Z64_ITEM_LIGHT_ARROW)	item = 0xFF;
+				else if (item == Z64_ITEM_HOOKSHOT)		item = 0xFF;
+				else if (item == Z64_ITEM_LONGSHOT)		item = 0xFF;
+				else if (item == Z64_ITEM_HAMMER)		item = 0xFF;
+			}
+			
+			if (item != Z64_ITEM_SLINGSHOT && item != Z64_ITEM_BOW && item != Z64_ITEM_BOMBCHU && item <= Z64_ITEM_NAYRUS_LOVE) {
 				z64_file.button_items[0] = item;
 				if (z64_file.link_age == 0)
 					z64_file.adult_button_items[0] = item;
@@ -73,7 +95,7 @@ void handle_buttons() {
 		}
 	}
 	
-	if (z64_game.pause_ctxt.state == 6 && pad_pressed.l) {
+	if (z64_game.pause_ctxt.state == 6 && pad_pressed.l && CFG_HIDE_HUD_ENABLED) {
 		if (HUD_HIDE == 0) {
 			HUD_HIDE = 1;
 			z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
@@ -90,12 +112,12 @@ void handle_buttons() {
 		else HUD_HEARTS_HIDE = 0;
 	}
 	
-	if (z64_game.pause_ctxt.state == 0 && pad_pressed.r && z64_camera_view == 2 && z64_file.items[Z64_SLOT_BOW] == Z64_ITEM_BOW) {
+	if (z64_game.pause_ctxt.state == 0 && pad_pressed.r && z64_camera_view == 2 && z64_file.items[Z64_SLOT_BOW] == Z64_ITEM_BOW && CFG_ARROW_TOGGLING_ENABLED) {
 		for (char i=0; i<3; i++) {
 			if (z64_file.c_button_slots[i] == Z64_ITEM_BOW || z64_file.c_button_slots[i] == Z64_ITEM_FIRE_ARROW || z64_file.c_button_slots[i] == Z64_ITEM_ICE_ARROW || z64_file.c_button_slots[i] == Z64_ITEM_LIGHT_ARROW) {
 				if (z64_file.c_button_slots[i] == Z64_ITEM_BOW && z64_file.items[Z64_SLOT_FIRE_ARROW] == Z64_ITEM_FIRE_ARROW) { // Regular -> Fire
 					z64_file.c_button_slots[i] = Z64_ITEM_FIRE_ARROW;
-					z64_file.button_items[i+1]   = Z64_ITEM_BOW_FIRE_ARROW;
+					z64_file.button_items[i+1] = Z64_ITEM_BOW_FIRE_ARROW;
 					z64_playsfx(0x483E, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 				}
 				else if (z64_file.c_button_slots[i] == Z64_ITEM_FIRE_ARROW && z64_file.items[Z64_SLOT_ICE_ARROW] == Z64_ITEM_ICE_ARROW) { // Fire -> Ice
@@ -105,12 +127,12 @@ void handle_buttons() {
 				}
 				else if (z64_file.c_button_slots[i] == Z64_ITEM_ICE_ARROW && z64_file.items[Z64_SLOT_LIGHT_ARROW] == Z64_ITEM_LIGHT_ARROW) { // Ice -> Light
 					z64_file.c_button_slots[i] = Z64_ITEM_LIGHT_ARROW;
-					z64_file.button_items[i+1]   = Z64_ITEM_BOW_LIGHT_ARROW;
+					z64_file.button_items[i+1] = Z64_ITEM_BOW_LIGHT_ARROW;
 					z64_playsfx(0x4840, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 				}
 				else { // Back to regular
 					z64_file.c_button_slots[i] = Z64_ITEM_BOW;
-					z64_file.button_items[i+1]   = Z64_ITEM_BOW;
+					z64_file.button_items[i+1] = Z64_ITEM_BOW;
 					z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 				}
 				z64_UpdateItemButton(&z64_game, i);
@@ -128,7 +150,7 @@ void handle_dpad() {
 	
 	if (z64_game.pause_ctxt.state == 6) {
 		
-		if (pad_pressed.du && z64_game.pause_ctxt.cursor_pos != 0x0A && z64_game.pause_ctxt.cursor_pos != 0x0B) {
+		if (pad_pressed.du && z64_game.pause_ctxt.cursor_pos != 0x0A && z64_game.pause_ctxt.cursor_pos != 0x0B && CFG_UNEQUIP_GEAR_ENABLED) {
 			if (z64_game.pause_ctxt.screen_idx == 3) {
 				if (z64_game.pause_ctxt.equip_cursor == 1 && z64_file.equip_sword == 1) {
 					z64_file.equip_sword     = 0;
@@ -170,7 +192,7 @@ void handle_dpad() {
 			}
 		}
 		
-		if (pad_pressed.dd && z64_game.pause_ctxt.cursor_pos != 0x0A && z64_game.pause_ctxt.cursor_pos != 0x0B) {
+		if (pad_pressed.dd && z64_game.pause_ctxt.cursor_pos != 0x0A && z64_game.pause_ctxt.cursor_pos != 0x0B && CFG_SWAP_ITEMS_ENABLED) {
 			if (z64_game.pause_ctxt.screen_idx == 3) {
 				if (z64_game.pause_ctxt.equip_cursor == 3 && (z64_file.ammo[4] == 1 || z64_file.bgs_flag == 1) ) {
 					z64_file.ammo[4] = 1;
@@ -268,7 +290,7 @@ void handle_dpad() {
 		
 	}
 	
-	if (z64_game.pause_ctxt.state == 0) {
+	if (z64_game.pause_ctxt.state == 0 && CFG_DPAD_ENABLED) {
 		
 		if (z64_file.link_age == 0) {
 			if (pad_pressed.dl && z64_file.iron_boots && z64_camera_view == 0) {
@@ -314,7 +336,7 @@ void handle_dpad() {
     }
 }
 void draw_dpad() {
-    if (!DISPLAY_DPAD || !CFG_DISPLAY_DPAD)
+    if (!DISPLAY_DPAD || !CFG_DISPLAY_DPAD || !CFG_DPAD_ENABLED)
 		return;
 	z64_disp_buf_t *db = &(z64_ctxt.gfx->overlay);
 	
