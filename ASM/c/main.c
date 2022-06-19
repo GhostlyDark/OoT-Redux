@@ -6,7 +6,10 @@
 #include "gfx.h"
 #include "text.h"
 #include "util.h"
+#include "buttons.h"
 #include "dpad.h"
+#include "dpad_paused.h"
+#include "arrow_toggling.h"
 #include "misc_colors.h"
 #include "hud_colors.h"
 #include "z64.h"
@@ -31,6 +34,8 @@ void before_game_state_update() {
     handle_pending_items();
     handle_buttons();
     handle_dpad();
+	handle_dpad_paused();
+	handle_arrow_toggling();
     handle_hud();
     update_misc_colors();
     update_hud_colors();
