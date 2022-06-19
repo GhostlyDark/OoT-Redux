@@ -34,7 +34,7 @@ void handle_hud() {
 				return;
 			}
 		}
-		else { HUD_COUNTER = 0; }
+		else HUD_COUNTER = 0;
 		
 		if (z64_game.hud_alpha_channels.b_button              > 40)		z64_game.hud_alpha_channels.b_button          -= 40; else z64_game.hud_alpha_channels.b_button          = 0;
 		if (z64_game.hud_alpha_channels.cl_button             > 40)		z64_game.hud_alpha_channels.cl_button         -= 40; else z64_game.hud_alpha_channels.cl_button         = 0;
@@ -84,7 +84,7 @@ void handle_buttons() {
 				else if (item == Z64_ITEM_HAMMER)		item = 0xFF;
 			}
 			
-			if (item != Z64_ITEM_SLINGSHOT && item != Z64_ITEM_BOW && item != Z64_ITEM_BOMBCHU && item <= Z64_ITEM_NAYRUS_LOVE) {
+			if (item != Z64_ITEM_SLINGSHOT && item != Z64_ITEM_BOW && item != Z64_ITEM_BOMBCHU && item != Z64_ITEM_LENS && item <= Z64_ITEM_NAYRUS_LOVE) {
 				z64_file.button_items[0] = item;
 				if (z64_file.link_age == 0)
 					z64_file.adult_button_items[0] = item;
