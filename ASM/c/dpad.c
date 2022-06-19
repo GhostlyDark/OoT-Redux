@@ -20,6 +20,7 @@ typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uin
 char HUD_HIDE        = 0;
 char HUD_HEARTS_HIDE = 1;
 char HUD_COUNTER     = 0;
+char KNIFE_COUNTER   = 0xFF;
 
 #define z64_playsfx   ((playsfx_t)      0x800C806C)
 #define z64_usebutton ((usebutton_t)    0x8038C9A0)
@@ -196,9 +197,14 @@ void handle_dpad() {
 			if (z64_game.pause_ctxt.screen_idx == 3) {
 				if (z64_game.pause_ctxt.equip_cursor == 3 && (z64_file.ammo[4] == 1 || z64_file.bgs_flag == 1) ) {
 					z64_file.ammo[4] = 1;
-					if (z64_file.bgs_flag == 1)
+					if (z64_file.bgs_flag == 1) {
+						if (KNIFE_COUNTER != 0xFF) { z64_file.bgs_hits_left = KNIFE_COUNTER; }
 						z64_file.bgs_flag = 0;
-					else z64_file.bgs_flag = 1;
+					}
+					else {
+						KNIFE_COUNTER = z64_file.bgs_hits_left;
+						z64_file.bgs_flag = 1;
+					}
 					if (z64_file.equip_sword == 3) {
 						z64_file.equip_sword     = 0;
 						z64_file.inf_table[29]   = 1;
