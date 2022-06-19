@@ -89,7 +89,7 @@ void handle_dpad() {
 			
 			if (pad_pressed.dd) {
 				if (z64_game.pause_ctxt.screen_idx == 3) {
-					if (z64_game.pause_ctxt.equip_cursor == 3 && z64_file.items[Z64_SLOT_ADULT_TRADE] == Z64_ITEM_CLAIM_CHECK && z64_file.bgs_hits_left != 0) {
+					if (z64_game.pause_ctxt.equip_cursor == 3 && z64_file.items[Z64_SLOT_ADULT_TRADE] == Z64_ITEM_CLAIM_CHECK) {
 						if (z64_file.bgs_flag == 1) { z64_file.bgs_flag = 0; } else { z64_file.bgs_flag = 1; }
 						z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 					}
