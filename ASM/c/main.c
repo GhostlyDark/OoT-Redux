@@ -29,6 +29,7 @@ void c_init() {
 
 void before_game_state_update() {
     handle_pending_items();
+	handle_buttons();
     handle_dpad();
 	handle_hud();
     update_misc_colors();
