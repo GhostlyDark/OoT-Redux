@@ -15,7 +15,7 @@
                             (z64_file.game_mode == 0) && \
                             ((z64_event_state_1 & 0x20) == 0))
 
-void swap_item();
+void swap_item(z64_slot_t slot, z64_item_t original, z64_item_t swap);
 void unequip_sword();
 void handle_dpad_paused();
 
