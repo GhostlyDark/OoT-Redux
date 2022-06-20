@@ -39,7 +39,7 @@ void change_equipment() {
 }
 
 void handle_dpad() {
-	if (!CAN_USE_DPAD || !DISPLAY_DPAD || z64_game.pause_ctxt.state != 0 || z64_camera_view != 0 || !CFG_DPAD_ENABLED) 
+	if (!CAN_USE_DPAD || !DISPLAY_DPAD || z64_game.pause_ctxt.state != 0 || z64_camera_view != 0 || CFG_DPAD_ENABLED == 0) 
 		return;
     pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 	
@@ -137,9 +137,16 @@ void handle_dpad() {
 }
 
 void draw_dpad() {
-    if (!DISPLAY_DPAD || !CFG_DISPLAY_DPAD || !CFG_DPAD_ENABLED)
+    if (!DISPLAY_DPAD || !CFG_DISPLAY_DPAD || CFG_DPAD_ENABLED == 0)
 		return;
 	z64_disp_buf_t *db = &(z64_ctxt.gfx->overlay);
+	
+	uint16_t dpad_x = 21;
+	uint16_t dpad_y = 68;
+	if (CFG_DPAD_ENABLED == 2) {
+		dpad_x = 271;
+		uint16_t dpad_y = 64;
+	}
 	
 	gSPDisplayList(db->p++, &setup_db);
 	gDPPipeSync(db->p++);
@@ -150,9 +157,9 @@ void draw_dpad() {
 		alpha = 0xFF;
 	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 	sprite_load(db, &dpad_sprite, 0, 1);
-	sprite_draw(db, &dpad_sprite, 0, 271, 64, 16, 16);
+	sprite_draw(db, &dpad_sprite, 0, dpad_x, dpad_y, 16, 16);
 	
-	if (alpha == 0xFF && !CAN_USE_DPAD)
+	if (alpha == 0xFF && !CAN_USE_DPAD && z64_game.pause_ctxt.state != 0)
 		gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 	
 	if (!z64_file.link_age) {
@@ -160,26 +167,26 @@ void draw_dpad() {
 			if (z64_file.iron_boots) {
 				sprite_load(db, &items_sprite, 69, 1);
 				if (z64_file.equip_boots == 2)
-					sprite_draw(db, &items_sprite, 0, 258, 64, 16, 16);
-				else sprite_draw(db, &items_sprite, 0, 260, 66, 12, 12);
+					sprite_draw(db, &items_sprite, 0, (dpad_x - 2 - 11), (dpad_y), 16, 16);
+				else sprite_draw(db, &items_sprite, 0, (dpad_x - 11), (dpad_y + 2), 12, 12);
 			}
 		
 			if (z64_file.hover_boots) {
 				sprite_load(db, &items_sprite, 70, 1);
 				if (z64_file.equip_boots == 3)
-					sprite_draw(db, &items_sprite, 0, 283, 64, 16, 16);
-				else sprite_draw(db, &items_sprite, 0, 285, 66, 12, 12);
+					sprite_draw(db, &items_sprite, 0, (dpad_x - 2 + 14), (dpad_y), 16, 16);
+				else sprite_draw(db, &items_sprite, 0, (dpad_x + 14), (dpad_y + 2), 12, 12);
 			}
 		}
 		else if (z64_file.equip_boots != 0) {
 			sprite_load(db, &items_sprite, (67 + z64_file.equip_boots), 1);
-			sprite_draw(db, &items_sprite, 0, 285, 66, 12, 12);
+			sprite_draw(db, &items_sprite, 0, (dpad_x + 14), (dpad_y + 2), 12, 12);
 		}
 	}
 	
 	if (z64_file.equip_tunic != 0 && ( (CFG_DPAD_TUNIC_ENABLED == 1 && !z64_file.link_age) || CFG_DPAD_TUNIC_ENABLED == 2) ) {
 		sprite_load(db, &items_sprite, (64 + z64_file.equip_tunic), 1);
-		sprite_draw(db, &items_sprite, 0, 260, 66, 12, 12);
+		sprite_draw(db, &items_sprite, 0, (dpad_x - 11), (dpad_y + 2), 12, 12);
 	}
 	
 	if (z64_file.link_age) {
@@ -188,7 +195,7 @@ void draw_dpad() {
 				gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 			else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 			sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_CHILD_TRADE], 1);
-			sprite_draw(db, &items_sprite, 0, 285, 66, 12, 12);
+			sprite_draw(db, &items_sprite, 0, (dpad_x + 14), (dpad_y + 2), 12, 12);
 		}
 	}
 
@@ -197,12 +204,12 @@ void draw_dpad() {
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_OCARINA], 1);
-		sprite_draw(db, &items_sprite, 0, 273, 77, 12,12);
+		sprite_draw(db, &items_sprite, 0, (dpad_x + 2), (dpad_y + 13), 12,12);
 	}
 	
 	if (CFG_DPAD_SHIELD_ENABLED && z64_file.equip_shield != 0) {
 		sprite_load(db, &items_sprite, (61 + z64_file.equip_shield), 1);
-		sprite_draw(db, &items_sprite, 0, 273, 53, 12, 12);
+		sprite_draw(db, &items_sprite, 0, (dpad_x + 2), (dpad_y - 11), 12, 12);
 	}
 
 	gDPPipeSync(db->p++);
