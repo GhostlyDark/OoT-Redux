@@ -6,9 +6,8 @@ typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , flo
 
 #define z64_playsfx   ((playsfx_t)      0x800C806C)
 
-void handle_arrow_toggling() {
-	pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
-	if (z64_game.pause_ctxt.state != 0 || !pad_pressed.r || z64_camera_view != 2 || z64_file.items[Z64_SLOT_BOW] != Z64_ITEM_BOW || !CFG_ARROW_TOGGLING_ENABLED)
+void handle_arrow_toggling(pad_t pad_pressed) {
+	/*if (z64_game.pause_ctxt.state != 0 || !pad_pressed.r || z64_camera_view != 2 || z64_file.items[Z64_SLOT_BOW] != Z64_ITEM_BOW || !CFG_ARROW_TOGGLING_ENABLED)
 		return;
 	
 	for (char i=0; i<3; i++) {
@@ -35,6 +34,6 @@ void handle_arrow_toggling() {
 			}
 			z64_UpdateItemButton(&z64_game, i);
 		}
-	}
+	}*/
 }
 
