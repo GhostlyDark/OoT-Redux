@@ -3,6 +3,7 @@
 
 #include "z64.h"
 
-void handle_arrow_toggling(pad_t pad_pressed);
+void toggle_arrow();
+void draw_arrow_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 
 #endif

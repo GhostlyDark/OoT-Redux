@@ -10,11 +10,6 @@
                     0x10000000 | \
                     0x20000000)
 
-#define BLOCK_ITEMS (0x00800000 | \
-                     0x00000800 | \
-                     0x00200000 | \
-                     0x08000000)
-
 #define DISPLAY_DPAD        (((z64_file.iron_boots || z64_file.hover_boots) && z64_file.link_age == 0) || \
                             ((z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH) && z64_file.link_age == 1) || \
                             z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA || z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME)
@@ -24,18 +19,12 @@
                             (z64_file.game_mode == 0) && \
                             ((z64_event_state_1 & 0x20) == 0))
 
-#define CAN_USE_OCARINA     (z64_game.pause_ctxt.state == 0 && (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA || z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME) && !z64_game.restriction_flags.ocarina && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
-#define CAN_USE_CHILD_TRADE (z64_game.pause_ctxt.state == 0 && z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH && !z64_game.restriction_flags.trade_items && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
-#define CAN_USE_ITEMS       (z64_game.pause_ctxt.state == 0 && !z64_game.restriction_flags.all && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
-
-void change_sword(char sword);
-void change_boots(char boots);
-void change_shield(char shield);
-void change_tunic(char tunic);
+void change_sword(uint8_t sword);
+void change_boots(uint8_t boots);
+void change_shield(uint8_t shield);
+void change_tunic(uint8_t tunic);
 void change_equipment();
 void handle_dpad();
-void handle_dpad_normal(pad_t pad_pressed);
-void handle_dpad_alt(pad_t pad_pressed);
 void draw_dpad();
 
 #endif

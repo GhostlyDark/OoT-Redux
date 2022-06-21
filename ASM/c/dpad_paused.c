@@ -7,13 +7,13 @@ extern uint8_t CFG_SWAP_ITEM_ENABLED;
 
 typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 
-char KNIFE_COUNTER = 0xFF;
+uint8_t KNIFE_COUNTER = 0xFF;
 
 #define z64_playsfx   ((playsfx_t)      0x800C806C)
 
 void swap_item(z64_slot_t slot, z64_item_t original, z64_item_t swap) {
 	if (z64_file.items[original] == original) {
-		for (char i=0; i<4; i++) {
+		for (uint8_t i=0; i<4; i++) {
 			if (z64_file.button_items[i] == original) {
 								z64_file.button_items[i]			= swap;
 				if (i > 0)		z64_file.c_button_slots[i-1]		= slot;
@@ -73,9 +73,9 @@ void handle_dpad_paused() {
 		
 		
 		if (z64_game.pause_ctxt.screen_idx == 0 && CFG_UNEQUIP_ITEM_ENABLED) { // Unset item from button
-			for (char j=0; j<24; j++) {
+			for (uint8_t j=0; j<24; j++) {
 				if (z64_game.pause_ctxt.item_cursor == j) {
-					for (char i=0; i<4; i++) {
+					for (uint8_t i=0; i<4; i++) {
 						if (z64_file.button_items[i] == z64_file.items[j]) {
 											z64_file.button_items[i]			= 0xFF;
 							if (i > 0)		z64_file.c_button_slots[i-1]		= 0xFF;

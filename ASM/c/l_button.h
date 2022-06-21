@@ -15,6 +15,7 @@
                             (z64_file.game_mode == 0) && \
                             ((z64_event_state_1 & 0x20) == 0))
 
+void toggle_minimap();
 void handle_l_button();
 
 #endif

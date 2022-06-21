@@ -1,14 +1,14 @@
 #include "l_button.h"
 
 extern uint8_t CFG_DPAD_ENABLED;
-extern char HUD_HIDE;
+extern uint8_t HUD_HIDE;
 
 typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 
 #define z64_playsfx   ((playsfx_t)      0x800C806C)
 
-char BLOCK_R	= 0;
-char PRESSED_R	= 0;
+uint8_t BLOCK_R	= 0;
+uint8_t PRESSED_R	= 0;
 
 void toggle_minimap() {
 	z64_gameinfo.minimap_disabled ^= 1;

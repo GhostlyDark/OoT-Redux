@@ -6,9 +6,9 @@ extern uint8_t CFG_B_BUTTON_ITEM_ENABLED;
 
 typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 
-char HUD_HIDE			= 0;
-char HUD_HEARTS_HIDE	= 1;
-char HUD_COUNTER		= 0;
+uint8_t HUD_HIDE			= 0;
+uint8_t HUD_HEARTS_HIDE	= 1;
+uint8_t HUD_COUNTER		= 0;
 
 #define z64_playsfx   ((playsfx_t)      0x800C806C)
 
@@ -49,7 +49,7 @@ void handle_buttons() {
 		if (z64_game.pause_ctxt.item_cursor >= Z64_SLOT_STICK && z64_game.pause_ctxt.item_cursor <= Z64_SLOT_CHILD_TRADE && CFG_B_BUTTON_ITEM_ENABLED) {
 			z64_item_t item = 0xFF;
 			
-			for (char i=0; i<18; i++)
+			for (uint8_t i=0; i<18; i++)
 				if (z64_game.pause_ctxt.item_cursor == i)
 					item = z64_file.items[i];
 			
