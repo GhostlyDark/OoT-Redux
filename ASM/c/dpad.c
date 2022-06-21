@@ -39,6 +39,7 @@ void change_equipment() {
 }
 
 void handle_dpad() {
+	
 	if (!CAN_USE_DPAD || !DISPLAY_DPAD || z64_game.pause_ctxt.state != 0 || z64_camera_view != 0 || CFG_DPAD_ENABLED == 0) 
 		return;
     pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
@@ -142,10 +143,18 @@ void draw_dpad() {
 	z64_disp_buf_t *db = &(z64_ctxt.gfx->overlay);
 	
 	uint16_t dpad_x = 21;
-	uint16_t dpad_y = 68;
-	if (CFG_DPAD_ENABLED == 2) {
+	uint16_t dpad_y = 44;
+	if (CFG_DPAD_ENABLED != 2) {
+		if (z64_file.magic_acquired && z64_file.energy_capacity > 0xA0)
+			dpad_y += 23;
+		else if (z64_file.energy_capacity > 0xA0)
+			dpad_y += 10;
+		else if (z64_file.magic_acquired)
+			dpad_y += 14;
+	}
+	else {
 		dpad_x = 271;
-		uint16_t dpad_y = 64;
+		dpad_y = 64;
 	}
 	
 	gSPDisplayList(db->p++, &setup_db);
