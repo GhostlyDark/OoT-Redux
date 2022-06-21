@@ -83,20 +83,13 @@ void handle_buttons() {
 	
 	if (pad_pressed.l) {
 		if (z64_game.pause_ctxt.state == 6 && CFG_HIDE_HUD_ENABLED) {
-			if (HUD_HIDE) {
-				HUD_HIDE = 0;
+			HUD_HIDE ^= 1;
+			if (HUD_HIDE)
 				z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-			}
-			else {
-				HUD_HIDE = 1;
-				z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-			}
+			else z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 		}
 	
-		if (z64_game.pause_ctxt.state == 0 && HUD_HIDE) {
-			if (HUD_HEARTS_HIDE)
-				HUD_HEARTS_HIDE = 0;
-			else HUD_HEARTS_HIDE = 1;
-		}
-	]
+		if (z64_game.pause_ctxt.state == 0 && HUD_HIDE)
+			HUD_HEARTS_HIDE ^= 1;
+	}
 }

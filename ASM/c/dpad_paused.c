@@ -41,7 +41,7 @@ void unequip_sword() {
 }
 
 void handle_dpad_paused() {
-	if (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 6 || z64_game.pause_ctxt.cursor_pos == 0x0A || z64_game.pause_ctxt.cursor_pos == 0x0B) 
+	if (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 6 || z64_game.pause_ctxt.cursor_pos == 0x0A || z64_game.pause_ctxt.cursor_pos == 0x0B || CFG_DPAD_ENABLED == 0) 
 		return;
     pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 	
@@ -97,16 +97,14 @@ void handle_dpad_paused() {
 	
 	if (pad_pressed.dd) {
 		if (z64_game.pause_ctxt.screen_idx == 3 && CFG_SWAP_ITEM_ENABLED) { // Swap knife
-			if (z64_game.pause_ctxt.equip_cursor == 3 && (z64_file.ammo[4] == 1 || z64_file.bgs_flag == 1) ) {
+			if (z64_game.pause_ctxt.equip_cursor == 3 && (z64_file.ammo[4] == 1 || z64_file.bgs_flag) ) {
 				z64_file.ammo[4] = 1;
-				if (z64_file.bgs_flag == 1) {
-					if (KNIFE_COUNTER != 0xFF) { z64_file.bgs_hits_left = KNIFE_COUNTER; }
-					z64_file.bgs_flag = 0;
+				z64_file.bgs_flag ^= 1;
+				if (!z64_file.bgs_flag) {
+					if (KNIFE_COUNTER != 0xFF)
+						z64_file.bgs_hits_left = KNIFE_COUNTER;
 				}
-				else {
-					KNIFE_COUNTER = z64_file.bgs_hits_left;
-					z64_file.bgs_flag = 1;
-				}
+				else KNIFE_COUNTER = z64_file.bgs_hits_left;
 				if (z64_file.equip_sword == 3) {
 					z64_file.equip_sword     = 0;
 					z64_file.inf_table[29]   = 1;
