@@ -1,5 +1,7 @@
 #include "dpad_paused.h"
 
+extern uint8_t CFG_MAP_SELECT_ENABLED;
+extern uint8_t CFG_INVENTORY_EDITOR_ENABLED;
 extern uint8_t CFG_DPAD_ENABLED;
 extern uint8_t CFG_UNEQUIP_GEAR_ENABLED;
 extern uint8_t CFG_UNEQUIP_ITEM_ENABLED;
@@ -44,6 +46,13 @@ void handle_dpad_paused() {
 	if (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 6 || z64_game.pause_ctxt.cursor_pos == 0x0A || z64_game.pause_ctxt.cursor_pos == 0x0B || CFG_DPAD_ENABLED == 0) 
 		return;
     pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
+	
+	else if (pad_pressed.dr && CFG_MAP_SELECT_ENABLED) {
+		if (z64_game.pause_ctxt.unk_02_[1] == 0)
+			z64_game.pause_ctxt.unk_02_[1] = 2;
+		else if (z64_game.pause_ctxt.unk_02_[1] == 2)
+			z64_game.pause_ctxt.unk_02_[1] = 0;
+	}
 	
 	if (pad_pressed.du) {
 		if (z64_game.pause_ctxt.screen_idx == 3 && CFG_UNEQUIP_GEAR_ENABLED) { // Unequip gear
