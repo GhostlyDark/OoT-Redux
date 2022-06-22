@@ -11,6 +11,13 @@ uint8_t BLOCK_R	= 0;
 uint8_t PRESSED_R	= 0;
 
 void toggle_minimap() {
+	if (z64_dungeon_scene != 0xFFFF) {
+		if (!z64_file.dungeon_items[z64_dungeon_scene].map)
+			return;
+	}		
+	else if (z64_has_minimap == 0xFFFF)
+		return;
+	
 	z64_gameinfo.minimap_disabled ^= 1;
 	if (z64_gameinfo.minimap_disabled)
 		z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);

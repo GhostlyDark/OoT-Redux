@@ -2,6 +2,7 @@
 #define L_BUTTON_H
 
 #include "z64.h"
+#include "z64_extended.h"
 
 #define BLOCK_DPAD (0x00000001 | \
 	                0x00000002 | \
