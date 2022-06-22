@@ -1,6 +1,5 @@
 #include "gfx.h"
 #include "dpad_actions.h"
-#include "arrow_toggling.h"
 
 extern uint8_t CFG_UNEQUIP_GEAR_ENABLED;
 
@@ -71,6 +70,15 @@ void change_shield(uint8_t shield) {
 void change_tunic(uint8_t tunic) {
 	z64_file.equip_tunic = tunic;
 	change_equipment();
+}
+
+void change_arrow(uint8_t button, z64_item_t item, uint16_t sfx) {
+	z64_file.button_items[button]	= item;
+	if (!z64_file.link_age)
+		z64_file.adult_button_items[button]	= item;
+	else z64_file.child_button_items[button]	= item;
+	z64_UpdateItemButton(&z64_game, button);
+	z64_playsfx(sfx, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 }
 
 void change_equipment() {
@@ -308,6 +316,44 @@ void toggle_tunic() {
 		change_tunic(tunic);
 }
 
+void toggle_arrow() {
+	if (z64_file.items[Z64_SLOT_BOW] != Z64_ITEM_BOW)
+		return;
+	
+	uint8_t slot;
+	uint8_t arrow = 0;
+	for (slot=1; slot<=3; slot++) {
+		if (z64_file.button_items[slot] == Z64_ITEM_BOW || z64_file.button_items[slot] == Z64_ITEM_BOW_FIRE_ARROW || z64_file.button_items[slot] == Z64_ITEM_BOW_ICE_ARROW || z64_file.button_items[slot] == Z64_ITEM_BOW_LIGHT_ARROW) {
+			arrow = z64_file.button_items[slot];
+			break;
+		}
+	}
+		
+	if (arrow == 0)
+		return;
+	
+	if (arrow == Z64_ITEM_BOW)
+		arrow = Z64_ITEM_BOW_FIRE_ARROW;
+	else if (arrow == Z64_ITEM_BOW_FIRE_ARROW)
+		arrow = Z64_ITEM_BOW_ICE_ARROW;
+	else if (arrow == Z64_ITEM_BOW_ICE_ARROW)
+		arrow = Z64_ITEM_BOW_LIGHT_ARROW;
+	else arrow = Z64_ITEM_BOW;
+	
+	if (arrow == Z64_ITEM_BOW && z64_file.items[Z64_SLOT_FIRE_ARROW] != Z64_ITEM_FIRE_ARROW)
+		arrow = Z64_ITEM_BOW_ICE_ARROW;
+	else if (arrow == Z64_ITEM_BOW_FIRE_ARROW && z64_file.items[Z64_SLOT_ICE_ARROW] != Z64_ITEM_ICE_ARROW)
+		arrow = Z64_ITEM_BOW_LIGHT_ARROW;
+	else if (arrow == Z64_ITEM_BOW_ICE_ARROW && z64_file.items[Z64_SLOT_LIGHT_ARROW] != Z64_ITEM_LIGHT_ARROW)
+		arrow = Z64_ITEM_BOW;
+	
+	if (arrow != z64_file.button_items[slot]) {
+		if (arrow == 03)
+			change_arrow(slot, arrow, 0x4808);
+		else change_arrow(slot, arrow, (0x4806 + arrow) );
+	}
+}
+
 void swap_iron_boots() {
 	if (!z64_file.iron_boots)
 		return;
@@ -365,6 +411,23 @@ void draw_tunic_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16
 	if (z64_file.equip_tunic != 0) {
 		sprite_load(db, &items_sprite, (64 + z64_file.equip_tunic), 1);
 		sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
+	}
+}
+
+void draw_arrow_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
+	for (uint8_t i=1; i<=3; i++) {
+		if (z64_file.button_items[i] == Z64_ITEM_BOW || z64_file.button_items[i] == Z64_ITEM_BOW_FIRE_ARROW || z64_file.button_items[i] == Z64_ITEM_BOW_ICE_ARROW || z64_file.button_items[i] == Z64_ITEM_BOW_LIGHT_ARROW) {
+			if (z64_file.button_items[i] == Z64_ITEM_BOW)
+				sprite_load(db, &items_sprite, 0x03, 1);
+			if (z64_file.button_items[i] == Z64_ITEM_BOW_FIRE_ARROW)
+				sprite_load(db, &items_sprite, 0x38, 1);
+			if (z64_file.button_items[i] == Z64_ITEM_BOW_ICE_ARROW)
+				sprite_load(db, &items_sprite, 0x39, 1);
+			if (z64_file.button_items[i] == Z64_ITEM_BOW_LIGHT_ARROW)
+				sprite_load(db, &items_sprite, 0x3A, 1);
+			sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
+			break;
+		}
 	}
 }
 

@@ -41,7 +41,7 @@ void handle_hud() {
 }
 
 void handle_buttons() {
-	if (!CFG_BUTTONS_ENABLED)
+	if (!CFG_BUTTONS_ENABLED || z64_game.pause_ctxt.unk_02_[1] != 0)
 		return;
 	pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 	

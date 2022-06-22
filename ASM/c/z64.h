@@ -1269,7 +1269,6 @@ typedef struct
 } z64_trail_t;
 
 /* dram addresses */
-#define z64_camera_view_addr                    0x801DB0CD
 #define z64_osSendMesg_addr                     0x80001E20
 #define z64_osRecvMesg_addr                     0x80002030
 #define z64_osCreateMesgQueue_addr              0x80004220
@@ -1371,7 +1370,6 @@ typedef void(*z64_LinkInvincibility_proc) (z64_link_t *link, uint8_t frames);
 typedef float *(*z64_GetMatrixStackTop_proc)();
 
 /* data */
-#define z64_camera_view       	(*(uint8_t*)       	  z64_camera_view_addr)
 #define z64_file_mq             (*(OSMesgQueue*)      z64_file_mq_addr)
 #define z64_vi_counter          (*(uint32_t*)         z64_vi_counter_addr)
 #define z64_stab                (*(z64_stab_t*)       z64_stab_addr)

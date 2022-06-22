@@ -2,6 +2,7 @@
 #define DPAD_H
 
 #include "z64.h"
+#include "z64_extended.h"
 
 #define BLOCK_DPAD (0x00000001 | \
 	                0x00000002 | \
@@ -18,13 +19,12 @@
                             ((uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && \
                             (z64_file.game_mode == 0) && \
                             ((z64_event_state_1 & 0x20) == 0))
-
-void change_sword(uint8_t sword);
-void change_boots(uint8_t boots);
-void change_shield(uint8_t shield);
-void change_tunic(uint8_t tunic);
-void change_equipment();
 void handle_dpad();
+void handle_dpad_buttons();
+void handle_dpad_ingame();
+void handle_dpad_paused();
+void handle_hud();
+void handle_l_button();
 void draw_dpad();
 
 #endif

@@ -1,6 +1,9 @@
 #include "gfx.h"
 #include "dpad.h"
+#include "dpad_paused.h"
 #include "dpad_actions.h"
+#include "buttons.h"
+#include "l_button.h"
 
 extern uint8_t CFG_DISPLAY_DPAD;
 extern uint8_t CFG_DPAD_ENABLED;
@@ -27,6 +30,14 @@ uint16_t DPAD_X		= 0;
 uint16_t DPAD_Y		= 0;
 
 void handle_dpad() {
+	handle_buttons();
+	handle_dpad_ingame();
+	handle_dpad_paused();
+    handle_hud();
+	handle_l_button();
+}
+
+void handle_dpad_ingame() {
 	if (!CAN_USE_DPAD || !DISPLAY_DPAD || z64_game.pause_ctxt.state != 0 || z64_camera_view != 0 || CFG_DPAD_ENABLED == 0) 
 		return;
     pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
