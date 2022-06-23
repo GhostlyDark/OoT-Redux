@@ -43,6 +43,8 @@ typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uin
 #define z64_playsfx   ((playsfx_t)      0x800C806C)
 #define z64_usebutton ((usebutton_t)    0x8038C9A0)
 
+static uint8_t DPAD_ACTIVE[4] = {0, 0, 0, 0};
+
 void change_sword(uint8_t sword) {
 	z64_file.equip_sword = sword;
 	change_equipment();
@@ -86,51 +88,50 @@ void change_equipment() {
 	z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 }
 
-void action_dpad_up() {
-	if (!z64_file.link_age && !DPAD_ALT)
-		run_action(CFG_DPAD_ADULT_SET1_UP);
-	else if (!z64_file.link_age &&  DPAD_ALT)
-		run_action(CFG_DPAD_ADULT_SET2_UP);
-	else if ( z64_file.link_age && !DPAD_ALT)
-		run_action(CFG_DPAD_CHILD_SET1_UP);
-	else if ( z64_file.link_age &&  DPAD_ALT)
-		run_action(CFG_DPAD_CHILD_SET2_UP);
+void run_dpad_actions(pad_t pad_pressed) {
+	if (pad_pressed.du) {
+		if (!z64_file.link_age && !DPAD_ALT)
+			run_action(CFG_DPAD_ADULT_SET1_UP);
+		else if (!z64_file.link_age &&  DPAD_ALT)
+			run_action(CFG_DPAD_ADULT_SET2_UP);
+		else if ( z64_file.link_age && !DPAD_ALT)
+			run_action(CFG_DPAD_CHILD_SET1_UP);
+		else if ( z64_file.link_age &&  DPAD_ALT)
+			run_action(CFG_DPAD_CHILD_SET2_UP);
+	}
+	else if (pad_pressed.dr) {
+		if (!z64_file.link_age && !DPAD_ALT)
+			run_action(CFG_DPAD_ADULT_SET1_RIGHT);
+		else if (!z64_file.link_age &&  DPAD_ALT)
+			run_action(CFG_DPAD_ADULT_SET2_RIGHT);
+		else if ( z64_file.link_age && !DPAD_ALT)
+			run_action(CFG_DPAD_CHILD_SET1_RIGHT);
+		else if ( z64_file.link_age &&  DPAD_ALT)
+			run_action(CFG_DPAD_CHILD_SET2_RIGHT);
+	}
+	else if (pad_pressed.dd) {
+		if (!z64_file.link_age && !DPAD_ALT)
+			run_action(CFG_DPAD_ADULT_SET1_DOWN);
+		else if (!z64_file.link_age &&  DPAD_ALT)
+			run_action(CFG_DPAD_ADULT_SET2_DOWN);
+		else if ( z64_file.link_age && !DPAD_ALT)
+			run_action(CFG_DPAD_CHILD_SET1_DOWN);
+		else if ( z64_file.link_age &&  DPAD_ALT)
+			run_action(CFG_DPAD_CHILD_SET2_DOWN);
+	}
+	else if (pad_pressed.dl) {
+		if (!z64_file.link_age && !DPAD_ALT)
+			run_action(CFG_DPAD_ADULT_SET1_LEFT);
+		else if (!z64_file.link_age &&  DPAD_ALT)
+			run_action(CFG_DPAD_ADULT_SET2_LEFT);
+		else if ( z64_file.link_age && !DPAD_ALT)
+			run_action(CFG_DPAD_CHILD_SET1_LEFT);
+		else if ( z64_file.link_age &&  DPAD_ALT)
+			run_action(CFG_DPAD_CHILD_SET2_LEFT);
+	}
 }
 
-void action_dpad_right() {
-	if (!z64_file.link_age && !DPAD_ALT)
-		run_action(CFG_DPAD_ADULT_SET1_RIGHT);
-	else if (!z64_file.link_age &&  DPAD_ALT)
-		run_action(CFG_DPAD_ADULT_SET2_RIGHT);
-	else if ( z64_file.link_age && !DPAD_ALT)
-		run_action(CFG_DPAD_CHILD_SET1_RIGHT);
-	else if ( z64_file.link_age &&  DPAD_ALT)
-		run_action(CFG_DPAD_CHILD_SET2_RIGHT);
-}
-
-void action_dpad_down() {
-	if (!z64_file.link_age && !DPAD_ALT)
-		run_action(CFG_DPAD_ADULT_SET1_DOWN);
-	else if (!z64_file.link_age &&  DPAD_ALT)
-		run_action(CFG_DPAD_ADULT_SET2_DOWN);
-	else if ( z64_file.link_age && !DPAD_ALT)
-		run_action(CFG_DPAD_CHILD_SET1_DOWN);
-	else if ( z64_file.link_age &&  DPAD_ALT)
-		run_action(CFG_DPAD_CHILD_SET2_DOWN);
-}
-
-void action_dpad_left() {
-	if (!z64_file.link_age && !DPAD_ALT)
-		run_action(CFG_DPAD_ADULT_SET1_LEFT);
-	else if (!z64_file.link_age &&  DPAD_ALT)
-		run_action(CFG_DPAD_ADULT_SET2_LEFT);
-	else if ( z64_file.link_age && !DPAD_ALT)
-		run_action(CFG_DPAD_CHILD_SET1_LEFT);
-	else if ( z64_file.link_age &&  DPAD_ALT)
-		run_action(CFG_DPAD_CHILD_SET2_LEFT);
-}
-
-void draw_dpad_up(z64_disp_buf_t *db, uint16_t alpha) {
+void draw_dpad_actions(z64_disp_buf_t *db, uint16_t alpha) {
 	if (!z64_file.link_age && !DPAD_ALT)
 		draw_action(CFG_DPAD_ADULT_SET1_UP, db, alpha, 2, -10);
 	else if (!z64_file.link_age &&  DPAD_ALT)
@@ -139,9 +140,7 @@ void draw_dpad_up(z64_disp_buf_t *db, uint16_t alpha) {
 		draw_action(CFG_DPAD_CHILD_SET1_UP, db, alpha, 2, -10);
 	else if ( z64_file.link_age &&  DPAD_ALT)
 		draw_action(CFG_DPAD_CHILD_SET2_UP, db, alpha, 2, -10);
-}
-
-void draw_dpad_right(z64_disp_buf_t *db, uint16_t alpha) {
+	
 	if (!z64_file.link_age && !DPAD_ALT)
 		draw_action(CFG_DPAD_ADULT_SET1_RIGHT, db, alpha, 14, 2);
 	else if (!z64_file.link_age &&  DPAD_ALT)
@@ -150,9 +149,7 @@ void draw_dpad_right(z64_disp_buf_t *db, uint16_t alpha) {
 		draw_action(CFG_DPAD_CHILD_SET1_RIGHT, db, alpha, 14, 2);
 	else if ( z64_file.link_age &&  DPAD_ALT)
 		draw_action(CFG_DPAD_CHILD_SET2_RIGHT, db, alpha, 14, 2);
-}
-
-void draw_dpad_down(z64_disp_buf_t *db, uint16_t alpha) {
+	
 	if (!z64_file.link_age && !DPAD_ALT)
 		draw_action(CFG_DPAD_ADULT_SET1_DOWN, db, alpha, 2, 14);
 	else if (!z64_file.link_age &&  DPAD_ALT)
@@ -161,9 +158,7 @@ void draw_dpad_down(z64_disp_buf_t *db, uint16_t alpha) {
 		draw_action(CFG_DPAD_CHILD_SET1_DOWN, db, alpha, 2, 14);
 	else if ( z64_file.link_age &&  DPAD_ALT)
 		draw_action(CFG_DPAD_CHILD_SET2_DOWN, db, alpha, 2, 14);
-}
-
-void draw_dpad_left(z64_disp_buf_t *db, uint16_t alpha) {
+	
 	if (!z64_file.link_age && !DPAD_ALT)
 		draw_action(CFG_DPAD_ADULT_SET1_LEFT, db, alpha, -11, 2);
 	else if (!z64_file.link_age &&  DPAD_ALT)
@@ -172,6 +167,46 @@ void draw_dpad_left(z64_disp_buf_t *db, uint16_t alpha) {
 		draw_action(CFG_DPAD_CHILD_SET1_LEFT, db, alpha, -11, 2);
 	else if ( z64_file.link_age &&  DPAD_ALT)
 		draw_action(CFG_DPAD_CHILD_SET2_LEFT, db, alpha, -11, 2);
+}
+
+uint8_t * check_dpad_actions() {
+	if (!z64_file.link_age && !DPAD_ALT)
+		check_action(0, CFG_DPAD_ADULT_SET1_UP);
+	else if (!z64_file.link_age &&  DPAD_ALT)
+		check_action(0, CFG_DPAD_ADULT_SET2_UP);
+	else if ( z64_file.link_age && !DPAD_ALT)
+		check_action(0, CFG_DPAD_CHILD_SET1_UP);
+	else if ( z64_file.link_age &&  DPAD_ALT)
+		check_action(0, CFG_DPAD_CHILD_SET2_UP);
+	
+	if (!z64_file.link_age && !DPAD_ALT)
+		check_action(1, CFG_DPAD_ADULT_SET1_RIGHT);
+	else if (!z64_file.link_age &&  DPAD_ALT)
+		check_action(1, CFG_DPAD_ADULT_SET2_RIGHT);
+	else if ( z64_file.link_age && !DPAD_ALT)
+		check_action(1, CFG_DPAD_CHILD_SET1_RIGHT);
+	else if ( z64_file.link_age &&  DPAD_ALT)
+		check_action(1, CFG_DPAD_CHILD_SET2_RIGHT);
+	
+	if (!z64_file.link_age && !DPAD_ALT)
+		check_action(2, CFG_DPAD_ADULT_SET1_DOWN);
+	else if (!z64_file.link_age &&  DPAD_ALT)
+		check_action(2, CFG_DPAD_ADULT_SET2_DOWN);
+	else if ( z64_file.link_age && !DPAD_ALT)
+		check_action(2, CFG_DPAD_CHILD_SET1_DOWN);
+	else if ( z64_file.link_age &&  DPAD_ALT)
+		check_action(2, CFG_DPAD_CHILD_SET2_DOWN);
+	
+	if (!z64_file.link_age && !DPAD_ALT)
+		check_action(3, CFG_DPAD_ADULT_SET1_LEFT);
+	else if (!z64_file.link_age &&  DPAD_ALT)
+		check_action(3, CFG_DPAD_ADULT_SET2_LEFT);
+	else if ( z64_file.link_age && !DPAD_ALT)
+		check_action(3, CFG_DPAD_CHILD_SET1_LEFT);
+	else if ( z64_file.link_age &&  DPAD_ALT)
+		check_action(3, CFG_DPAD_CHILD_SET2_LEFT);
+	
+	return DPAD_ACTIVE;
 }
 
 void run_action(uint8_t action) {
@@ -216,8 +251,56 @@ void draw_action(uint8_t action, z64_disp_buf_t *db, uint16_t alpha, uint16_t ic
 		draw_ocarina_icon(db, alpha, icon_x, icon_y);
 }
 
+void check_action(uint8_t button, uint8_t action) {
+	if (action == 0x01) { // Sword
+		if (z64_file.kokiri_sword || z64_file.master_sword || z64_file.giants_knife)
+			DPAD_ACTIVE[button] = 1;
+		else DPAD_ACTIVE[button] = 0;
+	}
+	else if (action == 0x02) { // Boots
+		if (z64_file.kokiri_boots && (z64_file.iron_boots || z64_file.hover_boots) )
+			DPAD_ACTIVE[button] = 1;
+		else DPAD_ACTIVE[button] = 0;
+	}
+	else if (action == 0x03) { // Shield
+		if (z64_file.deku_shield || z64_file.hylian_shield || z64_file.mirror_shield)
+			DPAD_ACTIVE[button] = 1;
+		else DPAD_ACTIVE[button] = 0;
+	}
+	else if (action == 0x04) { // Tunic
+		if (z64_file.kokiri_tunic && (z64_file.goron_tunic || z64_file.zora_tunic) )
+			DPAD_ACTIVE[button] = 1;
+		else DPAD_ACTIVE[button] = 0;
+	}
+	else if (action == 0x05) { // Arrow
+		if (z64_file.items[Z64_SLOT_BOW] == Z64_ITEM_BOW && (z64_file.items[Z64_SLOT_FIRE_ARROW] == Z64_ITEM_FIRE_ARROW || z64_file.items[Z64_SLOT_ICE_ARROW] == Z64_ITEM_ICE_ARROW || z64_file.items[Z64_SLOT_LIGHT_ARROW] == Z64_ITEM_LIGHT_ARROW) )
+			DPAD_ACTIVE[button] = 1;
+		else DPAD_ACTIVE[button] = 0;
+	}
+	else if (action == 0x06) { // Iron Boots
+		if (z64_file.iron_boots && (!z64_file.link_age || CFG_ALLOW_BOOTS) )
+			DPAD_ACTIVE[button] = 1;
+		else DPAD_ACTIVE[button] = 0;
+	}
+	else if (action == 0x07) { // Hover Boots
+		if (z64_file.hover_boots && (!z64_file.link_age || CFG_ALLOW_BOOTS) )
+			DPAD_ACTIVE[button] = 1;
+		else DPAD_ACTIVE[button] = 0;
+	}
+	else if (action == 0x08) { // Child Trade
+		if (z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH && z64_file.link_age)
+			DPAD_ACTIVE[button] = 1;
+		else DPAD_ACTIVE[button] = 0;
+	}
+	else if (action == 0x09) { // Ocarina
+		if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA || z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME)
+			DPAD_ACTIVE[button] = 1;
+		else DPAD_ACTIVE[button] = 0;
+	}
+}
+
 void toggle_sword() {
-	if ( (!z64_file.kokiri_sword || (!z64_file.link_age && !CFG_ALLOW_KOKIRI_SWORD) ) && (!z64_file.master_sword || (z64_file.link_age && !CFG_ALLOW_MASTER_SWORD) ) && (!z64_file.giants_knife || (z64_file.link_age && !CFG_ALLOW_GIANTS_KNIFE) ) )
+	if (!z64_file.kokiri_sword && !z64_file.master_sword && !z64_file.giants_knife)
 		return;
 	
 	uint8_t sword = z64_file.equip_sword;
@@ -267,7 +350,7 @@ void toggle_boots() {
 }
 
 void toggle_shield() {
-	if ( (!z64_file.deku_shield || (z64_file.link_age && !CFG_ALLOW_DEKU_SHIELD) ) && !z64_file.hylian_shield && (!z64_file.mirror_shield || (z64_file.link_age && !CFG_ALLOW_MIRROR_SHIELD) ) )
+	if (!z64_file.deku_shield && !z64_file.hylian_shield && !z64_file.mirror_shield)
 		return;
 	
 	uint8_t shield = z64_file.equip_shield;
@@ -278,11 +361,11 @@ void toggle_shield() {
 			shield++;
 	}
 	
-	if (shield == 1 && (!z64_file.link_age && !CFG_ALLOW_DEKU_SHIELD)   || !z64_file.deku_shield)
+	if (shield == 1 && (!z64_file.deku_shield || (!z64_file.link_age && !CFG_ALLOW_DEKU_SHIELD) ) )
 		shield++;
 	if (shield == 2 && !z64_file.hylian_shield)
 		shield++;
-	if (shield == 3 && ( z64_file.link_age && !CFG_ALLOW_MIRROR_SHIELD) || !z64_file.mirror_shield) {
+	if (shield == 3 && (!z64_file.mirror_shield || (z64_file.link_age && !CFG_ALLOW_MIRROR_SHIELD) ) ) {
 		if (CFG_UNEQUIP_GEAR_ENABLED)
 			shield = 0;
 		else if (z64_file.deku_shield && (z64_file.link_age || CFG_ALLOW_DEKU_SHIELD) )

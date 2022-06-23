@@ -78,26 +78,27 @@ void handle_dpad_paused() {
 		}
 		
 		
-		if (z64_game.pause_ctxt.screen_idx == 0 && CFG_UNEQUIP_ITEM_ENABLED) { // Unset item from button
-			for (uint8_t j=0; j<24; j++) {
-				if (z64_game.pause_ctxt.item_cursor == j) {
-					for (uint8_t i=0; i<4; i++) {
-						if (z64_file.button_items[i] == z64_file.items[j]) {
-											z64_file.button_items[i]			= 0xFF;
-							if (i > 0)		z64_file.c_button_slots[i-1]		= 0xFF;
+		if (z64_game.pause_ctxt.screen_idx == 0 && CFG_UNEQUIP_ITEM_ENABLED) { // Unset item from C button
+			for (uint8_t item=0; item<24; item++) {
+				if (z64_game.pause_ctxt.item_cursor == item) {
+					for (uint8_t button=1; button<=3; button++) {
+						if (z64_file.button_items[button] == z64_file.items[item]) {
+							z64_file.button_items[button]					= 0xFF;
+							z64_file.c_button_slots[button - 1]				= 0xFF;
 							if (!z64_file.link_age) {
-											z64_file.adult_button_items[i]		= 0xFF;
-								if (i > 0)	z64_file.adult_c_button_slots[i-1]	= 0xFF;
+								z64_file.adult_button_items[button]			= 0xFF;
+								z64_file.adult_c_button_slots[button - 1]	= 0xFF;
 							}
 							else {
-											z64_file.child_button_items[i]		= 0xFF;
-								if (i > 0)	z64_file.child_c_button_slots[i-1]	= 0xFF;
+								z64_file.child_button_items[button]			= 0xFF;
+								z64_file.child_c_button_slots[button - 1]	= 0xFF;
 							}
+							z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+							break;
 						}
 					}
 				}
 			}
-			z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 		}
 	}
 	

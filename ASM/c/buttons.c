@@ -6,7 +6,7 @@ extern uint8_t CFG_B_BUTTON_ITEM_ENABLED;
 
 typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 
-uint8_t HUD_HIDE			= 0;
+uint8_t HUD_HIDE		= 0;
 uint8_t HUD_HEARTS_HIDE	= 1;
 uint8_t HUD_COUNTER		= 0;
 

@@ -8,26 +8,9 @@
 extern uint8_t CFG_DISPLAY_DPAD;
 extern uint8_t CFG_DPAD_ENABLED;
 
-extern uint8_t CFG_DPAD_ADULT_SET1_UP;
-extern uint8_t CFG_DPAD_ADULT_SET1_RIGHT;
-extern uint8_t CFG_DPAD_ADULT_SET1_DOWN;
-extern uint8_t CFG_DPAD_ADULT_SET1_LEFT;
-extern uint8_t CFG_DPAD_ADULT_SET2_UP;
-extern uint8_t CFG_DPAD_ADULT_SET2_RIGHT;
-extern uint8_t CFG_DPAD_ADULT_SET2_DOWN;
-extern uint8_t CFG_DPAD_ADULT_SET2_LEFT;
-extern uint8_t CFG_DPAD_CHILD_SET1_UP;
-extern uint8_t CFG_DPAD_CHILD_SET1_RIGHT;
-extern uint8_t CFG_DPAD_CHILD_SET1_DOWN;
-extern uint8_t CFG_DPAD_CHILD_SET1_LEFT;
-extern uint8_t CFG_DPAD_CHILD_SET2_UP;
-extern uint8_t CFG_DPAD_CHILD_SET2_RIGHT;
-extern uint8_t CFG_DPAD_CHILD_SET2_DOWN;
-extern uint8_t CFG_DPAD_CHILD_SET2_LEFT;
-
-uint8_t DPAD_ALT	= 0;
-uint16_t DPAD_X		= 0;
-uint16_t DPAD_Y		= 0;
+uint8_t DPAD_ALT		= 0;
+uint16_t DPAD_X			= 0;
+uint16_t DPAD_Y			= 0;
 
 void handle_dpad() {
 	handle_buttons();
@@ -38,7 +21,7 @@ void handle_dpad() {
 }
 
 void handle_dpad_ingame() {
-	if (!CAN_USE_DPAD || !DISPLAY_DPAD || z64_game.pause_ctxt.state != 0 || z64_camera_view != 0 || CFG_DPAD_ENABLED == 0) 
+	if (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 0 || z64_camera_view != 0 || CFG_DPAD_ENABLED == 0) 
 		return;
     pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 	
@@ -47,19 +30,17 @@ void handle_dpad_ingame() {
 			DPAD_ALT ^= 1;
 	}
 	
-	if (pad_pressed.du)
-		action_dpad_up();
-	if (pad_pressed.dr)
-		action_dpad_right();
-	if (pad_pressed.dd)
-		action_dpad_down();
-	if (pad_pressed.dl)
-		action_dpad_left();
+	run_dpad_actions(pad_pressed);
 }
 
 void draw_dpad() {
-    if (!DISPLAY_DPAD || CFG_DISPLAY_DPAD == 0 || CFG_DPAD_ENABLED == 0)
+    if (CFG_DISPLAY_DPAD == 0 || CFG_DPAD_ENABLED == 0)
 		return;
+	
+	uint8_t *dpad_active  = check_dpad_actions();
+	if (!dpad_active[0] && !dpad_active[1] && !dpad_active[2] && !dpad_active[3])
+		return;
+	
 	z64_disp_buf_t *db = &(z64_ctxt.gfx->overlay);
 	
 	if (CFG_DISPLAY_DPAD != 2) {
@@ -88,14 +69,10 @@ void draw_dpad() {
 	sprite_load(db, &dpad_sprite, 0, 1);
 	sprite_draw(db, &dpad_sprite, 0, DPAD_X, DPAD_Y, 16, 16);
 	
-	if (alpha == 0xFF && !CAN_USE_DPAD && z64_game.pause_ctxt.state != 0)
+	if (alpha == 0xFF && (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 0) )
 		gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 	
-	draw_dpad_up(db, alpha);
-	draw_dpad_right(db, alpha);
-	draw_dpad_down(db, alpha);
-	draw_dpad_left(db, alpha);
-
+	draw_dpad_actions(db, alpha);
 	gDPPipeSync(db->p++);
 }
 

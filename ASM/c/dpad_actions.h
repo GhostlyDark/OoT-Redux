@@ -2,6 +2,7 @@
 #define DPAD_ACTIONS_H
 
 #include "z64.h"
+#include <stdbool.h>
 
 #define BLOCK_ITEMS (0x00800000 | \
                      0x00000800 | \
@@ -21,16 +22,12 @@ void change_tunic(uint8_t tunic);
 void change_arrow(uint8_t button, z64_item_t item, uint16_t sfx);
 void change_equipment();
 
-void action_dpad_up();
-void action_dpad_right();
-void action_dpad_down();
-void action_dpad_left();
-void draw_dpad_up(z64_disp_buf_t *db, uint16_t alpha);
-void draw_dpad_right(z64_disp_buf_t *db, uint16_t alpha);
-void draw_dpad_down(z64_disp_buf_t *db, uint16_t alpha);
-void draw_dpad_left(z64_disp_buf_t *db, uint16_t alpha);
+void run_dpad_actions(pad_t pad_pressed);
+void draw_dpad_actions(z64_disp_buf_t *db, uint16_t alpha);
+uint8_t * check_dpad_actions();
 void run_action(uint8_t action);
 void draw_action(uint8_t action, z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
+void check_action(uint8_t button, uint8_t action);
 
 void toggle_sword();
 void toggle_boots();
