@@ -151,13 +151,13 @@ void draw_dpad_actions(z64_disp_buf_t *db, uint16_t alpha) {
 		draw_action(CFG_DPAD_CHILD_SET2_RIGHT, db, alpha, 14, 2);
 	
 	if (!z64_file.link_age && !DPAD_ALT)
-		draw_action(CFG_DPAD_ADULT_SET1_DOWN, db, alpha, 2, 14);
+		draw_action(CFG_DPAD_ADULT_SET1_DOWN, db, alpha, 2, 15);
 	else if (!z64_file.link_age &&  DPAD_ALT)
-		draw_action(CFG_DPAD_ADULT_SET2_DOWN, db, alpha, 2, 14);
+		draw_action(CFG_DPAD_ADULT_SET2_DOWN, db, alpha, 2, 15);
 	else if ( z64_file.link_age && !DPAD_ALT)
-		draw_action(CFG_DPAD_CHILD_SET1_DOWN, db, alpha, 2, 14);
+		draw_action(CFG_DPAD_CHILD_SET1_DOWN, db, alpha, 2, 15);
 	else if ( z64_file.link_age &&  DPAD_ALT)
-		draw_action(CFG_DPAD_CHILD_SET2_DOWN, db, alpha, 2, 14);
+		draw_action(CFG_DPAD_CHILD_SET2_DOWN, db, alpha, 2, 15);
 	
 	if (!z64_file.link_age && !DPAD_ALT)
 		draw_action(CFG_DPAD_ADULT_SET1_LEFT, db, alpha, -11, 2);
@@ -311,11 +311,11 @@ void toggle_sword() {
 			sword++;
 	}
 	
-	if (sword == 1 && (!z64_file.link_age && !CFG_ALLOW_KOKIRI_SWORD) || !z64_file.kokiri_sword)
+	if (sword == 1 && (!z64_file.kokiri_sword || (!z64_file.link_age && !CFG_ALLOW_KOKIRI_SWORD) ) )
 		sword++;
-	if (sword == 2 && ( z64_file.link_age && !CFG_ALLOW_MASTER_SWORD) || !z64_file.master_sword)
+	if (sword == 2 && (!z64_file.master_sword || ( z64_file.link_age && !CFG_ALLOW_MASTER_SWORD) ) )
 		sword++;
-	if (sword == 3 && ( z64_file.link_age && !CFG_ALLOW_GIANTS_KNIFE) || !z64_file.giants_knife) {
+	if (sword == 3 && (!z64_file.giants_knife || ( z64_file.link_age && !CFG_ALLOW_GIANTS_KNIFE) ) ) {
 		if (CFG_UNEQUIP_GEAR_ENABLED)
 			sword = 0;
 		else if (z64_file.kokiri_sword && ( z64_file.link_age || CFG_ALLOW_KOKIRI_SWORD) )
@@ -470,10 +470,10 @@ void use_ocarina() {
 }
 
 void draw_sword_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
-	if (z64_file.equip_sword != 0) {
+	//if (z64_file.equip_sword != 0) {
 		sprite_load(db, &items_sprite, (58 + z64_file.equip_sword), 1);
 		sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
-	}
+	//}
 }
 
 void draw_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {

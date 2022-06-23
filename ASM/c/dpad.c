@@ -45,7 +45,7 @@ void draw_dpad() {
 	
 	z64_disp_buf_t *db = &(z64_ctxt.gfx->overlay);
 	
-	if (CFG_DISPLAY_DPAD != 2) {
+	if (CFG_DISPLAY_DPAD == 1) {
 		DPAD_X = 21;
 		DPAD_Y = 44;
 		if (z64_file.magic_acquired && z64_file.energy_capacity > 0xA0)
@@ -65,6 +65,13 @@ void draw_dpad() {
 		else if (CFG_HUD_LAYOUT == 4 || CFG_HUD_LAYOUT == 5)
 			DPAD_Y += 15;
 	}
+	if (CFG_DISPLAY_DPAD == 3) {
+		DPAD_X = 35;
+		DPAD_Y = 175;
+		if (z64_dungeon_scene != 0xFF)
+			if (z64_file.dungeon_keys[z64_dungeon_scene] > 0)
+				DPAD_Y = 158;
+	}
 	
 	gSPDisplayList(db->p++, &setup_db);
 	gDPPipeSync(db->p++);
@@ -77,7 +84,7 @@ void draw_dpad() {
 	sprite_load(db, &dpad_sprite, 0, 1);
 	sprite_draw(db, &dpad_sprite, 0, DPAD_X, DPAD_Y, 16, 16);
 	
-	if (alpha == 0xFF && (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 0) )
+	if (alpha == 0xFF && z64_game.pause_ctxt.state != 0)
 		gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 	
 	draw_dpad_actions(db, alpha);
