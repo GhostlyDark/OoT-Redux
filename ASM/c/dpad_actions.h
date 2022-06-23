@@ -2,7 +2,6 @@
 #define DPAD_ACTIONS_H
 
 #include "z64.h"
-#include <stdbool.h>
 
 #define BLOCK_ITEMS (0x00800000 | \
                      0x00000800 | \

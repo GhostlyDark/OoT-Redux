@@ -7,12 +7,14 @@
 
 extern uint8_t CFG_DISPLAY_DPAD;
 extern uint8_t CFG_DPAD_ENABLED;
+extern uint8_t CFG_HUD_LAYOUT;
 
 uint8_t DPAD_ALT		= 0;
 uint16_t DPAD_X			= 0;
 uint16_t DPAD_Y			= 0;
 
 void handle_dpad() {
+	handle_layout();
 	handle_buttons();
 	handle_dpad_ingame();
 	handle_dpad_paused();
@@ -56,6 +58,12 @@ void draw_dpad() {
 	else {
 		DPAD_X = 271;
 		DPAD_Y = 64;
+		if (CFG_HUD_LAYOUT == 2 || CFG_HUD_LAYOUT == 3) {
+			DPAD_X += 10;
+			DPAD_Y += 14;
+		}
+		else if (CFG_HUD_LAYOUT == 4 || CFG_HUD_LAYOUT == 5)
+			DPAD_Y += 15;
 	}
 	
 	gSPDisplayList(db->p++, &setup_db);
