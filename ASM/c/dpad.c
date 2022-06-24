@@ -4,22 +4,36 @@
 #include "dpad_actions.h"
 #include "buttons.h"
 #include "l_button.h"
+#include "boss_rush.h"
 
 extern uint8_t CFG_DISPLAY_DPAD;
 extern uint8_t CFG_DPAD_ENABLED;
 extern uint8_t CFG_HUD_LAYOUT;
+extern uint8_t CFG_KEEP_MASK;
 
-uint8_t DPAD_ALT		= 0;
-uint16_t DPAD_X			= 0;
-uint16_t DPAD_Y			= 0;
+uint8_t DPAD_ALT			= 0;
+uint16_t DPAD_X				= 0;
+uint16_t DPAD_Y				= 0;
+uint16_t LAST_MASK			= 0;
+uint16_t LAST_MASK_SCENE	= 0xFFFF;
 
 void handle_dpad() {
+	handle_boss_rush();
 	handle_layout();
 	handle_buttons();
 	handle_dpad_ingame();
 	handle_dpad_paused();
     handle_hud();
 	handle_l_button();
+	
+	if (CFG_KEEP_MASK) {
+		if (z64_mask_equipped > 0)
+			LAST_MASK = z64_mask_equipped;
+		if (z64_game.scene_index != LAST_MASK_SCENE && LAST_MASK > 0) {
+			z64_mask_equipped = LAST_MASK;
+			LAST_MASK_SCENE = z64_game.scene_index;
+		}
+	}
 }
 
 void handle_dpad_ingame() {
