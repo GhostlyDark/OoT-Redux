@@ -76,6 +76,8 @@ void draw_dpad() {
 		}
 		else if (CFG_HUD_LAYOUT == 4 || CFG_HUD_LAYOUT == 5)
 			DPAD_Y += 15;
+		if (Z64_SCREEN_WIDTH == 424)
+			DPAD_X += 104;
 	}
 	if (CFG_DISPLAY_DPAD == 3) {
 		DPAD_X = 35;

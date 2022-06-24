@@ -70,7 +70,7 @@ CFG_RAINBOW_NAVI_PROP_OUTER_ENABLED:
 CFG_SHOW_SETTING_INFO:
 .byte 0x00
 
-// Shows the ASCII text DPAD in ROM so you look it up
+// Shows the ASCII string DPAD in ROM so you can look it up
 .byte 0x44
 .byte 0x50
 .byte 0x41
@@ -112,7 +112,7 @@ CFG_DPAD_CHILD_SET2_DOWN:
 CFG_DPAD_CHILD_SET2_LEFT:
 .byte 0x04
 
-// Shows the ASCII text MISC in ROM so you look it up
+// Shows the ASCII string MISC in ROM so you can look it up
 .byte 0x4D
 .byte 0x49
 .byte 0x53
