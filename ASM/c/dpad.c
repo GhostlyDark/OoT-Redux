@@ -4,7 +4,6 @@
 #include "dpad_actions.h"
 #include "buttons.h"
 #include "l_button.h"
-#include "boss_rush.h"
 
 extern uint8_t CFG_DISPLAY_DPAD;
 extern uint8_t CFG_DPAD_ENABLED;
@@ -18,7 +17,6 @@ uint16_t LAST_MASK			= 0;
 uint16_t LAST_MASK_SCENE	= 0xFFFF;
 
 void handle_dpad() {
-	handle_boss_rush();
 	handle_layout();
 	handle_buttons();
 	handle_dpad_ingame();

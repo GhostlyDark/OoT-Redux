@@ -16,7 +16,8 @@
                             ((z64_event_state_1 & 0x20) == 0))
 
 void swap_item(z64_slot_t slot, z64_item_t original, z64_item_t swap);
-void unequip_sword();
+void unequip_sword(uint8_t play);
+void unequip_shield();
 void handle_dpad_paused();
 
 #endif

@@ -28,10 +28,23 @@ void swap_item(z64_slot_t slot, z64_item_t item, z64_item_t swap) {
 	}
 }
 
-void unequip_sword() {
-	z64_file.equip_sword     = 0;
-	z64_file.inf_table[29]   = 1;
-	z64_file.button_items[0] = -1;
+void unequip_sword(uint8_t play) {
+	z64_file.equip_sword				= 0;
+	if (z64_file.link_age)
+		z64_file.child_equip_sword		= 0;
+	else z64_file.adult_equip_sword		= 0;
+	z64_file.inf_table[29]				= 1;
+	z64_file.button_items[0]			= -1;
+	z64_UpdateEquipment(&z64_game, &z64_link);
+	if (play)
+		z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+}
+
+void unequip_shield() {
+	z64_file.equip_shield				= 0;
+	if (z64_file.link_age)
+		z64_file.child_equip_shield		= 0;
+	else z64_file.adult_equip_shield	= 0;
 	z64_UpdateEquipment(&z64_game, &z64_link);
 	z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 }
@@ -53,28 +66,10 @@ void handle_dpad_paused() {
 	
 	if (pad_pressed.du) {
 		if (z64_game.pause_ctxt.screen_idx == 3 && CFG_UNEQUIP_GEAR_ENABLED) { // Unequip gear
-			if (z64_game.pause_ctxt.equip_cursor == 1 && z64_file.equip_sword == 1)
-				unequip_sword();
-			if (z64_game.pause_ctxt.equip_cursor == 2 && z64_file.equip_sword == 2)
-				unequip_sword();
-			if (z64_game.pause_ctxt.equip_cursor == 3 && z64_file.equip_sword == 3)
-				unequip_sword();
-			
-			if (z64_game.pause_ctxt.equip_cursor == 5 && z64_file.equip_shield == 1) {
-				z64_file.equip_shield = 0;
-				z64_UpdateEquipment(&z64_game, &z64_link);
-				z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-			}
-			if (z64_game.pause_ctxt.equip_cursor == 6 && z64_file.equip_shield == 2) {
-				z64_file.equip_shield = 0;
-				z64_UpdateEquipment(&z64_game, &z64_link);
-				z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-			}
-			if (z64_game.pause_ctxt.equip_cursor == 7 && z64_file.equip_shield == 3) {
-				z64_file.equip_shield = 0;
-				z64_UpdateEquipment(&z64_game, &z64_link);
-				z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-			}
+			if ( (z64_game.pause_ctxt.equip_cursor == 1 && z64_file.equip_sword  == 1) || (z64_game.pause_ctxt.equip_cursor == 2 && z64_file.equip_sword  == 2) || (z64_game.pause_ctxt.equip_cursor == 3 && z64_file.equip_sword  == 3) )
+				unequip_sword(1);
+			if ( (z64_game.pause_ctxt.equip_cursor == 5 && z64_file.equip_shield == 1) || (z64_game.pause_ctxt.equip_cursor == 6 && z64_file.equip_shield == 2) || (z64_game.pause_ctxt.equip_cursor == 7 && z64_file.equip_shield == 3) )
+				unequip_shield();
 		}
 		
 		
@@ -107,16 +102,12 @@ void handle_dpad_paused() {
 			if (z64_game.pause_ctxt.equip_cursor == 3 && (z64_file.ammo[4] == 1 || z64_file.bgs_flag) ) {
 				z64_file.ammo[4] = 1;
 				z64_file.bgs_flag ^= 1;
-				if (!z64_file.bgs_flag) {
+				if (!z64_file.bgs_flag)
 					if (KNIFE_COUNTER != 0xFF)
 						z64_file.bgs_hits_left = KNIFE_COUNTER;
-				}
 				else KNIFE_COUNTER = z64_file.bgs_hits_left;
-				if (z64_file.equip_sword == 3) {
-					z64_file.equip_sword     = 0;
-					z64_file.inf_table[29]   = 1;
-					z64_file.button_items[0] = -1;
-				}
+				if (z64_file.equip_sword == 3)
+					unequip_sword(0);
 				z64_UpdateEquipment(&z64_game, &z64_link);
 				z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 			}

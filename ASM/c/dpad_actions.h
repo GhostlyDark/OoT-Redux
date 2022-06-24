@@ -15,9 +15,9 @@
 #endif
 
 void change_sword(uint8_t sword);
-void change_boots(uint8_t boots);
 void change_shield(uint8_t shield);
 void change_tunic(uint8_t tunic);
+void change_boots(uint8_t boots);
 void change_arrow(uint8_t button, z64_item_t item, uint16_t sfx);
 void change_equipment();
 
@@ -29,9 +29,9 @@ void draw_action(uint8_t action, z64_disp_buf_t *db, uint16_t alpha, uint16_t ic
 void check_action(uint8_t button, uint8_t action);
 
 void toggle_sword();
-void toggle_boots();
 void toggle_shield();
 void toggle_tunic();
+void toggle_boots();
 void toggle_arrow();
 void swap_iron_boots();
 void swap_hover_boots();
@@ -39,9 +39,9 @@ void use_child_trade();
 void use_ocarina();
 
 void draw_sword_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
-void draw_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 void draw_shield_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 void draw_tunic_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
+void draw_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 void draw_arrow_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 void draw_iron_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 void draw_hover_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);

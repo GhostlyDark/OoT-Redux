@@ -46,31 +46,43 @@ typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uin
 static uint8_t DPAD_ACTIVE[4] = {0, 0, 0, 0};
 
 void change_sword(uint8_t sword) {
-	z64_file.equip_sword = sword;
+	z64_file.equip_sword				= sword;
+		if (z64_file.link_age)
+		z64_file.child_equip_sword		= sword;
+	else z64_file.adult_equip_sword		= sword;
 	change_equipment();
 	if (z64_file.equip_sword == 0) {
-		z64_file.inf_table[29]   = 1;
-		z64_file.button_items[0] = -1;
+		z64_file.inf_table[29]			= 1;
+		z64_file.button_items[0]		= -1;
 	}
 	else {
-		z64_file.inf_table[29]   = 0;
-		z64_file.button_items[0] = z64_file.equip_sword + 0x3A;
+		z64_file.inf_table[29]			= 0;
+		z64_file.button_items[0]		= z64_file.equip_sword + 0x3A;
 		z64_UpdateItemButton(&z64_game, 0);
 	}
 }
 
-void change_boots(uint8_t boots) {
-	z64_file.equip_boots = boots;
-	change_equipment();
-}
-
 void change_shield(uint8_t shield) {
-	z64_file.equip_shield = shield;
+	z64_file.equip_shield				= shield;
+	if (z64_file.link_age)
+		z64_file.child_equip_shield		= shield;
+	else z64_file.adult_equip_shield	= shield;
 	change_equipment();
 }
 
 void change_tunic(uint8_t tunic) {
-	z64_file.equip_tunic = tunic;
+	z64_file.equip_tunic				= tunic;
+	if (z64_file.link_age)
+		z64_file.child_equip_tunic		= tunic;
+	else z64_file.adult_equip_tunic		= tunic;
+	change_equipment();
+}
+
+void change_boots(uint8_t boots) {
+	z64_file.equip_boots				= boots;
+	if (z64_file.link_age)
+		z64_file.child_equip_boots		= boots;
+	else z64_file.adult_equip_boots		= boots;
 	change_equipment();
 }
 
@@ -329,26 +341,6 @@ void toggle_sword() {
 		change_sword(sword);
 }
 
-void toggle_boots() {
-	if (z64_file.link_age && !CFG_ALLOW_BOOTS)
-		return;
-	if (!z64_file.kokiri_boots || (!z64_file.iron_boots && !z64_file.hover_boots) )
-		return;
-	
-	uint8_t boots = z64_file.equip_boots;
-	boots++;
-	if (boots > 3)
-		boots = 1;
-	
-	if (boots == 2 && !z64_file.iron_boots)
-		boots++;
-	if (boots == 3 && !z64_file.hover_boots)
-		boots = 1;
-	
-	if (boots != z64_file.equip_boots)
-		change_boots(boots);
-}
-
 void toggle_shield() {
 	if (!z64_file.deku_shield && !z64_file.hylian_shield && !z64_file.mirror_shield)
 		return;
@@ -397,6 +389,26 @@ void toggle_tunic() {
 	
 	if (tunic != z64_file.equip_tunic)
 		change_tunic(tunic);
+}
+
+void toggle_boots() {
+	if (z64_file.link_age && !CFG_ALLOW_BOOTS)
+		return;
+	if (!z64_file.kokiri_boots || (!z64_file.iron_boots && !z64_file.hover_boots) )
+		return;
+	
+	uint8_t boots = z64_file.equip_boots;
+	boots++;
+	if (boots > 3)
+		boots = 1;
+	
+	if (boots == 2 && !z64_file.iron_boots)
+		boots++;
+	if (boots == 3 && !z64_file.hover_boots)
+		boots = 1;
+	
+	if (boots != z64_file.equip_boots)
+		change_boots(boots);
 }
 
 void toggle_arrow() {
@@ -470,31 +482,32 @@ void use_ocarina() {
 }
 
 void draw_sword_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
-	//if (z64_file.equip_sword != 0) {
-		sprite_load(db, &items_sprite, (58 + z64_file.equip_sword), 1);
-		sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
-	//}
-}
-
-void draw_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
-	if (z64_file.equip_boots != 0) {
-		sprite_load(db, &items_sprite, (67 + z64_file.equip_boots), 1);
-		sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
-	}
+	if (z64_file.equip_sword == 0)
+		return;
+	sprite_load(db, &items_sprite, (58 + z64_file.equip_sword), 1);
+	sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
 }
 
 void draw_shield_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
-	if (z64_file.equip_shield != 0) {
-		sprite_load(db, &items_sprite, (61 + z64_file.equip_shield), 1);
-		sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
-	}
+	if (z64_file.equip_shield == 0)
+		return;
+	sprite_load(db, &items_sprite, (61 + z64_file.equip_shield), 1);
+	sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
 }
 
 void draw_tunic_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
-	if (z64_file.equip_tunic != 0) {
-		sprite_load(db, &items_sprite, (64 + z64_file.equip_tunic), 1);
-		sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
-	}
+	if (z64_file.equip_tunic == 0)
+		return;
+	sprite_load(db, &items_sprite, (64 + z64_file.equip_tunic), 1);
+	sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
+}
+
+
+void draw_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
+	if (z64_file.equip_boots == 0)
+		return;
+	sprite_load(db, &items_sprite, (67 + z64_file.equip_boots), 1);
+	sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
 }
 
 void draw_arrow_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
