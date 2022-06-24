@@ -32,7 +32,7 @@
 ; New code region
 ;==================================================================================================
 
-.headersize (0x80400000 - 0x03480000)
+.headersize (0x80400000 - 0x03680000)
 
 .org 0x80400000
 .area 0x20000 //payload max memory
@@ -107,7 +107,7 @@ RANDO_CONTEXT:
 .importobj "../build/bundle.o"
 .align 8
 FONT_TEXTURE:
-;.incbin("../resources/font.bin")
+.incbin("../resources/font.bin")
 DPAD_TEXTURE:
 .incbin("../resources/dpad.bin")
 TRIFORCE_ICON_TEXTURE:
