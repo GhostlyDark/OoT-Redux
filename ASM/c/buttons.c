@@ -1,6 +1,5 @@
 #include "buttons.h"
 
-extern uint8_t CFG_BUTTONS_ENABLED;
 extern uint8_t CFG_HUD_LAYOUT;
 extern uint8_t CFG_HIDE_HUD_ENABLED;
 extern uint8_t CFG_B_BUTTON_ITEM_ENABLED;
@@ -157,7 +156,7 @@ void handle_hud() {
 }
 
 void handle_buttons() {
-	if (!CFG_BUTTONS_ENABLED || z64_game.pause_ctxt.unk_02_[1] != 0)
+	if (z64_game.pause_ctxt.unk_02_[1] != 0)
 		return;
 	pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 	

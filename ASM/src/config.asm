@@ -70,6 +70,7 @@ CFG_RAINBOW_NAVI_PROP_OUTER_ENABLED:
 CFG_SHOW_SETTING_INFO:
 .byte 0x00
 
+// Shows the ASCII text DPAD in ROM so you look it up
 .byte 0x44
 .byte 0x50
 .byte 0x41
@@ -111,20 +112,19 @@ CFG_DPAD_CHILD_SET2_DOWN:
 CFG_DPAD_CHILD_SET2_LEFT:
 .byte 0x04
 
+// Shows the ASCII text MISC in ROM so you look it up
 .byte 0x4D
 .byte 0x49
 .byte 0x53
 .byte 0x43
-CFG_BUTTONS_ENABLED:
-.byte 0x01
 CFG_HUD_LAYOUT:
 .byte 0x00
 CFG_HIDE_HUD_ENABLED:
-.byte 0x01
+.byte 0x00
 CFG_KEEP_MASK:
 .byte 0x01
 CFG_INVENTORY_EDITOR_ENABLED:
-.byte 0x01
+.byte 0x00
 CFG_ALLOW_KOKIRI_SWORD:
 .byte 0x00
 CFG_ALLOW_MASTER_SWORD:
@@ -140,13 +140,13 @@ CFG_ALLOW_TUNIC:
 CFG_ALLOW_BOOTS:
 .byte 0x00
 CFG_UNEQUIP_GEAR_ENABLED:
-.byte 0x01
+.byte 0x00
 CFG_UNEQUIP_ITEM_ENABLED:
-.byte 0x01
+.byte 0x00
 CFG_SWAP_ITEM_ENABLED:
-.byte 0x01
+.byte 0x00
 CFG_B_BUTTON_ITEM_ENABLED:
-.byte 0x01
+.byte 0x00
 
 .area 0x20, 0
 CFG_CUSTOM_MESSAGE_1:
