@@ -9,6 +9,7 @@ COSMETIC_CONTEXT:
 COSMETIC_FORMAT_VERSION:
 .word 0x1F073FD8
 
+; HUDC string
 .byte 0x48
 .byte 0x55
 .byte 0x44
@@ -70,7 +71,7 @@ CFG_RAINBOW_NAVI_PROP_OUTER_ENABLED:
 CFG_SHOW_SETTING_INFO:
 .byte 0x00
 
-// Shows the ASCII text DPAD in ROM so you look it up
+; DPAD string
 .byte 0x44
 .byte 0x50
 .byte 0x41
@@ -112,7 +113,7 @@ CFG_DPAD_CHILD_SET2_DOWN:
 CFG_DPAD_CHILD_SET2_LEFT:
 .byte 0x04
 
-// Shows the ASCII text MISC in ROM so you look it up
+; MISC string
 .byte 0x4D
 .byte 0x49
 .byte 0x53
