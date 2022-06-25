@@ -40,79 +40,79 @@ Gameplay_InitSkybox:
 
 ; Runs after the file select menu is rendered
 ; Replaces: code that draws the fade-out rectangle on file load
-;.orga 0xBAF738 ; In memory: 0x803B3538
-;.area 0x60, 0
-;    or      a1, r0, s0   ; menu data
-;    jal     draw_file_select_hash
-;    andi    a0, t8, 0xFF ; a0 = alpha channel of fade-out rectangle
+.orga 0xBAF738 ; In memory: 0x803B3538
+.area 0x60, 0
+    or      a1, r0, s0   ; menu data
+    jal     draw_file_select_hash
+    andi    a0, t8, 0xFF ; a0 = alpha channel of fade-out rectangle
 
-;    lw      s0, 0x18 (sp)
-;    lw      ra, 0x1C (sp)
-;    jr      ra
-;    addiu   sp, sp, 0x88
-;.endarea
+    lw      s0, 0x18 (sp)
+    lw      ra, 0x1C (sp)
+    jr      ra
+    addiu   sp, sp, 0x88
+.endarea
 
 ;==================================================================================================
 ; Hide file details panel
 ;==================================================================================================
 ; keep death count alpha at 0 instead of using file_detail alpha
-;.orga 0xBAC064 ; In memory: 0x803AFE64
-;    move    t7, r0 ; was: lh t7, 0x4A7E (t4)
+.orga 0xBAC064 ; In memory: 0x803AFE64
+    move    t7, r0 ; was: lh t7, 0x4A7E (t4)
 
 ; keep hearts alpha at 0 instead of using file_detail alpha
-;.orga 0xBAC1BC ; In memory: 0x803AFFBC
-;    move    t7, r0 ; was: lh t7, 0x4A7E (t4)
+.orga 0xBAC1BC ; In memory: 0x803AFFBC
+    move    t7, r0 ; was: lh t7, 0x4A7E (t4)
 
 ; keep stones/medals alpha at 0 instead of using file_detail alpha
-;.orga 0xBAC3EC ; In memory: 0x803B01EC
-;    move    t9, r0 ; was: lh t9, 0x4A7E (t3)
+.orga 0xBAC3EC ; In memory: 0x803B01EC
+    move    t9, r0 ; was: lh t9, 0x4A7E (t3)
 
 ; keep detail panel alpha at 0 instead of using file_detail alpha
-;.orga 0xBAC94C ; In memory: 0x803B074C
-;    move    t9, r0 ; was: lh t9, 0x4A7E (t9)
+.orga 0xBAC94C ; In memory: 0x803B074C
+    move    t9, r0 ; was: lh t9, 0x4A7E (t9)
 
 ; keep file tag alpha at 0xC8 instead of subtracting 0x19 each transition frame
-;.orga 0xBAE5A4 ; In memory: 0x803B23A4
-;    sh      t3, 0x4A6C (v1) ; was: sh t5, 0x4A6C (v1)
+.orga 0xBAE5A4 ; In memory: 0x803B23A4
+    sh      t3, 0x4A6C (v1) ; was: sh t5, 0x4A6C (v1)
 
 ; prevent setting file tag alpha to 0x00 when transition is finished
-;.orga 0xBAE5C8 ; In memory: 0x803B23C8
-;    nop ; was: sh r0, 0x4A6C (v1)
+.orga 0xBAE5C8 ; In memory: 0x803B23C8
+    nop ; was: sh r0, 0x4A6C (v1)
 
 ; prevent increasing alpha when transitioning away from file
-;.orga 0xBAE864 ; In memory: 0x803B2664
-;    nop ; was: sh t5, 0x4A6C (v1)
+.orga 0xBAE864 ; In memory: 0x803B2664
+    nop ; was: sh t5, 0x4A6C (v1)
 
 ; change file positions in copy menu
-;.orga 0xBB05FC ; In memory: 0x803B43FC
-;    .word 0x0000FFC0
-;    .word 0xFFB0FFB0
+.orga 0xBB05FC ; In memory: 0x803B43FC
+    .word 0x0000FFC0
+    .word 0xFFB0FFB0
 
 ; keep file tag alpha at 0xC8 in copy menu
-;.orga 0xBA18C4 ; In memory: 0x803A56C4
-;    ori     t4, r0, 0x00C8 ; was: addiu t4, t9, 0xFFE7
+.orga 0xBA18C4 ; In memory: 0x803A56C4
+    ori     t4, r0, 0x00C8 ; was: addiu t4, t9, 0xFFE7
 
 ;.orga 0xBA1980 ; In memory: 0x803A5780
-;    ori     t0, r0, 0x00C8 ; was: addiu t0, t9, 0xFFE7
+    ori     t0, r0, 0x00C8 ; was: addiu t0, t9, 0xFFE7
     
 ;.orga 0xBA19DC ; In memory: 0x803A57DC
-;    nop ; was: sh r0, 0x4A6C (t2)
+    nop ; was: sh r0, 0x4A6C (t2)
     
 ;.orga 0xBA1E20 ; In memory: 0x803A5C20
-;    ori     t5, r0, 0x00C8 ; was: addiu t5, t4, 0x0019
+    ori     t5, r0, 0x00C8 ; was: addiu t5, t4, 0x0019
 
 ;.orga 0xBA18C4 ; In memory: 0x803A56C4
-;    ori     t4, r0, 0x00C8 ; was: ori t4, t4, 0x00C8
+    ori     t4, r0, 0x00C8 ; was: ori t4, t4, 0x00C8
 
 ; keep file tag alpha at 0xC8 in erase menu
-;.orga 0xBA34DC ; In memory: 0x803A72DC
-;    ori     t8, r0, 0x00C8 ; was: addiu t8, t7, 0xFFE7
+.orga 0xBA34DC ; In memory: 0x803A72DC
+    ori     t8, r0, 0x00C8 ; was: addiu t8, t7, 0xFFE7
 
-;.orga 0xBA3654
-;    nop ; was: sh r0, 0x4A6C (t6)
+.orga 0xBA3654
+    nop ; was: sh r0, 0x4A6C (t6)
 
-;.orga 0xBA39D0
-;    ori     t5, r0, 0x00C8 ; was: addiu t5, t4, 0x0019
+.orga 0xBA39D0
+    ori     t5, r0, 0x00C8 ; was: addiu t5, t4, 0x0019
 
 ;==================================================================================================
 ; Initial save
@@ -133,9 +133,9 @@ Gameplay_InitSkybox:
 ;sw      r0, 0x0428(v0)
 ;sw      t5, 0x066C(v0)
 
-;.orga 0xC0E77C
-;    jal     empty_bomb
-;    sw      r0, 0x0428(v0)
+.orga 0xC0E77C
+    jal     empty_bomb
+    sw      r0, 0x0428(v0)
 
 ;==================================================================================================
 ; Talon Cutscene Skip
@@ -176,20 +176,20 @@ Gameplay_InitSkybox:
 
 ; Replaces:
 ;   c.lt.s  f0, f2
-;.orga 0xBE4A14
-;    jal     agony_distance_hook
+.orga 0xBE4A14
+    jal     agony_distance_hook
 
     ; Replaces:
 ;   c.lt.s  f4, f6
-;.orga 0xBE4A40
-;    jal     agony_vibrate_hook
+.orga 0xBE4A40
+    jal     agony_vibrate_hook
 
 ; Replaces:
 ;   addiu   sp, sp, 0x20
 ;   jr      ra
-;.orga 0xBE4A60
-;    j       agony_post_hook
-;    nop
+.orga 0xBE4A60
+    j       agony_post_hook
+    nop
 
 ;==================================================================================================
 ; Cast Fishing Rod without B Item
@@ -220,13 +220,13 @@ Gameplay_InitSkybox:
 ;==================================================================================================
 ;
 ;manually set next entrance and fade out type
-;.orga 0xBEA044 
-;   jal      warp_speedup
-;   nop
+.orga 0xBEA044 
+   jal      warp_speedup
+   nop
 
-;.orga 0xB10CC0 ;set fade in type after the warp
-;    jal     set_fade_in
-;    lui     at, 0x0001
+.orga 0xB10CC0 ;set fade in type after the warp
+    jal     set_fade_in
+    lui     at, 0x0001
 
 ;==================================================================================================
 ; Dampe Digging Fix
@@ -323,13 +323,13 @@ Gameplay_InitSkybox:
 ;           sw      t9, 0x0000(s1)
 ;           lhu     t4, 0x0252(s7)
 ;           ori     at, at, 0x6400      ; at = HUD Rupee Icon Color
-;.orga 0xAEB764
-;    addiu   t8, s1, 0x0008
-;    sw      t8, 0x02B0(s4)
-;    jal     rupee_hud_color
-;    sw      t9, 0x0000(s1)
-;    lhu     t4, 0x0252(s7)
-;    move    at, v0
+.orga 0xAEB764
+    addiu   t8, s1, 0x0008
+    sw      t8, 0x02B0(s4)
+    jal     rupee_hud_color
+    sw      t9, 0x0000(s1)
+    lhu     t4, 0x0252(s7)
+    move    at, v0
 
 ; ==================================================================================================
 ; HUD Button Colors
@@ -367,49 +367,49 @@ Gameplay_InitSkybox:
 
 ;case 1: light trial (breaks on impact)
 ; Replaces: jal       0x8006B6FC
-;.orga 0xCDF3EC
-;    nop
+.orga 0xCDF3EC
+    nop
 
 ;case 0: fire trial
 ; Replaces: jal       0x8006B6FC
-;.orga 0xCDF404
-;    nop
+.orga 0xCDF404
+    nop
 
 ;case 4: outside ganons castle
 ; Replaces: jal       0x8006B6FC
-;.orga 0xCDF420 
-;    jal     heavy_block_set_switch
+.orga 0xCDF420 
+    jal     heavy_block_set_switch
 
 ;set links position and angle to the center of the block as its being lifted
 ; Replaces: or         t9, t8, at
 ;           sw         t9, 0x66C(s0)
-;.orga 0xBD5C58
-;    jal      heavy_block_posrot
-;    or       t9, t8, at
+.orga 0xBD5C58
+    jal      heavy_block_posrot
+    or       t9, t8, at
 
 ;set links action to 7 so he can move again
 ; Replaces: swc1      f4, 0x34(sp)
 ;           lwc1      f6, 0x0C(s0)
-;.orga 0xCDF638
-;    jal     heavy_block_set_link_action
-;    swc1    f4, 0x34(sp)
+.orga 0xCDF638
+    jal     heavy_block_set_link_action
+    swc1    f4, 0x34(sp)
 
 ;reduce quake timer for case 1
 ;Replaces: addiu      a1, r0, 0x03E7
-;.orga 0xCDF790
-;    addiu      a1, r0, 0x1E
+.orga 0xCDF790
+    addiu      a1, r0, 0x1E
 
 ;skip parts of links lifting animation
 ;Replaces: sw         a1, 0x34(sp)
 ;          addiu      a1, s0, 0x01A4
-;.orga 0xBE1BC8
-;    jal    heavy_block_shorten_anim
-;    sw     a1, 0x34(sp)
+.orga 0xBE1BC8
+    jal    heavy_block_shorten_anim
+    sw     a1, 0x34(sp)
 
 ;slightly change rock throw trajectory to land in the right place
 ;Replaces: lui        at, 0x4220
-;.orga 0xBE1C98
-;    lui    at, 0x4218
+.orga 0xBE1C98
+    lui    at, 0x4218
 
 ;==================================================================================================
 ; Use Sticks and Masks as Adult
@@ -496,5 +496,5 @@ Gameplay_InitSkybox:
 ;===================================================================================================
 ; Allow ice arrows to melt red ice
 ;===================================================================================================
-;.orga 0xDB32C8
-;    jal blue_fire_arrows ; replaces addiu at, zero, 0x00F0
+.orga 0xDB32C8
+    jal blue_fire_arrows ; replaces addiu at, zero, 0x00F0
