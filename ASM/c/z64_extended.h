@@ -19,4 +19,23 @@
 #define z64_b_button_label_y	(*(uint16_t*)	z64_b_button_label_y_addr)
 #define z64_mask_equipped		(*(uint8_t*)	z64_mask_equipped_addr)
 
+/* dram addresses & data for 30 FPS */
+#define z64_fps_limit					(*(uint8_t*)	0x801C6FA1)
+#define z64_is_demo						(*(uint8_t*)	0x801DB09D)
+#define z64_control_link				(*(uint16_t*)	0x801DAADE)
+#define z64_boomerang_active			(*(uint16_t*)	0x800E8B8E)
+#define z64_hookshot_active				(*(uint16_t*)	0x801DAA50)
+#define z64_link_animation				(*(uint16_t*)	0x801DABDE)
+#define z64_talking_to_npc				(*(uint8_t*)	0x801DAA36)
+#define z64_link_animation_parameter	(*(uint32_t*)	0x801DABF0)
+#define z64_jump_gravity				(*(uint16_t*)	0x801DAA9C)
+#define z64_fps_14						(*(uint16_t*)	0x801DB280)
+#define z64_deku_stick_timer			(*(uint16_t*)	0x801DB280)
+#define z64_time_of_day_speed			(*(uint16_t*)	0x800F1650)
+#define z64_change_scene				(*(uint8_t*)	0x801DB09C)
+#define z64_playing_ocarina				(*(uint8_t*)	0x80102208)
+
+#define z64_fps_1						(*(uint16_t*)	0x801C8C40)
+#define z64_fps_2						(*(uint8_t*)	0x801C8C41)
+
 #endif
