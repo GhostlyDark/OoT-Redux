@@ -1,10 +1,6 @@
 ; Add dmatable entries for new code
-; Remove the unused files at the bottom the DMA Table
-;   - this isn't strictly necessary, but adds flexibility for the future
 .orga 0xD1B0
-.area 0x100, 0
-    .word 0x03680000, 0x03680000 + PAYLOAD_END - PAYLOAD_START, 0x03680000, 0
-.endarea
+.word 0x03680000, 0x03680000 + PAYLOAD_END - PAYLOAD_START, 0x03680000, 0
 
 ; Load new code from ROM
 ; Replaces:
