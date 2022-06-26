@@ -5,7 +5,9 @@ extern uint8_t FPS_SWITCH;
 
 typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 
-uint16_t DEKU_STICK_TIMER_SWITCH = 0;
+uint16_t DEKU_STICK_TIMER_SWITCH	= 0;
+uint16_t LAST_TIME					= 0;
+uint16_t STARTED_TIMER				= 0;
 
 #define z64_playsfx   ((playsfx_t)      0x800C806C)
 
@@ -47,5 +49,31 @@ void handle_fps() {
 		
 		if (z64_time_of_day_speed == 10)
 			z64_time_of_day_speed = 7;
+		
+		if ( (z64_timer_type == 0x4 || z64_timer_type == 0x8 || z64_timer_type == 0xE) && !STARTED_TIMER) {
+			STARTED_TIMER	= 1;
+			LAST_TIME		= z64_time_remaining;
+		}
+		else if (z64_timer_type == 0 && STARTED_TIMER)
+			STARTED_TIMER	= 0;
+		
+		if (z64_timer_type == 0x4 || z64_timer_type == 0x8) { // Decreasing
+			if (LAST_TIME == z64_time_remaining + 3) {
+				z64_time_remaining++;
+				z64_seconds_left++;
+				LAST_TIME = z64_time_remaining;
+			}
+		}
+		else if (z64_timer_type == 0xE) { // Increasing
+			if (LAST_TIME == z64_time_remaining - 3) {
+				z64_time_remaining--;
+				z64_seconds_left--;
+				LAST_TIME = z64_time_remaining;
+			}
+		}
+		
+		if (z64_hover_boots_frames == 0x13 && z64_hover_boots_active == 2)
+			z64_hover_boots_frames += 10;
+		
 	}
 }
