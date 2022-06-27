@@ -8,7 +8,7 @@
 #define Z64_OOT11             0x01
 #define Z64_OOT12             0x02
 
-#define Z64_SCREEN_WIDTH      320
+#define Z64_SCREEN_WIDTH      424
 #define Z64_SCREEN_HEIGHT     240
 
 #define Z64_SEG_PHYS          0x00

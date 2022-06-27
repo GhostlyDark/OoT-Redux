@@ -8,7 +8,7 @@ init:
     ; Displaced code
     lui     v0, 0x8012
     addiu   v0, v0, 0xD2A0
-    addiu   t6, r0, 0x0140
+    addiu   t6, r0, 0x01A8
     lui     at, 0x8010
     sw      t6, 0xE500 (at)
     addiu   t7, r0, 0x00F0
