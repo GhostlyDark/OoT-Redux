@@ -25,7 +25,11 @@ typedef struct {
 
 
 static int get_left(tile_position pos) {
-    return LEFT_OFFSET + (int)pos.left;
+    if (Z64_SCREEN_WIDTH == 424)
+        return LEFT_OFFSET + (int)pos.left + 52;
+    else {
+        return LEFT_OFFSET + (int)pos.left;
+    }
 }
 
 
