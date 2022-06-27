@@ -10,6 +10,7 @@ extern uint8_t CFG_DISPLAY_DPAD;
 extern uint8_t CFG_DPAD_ENABLED;
 extern uint8_t CFG_HUD_LAYOUT;
 extern uint8_t CFG_KEEP_MASK;
+extern uint8_t CFG_WS;
 
 uint8_t DPAD_ALT			= 0;
 uint16_t DPAD_X				= 0;
@@ -78,7 +79,7 @@ void draw_dpad() {
 		}
 		else if (CFG_HUD_LAYOUT == 4 || CFG_HUD_LAYOUT == 5)
 			DPAD_Y += 15;
-		if (Z64_SCREEN_WIDTH == 424)
+		if (CFG_WS)
 			DPAD_X += 104;
 	}
 	if (CFG_DISPLAY_DPAD == 3) {
