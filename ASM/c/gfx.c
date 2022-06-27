@@ -6,6 +6,7 @@
 extern uint8_t FONT_TEXTURE[];
 extern uint8_t DPAD_TEXTURE[];
 extern uint8_t TRIFORCE_ICON_TEXTURE[];
+extern uint8_t CFG_WS;
 
 Gfx setup_db[] =
 {
@@ -126,6 +127,9 @@ void sprite_draw(z64_disp_buf_t *db, sprite_t *sprite, int tile_index,
 }
 
 void gfx_init() {
+	if (CFG_WS)
+        setup_db[2] = gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, Z64_SCREEN_WIDTH + 104, Z64_SCREEN_HEIGHT);
+	
     file_t title_static = {
         NULL, z64_file_select_static_vaddr, z64_file_select_static_vsize
     };
