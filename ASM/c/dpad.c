@@ -4,6 +4,7 @@
 #include "dpad_actions.h"
 #include "buttons.h"
 #include "l_button.h"
+#include "fps.h"
 
 extern uint8_t CFG_DISPLAY_DPAD;
 extern uint8_t CFG_DPAD_ENABLED;
@@ -22,6 +23,7 @@ void handle_dpad() {
 	handle_dpad_ingame();
 	handle_dpad_paused();
     handle_hud();
+	handle_fps();
 	handle_l_button();
 	
 	if (CFG_KEEP_MASK) {
