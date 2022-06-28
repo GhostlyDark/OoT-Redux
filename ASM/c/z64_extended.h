@@ -39,8 +39,25 @@
 #define z64_time_remaining				(*(uint16_t*)	0x8011B9A0)
 #define z64_seconds_left				(*(uint8_t*)	0x8011BF31)
 
-#define z64_hover_boots_frames			(*(uint8_t*)	0x801DB2B3)
-#define z64_hover_boots_active			(*(uint8_t*)	0x801DB2BF)
+#define z64_hover_boots_length			(*(uint16_t*)	0x8039E612)
+// #define z64_hover_boots_length_2		(*(uint16_t*)	0x803A0DBA)
+// #define z64_hover_boots_length_3		(*(uint16_t*)	0x803A0DC0)
+// #define z64_hover_boots_length_4		(*(uint16_t*)	0x803A0DCE)
+// #define z64_hover_boots_length_5		(*(uint16_t*)	0x803A0DFE)
+// #define z64_hover_boots_frames		(*(uint8_t*)	0x801DB2B3)
+// #define z64_hover_boots_active		(*(uint8_t*)	0x801DB2BF)
+
+#define z64_torch_length_1				(*(uint16_t*)	0x801F24E2)
+#define z64_torch_length_2				(*(uint16_t*)	0x801F25E6)
+#define z64_torch_length_3				(*(uint16_t*)	0x801F2826)
+
+// #define z64_bomb_length_1			(*(uint16_t*)	0x80216B46)
+// #define z64_bomb_length_2			(*(uint16_t*)	0x8021707E)
+// #define z64_bomb_length_3			(*(uint16_t*)	0x80217162)
+// #define z64_bomb_length_4			(*(uint16_t*)	0x80217282)
+// #define z64_bomb_length_5			(*(uint16_t*)	0x8021729A)
+
+// #define z64_bombchu_length			(*(uint32_t*)	0x80202C68)
 
 #define z64_fps_1						(*(uint16_t*)	0x801C8C40)
 #define z64_fps_2						(*(uint8_t*)	0x801C8C41)

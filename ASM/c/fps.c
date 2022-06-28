@@ -72,8 +72,15 @@ void handle_fps() {
 			}
 		}
 		
-		if (z64_hover_boots_frames == 0x13 && z64_hover_boots_active == 2)
-			z64_hover_boots_frames += 10;
-		
+		z64_hover_boots_length	= 30;
+		z64_torch_length_1		= 250;
+		z64_torch_length_2		= 275;
+		z64_torch_length_3		= 250;
+	}
+	else if (z64_fps_limit == 3) {
+		z64_hover_boots_length	= 19;
+		z64_torch_length_1		= 100;
+		z64_torch_length_2		= 110;
+		z64_torch_length_3		= 100;
 	}
 }
