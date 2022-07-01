@@ -34,11 +34,11 @@ void handle_fps() {
 		z64_fps_limit = 2;
 	
 	if (z64_fps_limit == 2) {
-		if (z64_deku_stick_timer <= 100 && !DEKU_STICK_TIMER_SWITCH) {
+		if (z64_deku_stick_timer == 100 && !DEKU_STICK_TIMER_SWITCH) {
 			z64_deku_stick_timer += 100;
 			DEKU_STICK_TIMER_SWITCH = 1;
 		}
-		if (z64_deku_stick_timer == 0)
+		else if (z64_deku_stick_timer == 0)
 			DEKU_STICK_TIMER_SWITCH = 0;
 		
 		if (z64_link_animation == 0x2968 || z64_link_animation == 0x2970 || z64_link_animation == 0x2A80 || z64_link_animation == 0x2A90)
@@ -72,15 +72,11 @@ void handle_fps() {
 			}
 		}
 		
-		z64_hover_boots_length	= 30;
-		z64_torch_length_1		= 250;
-		z64_torch_length_2		= 275;
-		z64_torch_length_3		= 250;
+		if (z64_hover_boots_length == 19)
+			z64_hover_boots_length	= 30;
 	}
 	else if (z64_fps_limit == 3) {
-		z64_hover_boots_length	= 19;
-		z64_torch_length_1		= 100;
-		z64_torch_length_2		= 110;
-		z64_torch_length_3		= 100;
+		if (z64_hover_boots_length == 30)
+			z64_hover_boots_length	= 19;
 	}
 }
