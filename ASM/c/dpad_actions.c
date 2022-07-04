@@ -372,7 +372,7 @@ void toggle_shield() {
 }
 
 void toggle_tunic() {
-	if (z64_file.link_age && CFG_ALLOW_TUNIC)
+	if (z64_file.link_age && !CFG_ALLOW_TUNIC)
 		return;
 	if (!z64_file.kokiri_tunic || (!z64_file.goron_tunic && !z64_file.zora_tunic) )
 			return;
