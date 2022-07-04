@@ -144,9 +144,9 @@ Gameplay_InitSkybox:
 ; Replaces: lw      a0, 0x0018(sp)
 ;           addiu   t1, r0, 0x0041
 
-;.orga 0xCC0038
-;    jal    talon_break_free
-;    lw     a0, 0x0018(sp)
+.orga 0xCC0038
+    jal    talon_break_free
+    lw     a0, 0x0018(sp)
 
 ;==================================================================================================
 ; Pause menu
@@ -449,9 +449,9 @@ Gameplay_InitSkybox:
 ;===================================================================================================
 ;Kill Door of Time collision when the cutscene starts
 ;===================================================================================================
-;.orga 0xCCE9A4
-;    jal     kill_door_of_time_col ; Replaces lui     $at, 0x3F80 
-;    lw      a0, 0x011C(s0) ; replaces mtc1    $at, $f6 
+.orga 0xCCE9A4
+    jal     kill_door_of_time_col ; Replaces lui     $at, 0x3F80 
+    lw      a0, 0x011C(s0) ; replaces mtc1    $at, $f6 
 
 ;==================================================================================================
 ; Prevent Mask de-equip if not on a C-button
