@@ -34,6 +34,7 @@
 #define z64_time_of_day_speed			(*(uint16_t*)	0x800F1650)
 #define z64_change_scene				(*(uint8_t*)	0x801DB09C)
 #define z64_playing_ocarina				(*(uint8_t*)	0x80102208)
+#define z64_bottle_action				(*(uint32_t*)	0x801C86B2)
 #define z64_hover_boots_length			(*(uint16_t*)	0x8039E612)
 #define z64_timer_type					(*(uint8_t*)	0x8011B99F)
 #define z64_time_remaining				(*(uint16_t*)	0x8011B9A0)
