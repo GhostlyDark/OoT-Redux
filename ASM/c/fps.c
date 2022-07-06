@@ -28,7 +28,7 @@ void handle_fps() {
 		z64_fps_limit = 3;
 	else if (z64_playing_ocarina || z64_change_scene == 0x20)
 		z64_fps_limit = 2;
-	else if (z64_is_demo == 0x80 || z64_control_link == 0 || z64_control_link == 0x4200 || (z64_control_link == 0xFF00 && !z64_talking_to_npc) || z64_hookshot_active == 0x100B || z64_link_animation == 0x2708 || z64_bottle_action == 0x00010005)
+	else if (z64_is_demo == 0x80 || z64_control_link == 0 || z64_control_link == 0x4200 || (z64_control_link == 0xFF00 && !z64_talking_to_npc) || z64_hookshot_active == 0x100B || z64_link_animation == 0x2708 || z64_bottle_action == 0x00010005 || z64_frogs > 1)
 		z64_fps_limit = 3;
 	else if (FPS_SWITCH)
 		z64_fps_limit = 2;

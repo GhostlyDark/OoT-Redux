@@ -39,5 +39,6 @@
 #define z64_playing_ocarina				(*(uint8_t*)	0x80102208)
 #define z64_bottle_action				(*(uint32_t*)	0x801C86B2)
 #define z64_fishing						(*(uint8_t*)	0x801C8C41)
+#define z64_frogs						(*(uint8_t*)	0x801C8835)
 
 #endif
