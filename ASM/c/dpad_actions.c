@@ -484,6 +484,7 @@ void use_ocarina() {
 void draw_sword_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.equip_sword == 0)
 		return;
+	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 	sprite_load(db, &items_sprite, (58 + z64_file.equip_sword), 1);
 	sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
 }
@@ -491,6 +492,7 @@ void draw_sword_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16
 void draw_shield_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.equip_shield == 0)
 		return;
+	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 	sprite_load(db, &items_sprite, (61 + z64_file.equip_shield), 1);
 	sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
 }
@@ -498,6 +500,7 @@ void draw_shield_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint1
 void draw_tunic_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.equip_tunic == 0)
 		return;
+	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 	sprite_load(db, &items_sprite, (64 + z64_file.equip_tunic), 1);
 	sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
 }
@@ -506,6 +509,7 @@ void draw_tunic_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16
 void draw_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.equip_boots == 0)
 		return;
+	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 	sprite_load(db, &items_sprite, (67 + z64_file.equip_boots), 1);
 	sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
 }
@@ -513,6 +517,7 @@ void draw_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16
 void draw_arrow_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	for (uint8_t i=1; i<=3; i++) {
 		if (z64_file.button_items[i] == Z64_ITEM_BOW || z64_file.button_items[i] == Z64_ITEM_BOW_FIRE_ARROW || z64_file.button_items[i] == Z64_ITEM_BOW_ICE_ARROW || z64_file.button_items[i] == Z64_ITEM_BOW_LIGHT_ARROW) {
+			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 			if (z64_file.button_items[i] == Z64_ITEM_BOW)
 				sprite_load(db, &items_sprite, 0x03, 1);
 			if (z64_file.button_items[i] == Z64_ITEM_BOW_FIRE_ARROW)
@@ -529,6 +534,7 @@ void draw_arrow_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16
 
 void draw_iron_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.iron_boots) {
+		gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, 69, 1);
 		if (z64_file.equip_boots == 2)
 			sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x - 2), (DPAD_Y + icon_y - 2), 16, 16);
@@ -538,6 +544,7 @@ void draw_iron_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, u
 
 void draw_hover_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.hover_boots) {
+		gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, 70, 1);
 		if (z64_file.equip_boots == 3)
 			sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x - 2), (DPAD_Y + icon_y - 2), 16, 16);
@@ -551,7 +558,9 @@ void draw_child_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, 
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_CHILD_TRADE], 1);
-		sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
+		if (z64_mask_equipped > 0)
+			sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x - 2), (DPAD_Y + icon_y - 2), 16, 16);
+		else sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
 	}
 }
 

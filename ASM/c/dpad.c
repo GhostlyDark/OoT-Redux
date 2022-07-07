@@ -28,7 +28,7 @@ void handle_dpad() {
 	handle_l_button();
 	
 	if (CFG_KEEP_MASK) {
-		if (z64_mask_equipped > 0)
+		if (LAST_MASK != z64_mask_equipped && z64_change_scene != 0x20)
 			LAST_MASK = z64_mask_equipped;
 		if (z64_game.scene_index != LAST_MASK_SCENE && LAST_MASK > 0) {
 			z64_mask_equipped = LAST_MASK;
