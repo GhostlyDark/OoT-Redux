@@ -121,9 +121,9 @@ Gameplay_InitSkybox:
 ; Replaces:
 ;   sb      t0, 32(s1)
 ;   sb      a1, 33(s1)
-;.orga 0xB06C2C ; In memory: ???
-;    jal     write_initial_save
-;    sb      t0, 32(s1)
+.orga 0xB06C2C ; In memory: ???
+    jal     write_initial_save
+    sb      t0, 32(s1)
 
 ;==================================================================================================
 ; Empty Bomb Fix
