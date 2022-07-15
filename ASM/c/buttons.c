@@ -18,66 +18,52 @@ void handle_layout() {
 		return;
 	LAST_SCENE = z64_game.scene_index;
 	
-	uint16_t a_x = 0, a_y = 0, b_x = 0, b_y = 0, c_left_x = 0, c_left_y = 0, c_down_x = 0, c_down_y = 0, c_right_x = 0, c_right_y = 0, c_up_x, c_up_y;
+	uint16_t a_x = 0, a_y = 0, b_x = 0, b_y = 0, c_left_x = 0, c_left_y = 0, c_down_x = 0, c_down_y = 0, c_right_x = 0, c_right_y = 0, c_up_x = 0, c_up_y = 0;
 	
 	if (CFG_HUD_LAYOUT == 1) { // Majora's Mask
 		a_x			= 4;	// 186	->	190
 		a_y			= 14;	// 9	->	23
 		b_x			= 7;	// 160	->	167
-		b_y			= 7;	// 11	->	18
 	}
-	else if (CFG_HUD_LAYOUT == 2) { // HD
+	else if (CFG_HUD_LAYOUT == 2) { // Nintendo
 		a_x			= 70;	// 186	->	256
 		a_y			= 23;	// 9	->	32
 		
 		b_x			= 80;	// 160	->	240
 		b_y			= 45;	// 11	->	56
 		
- 		c_left_x	= -10;	// 227	->	217
-		c_left_y	= 20;	// 18	->	38
+		c_left_x	= 14;	// 227	->	241
+		c_left_y	= 0;	// 18	->	18
 		
 		c_down_x	= 30;	// 249	->	279
 		c_down_y	= -20;	// 34	->	14
-		
-		c_right_x	= -30;	// 271	->	241
-		c_right_y	= 0;	// 18	->	18
-		
-		c_up_x		= 10;	// 254	->	264
-		c_up_y		= -10;	// 16	->	6
-	}
-	else if (CFG_HUD_LAYOUT == 3) { // HD (inverted)
-		a_x			= 44;	// 186	->	232
-		a_y			= 45;	// 9	->	54
-		
-		b_x			= 100;	// 160	->	260
-		b_y			= 21;	// 11	->	32
-		
- 		c_left_x	= 14;	// 227	->	241
-		c_left_y	= 0;	// 18	->	18
-		
-		c_down_x	= 30;	// 249	->	279		
-		c_down_y	= -20;	// 34	->	14		
 		
 		c_right_x	= -54;	// 271	->	217
 		c_right_y	= 20;	// 18	->	38
 		
+		c_up_x		= 10;	// 254	->	264
+		c_up_y		= -10;	// 16	->	6
+	}
+	else if (CFG_HUD_LAYOUT == 3) { // Modern
+		a_x			= 46;	// 186	->	234
+		a_y			= 45;	// 9	->	54
+		
+		b_x			= 104;	// 160	->	264
+		b_y			= 23;	// 11	->	33
+		
+		c_left_x	= -10;	// 227	->	217
+		c_left_y	= 20;	// 18	->	38
+		
+		c_down_x	= 30;	// 249	->	279		
+		c_down_y	= -20;	// 34	->	14		
+		
+		c_right_x	= -30;	// 271	->	241
+		c_right_y	= 0;	// 18	->	18
+		
 		c_up_x		= 10;	// 254	->	264		
 		c_up_y		= -10;	// 16	->	6		
 	}
-	else if (CFG_HUD_LAYOUT == 4) { // GC
-		a_x			= 55;	// 186	->	241
-		a_y			= 20;	// 9	->	29
-		b_x			= 65;	// 160	->	225
-		b_y			= 40;	// 11	->	51
-		c_left_x	= 55;	// 227	->	282
-		c_left_y	= 25;	// 18	->	43
-		c_down_x	= 30;	// 249	->	279
-		c_down_y	= -20;	// 34	->	14
-		c_right_x	= -20;	// 271	->	251
-		c_right_y	= -10;	// 18	->	8
-		c_up_x		= -20;	// 254	->	234
-	}
-	else if (CFG_HUD_LAYOUT == 5) { // GC (inverted)
+	else if (CFG_HUD_LAYOUT == 4) { // GameCube (Original)
 		a_x			= 55;	// 186	->	241
 		a_y			= 20;	// 9	->	29
 		b_x			= 65;	// 160	->	225
@@ -88,6 +74,19 @@ void handle_layout() {
 		c_down_y	= -20;	// 34	->	14
 		c_right_x	= 11;	// 271	->	282
 		c_right_y	= 25;	// 18	->	43
+		c_up_x		= -20;	// 254	->	234
+	}
+	else if (CFG_HUD_LAYOUT == 5) { // GameCube (Modern)
+		a_x			= 55;	// 186	->	241
+		a_y			= 20;	// 9	->	29
+		b_x			= 65;	// 160	->	225
+		b_y			= 40;	// 11	->	51
+		c_left_x	= 55;	// 227	->	282
+		c_left_y	= 25;	// 18	->	43
+		c_down_x	= 30;	// 249	->	279
+		c_down_y	= -20;	// 34	->	14
+		c_right_x	= -20;	// 271	->	251
+		c_right_y	= -10;	// 18	->	8
 		c_up_x		= -20;	// 254	->	234
 	}
 	
