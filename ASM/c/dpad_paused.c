@@ -8,9 +8,121 @@ extern uint8_t CFG_SWAP_ITEM_ENABLED;
 
 typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 
-uint8_t KNIFE_COUNTER = 0xFF;
+uint8_t KNIFE_COUNTER	= 0xFF;
+
+uint8_t DPAD_ADULT_SET1_UP		= 0;
+uint8_t DPAD_ADULT_SET1_RIGHT	= 0;
+uint8_t DPAD_ADULT_SET1_DOWN	= 0;
+uint8_t DPAD_ADULT_SET1_LEFT	= 0;
+
+uint8_t DPAD_ADULT_SET2_UP		= 0;
+uint8_t DPAD_ADULT_SET2_RIGHT	= 0;
+uint8_t DPAD_ADULT_SET2_DOWN	= 0;
+uint8_t DPAD_ADULT_SET2_LEFT	= 0;
+
+uint8_t DPAD_CHILD_SET1_UP		= 0;
+uint8_t DPAD_CHILD_SET1_RIGHT	= 0;
+uint8_t DPAD_CHILD_SET1_DOWN	= 0;
+uint8_t DPAD_CHILD_SET1_LEFT	= 0;
+
+uint8_t DPAD_CHILD_SET2_UP		= 0;
+uint8_t DPAD_CHILD_SET2_RIGHT	= 0;
+uint8_t DPAD_CHILD_SET2_DOWN	= 0;
+uint8_t DPAD_CHILD_SET2_LEFT	= 0;
+
+extern uint8_t DPAD_ALT;
 
 #define z64_playsfx   ((playsfx_t)      0x800C806C)
+
+void set_dpad_slots(pad_t pad_pressed) {
+	if (z64_game.pause_ctxt.screen_idx == 3) {
+		if (z64_game.pause_ctxt.equip_cursor == 0x01 || z64_game.pause_ctxt.equip_cursor == 0x02 || z64_game.pause_ctxt.equip_cursor == 0x03) // Swords
+			set_dpad_slot(pad_pressed, 0x01);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x0D) // Kokiri Boots
+			set_dpad_slot(pad_pressed, 0x02);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x05 || z64_game.pause_ctxt.equip_cursor == 0x06 || z64_game.pause_ctxt.equip_cursor == 0x07) // Shields
+			set_dpad_slot(pad_pressed, 0x03);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x09 || z64_game.pause_ctxt.equip_cursor == 0x0A || z64_game.pause_ctxt.equip_cursor == 0x0B) // Tunics
+			set_dpad_slot(pad_pressed, 0x04);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x0E) // Iron Boots
+			set_dpad_slot(pad_pressed, 0x06);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x0F) // Hover Boots
+			set_dpad_slot(pad_pressed, 0x07);
+	}
+	else if (z64_game.pause_ctxt.screen_idx == 0) {
+		if (!z64_file.link_age) {
+			if (z64_game.pause_ctxt.item_cursor == 0x03 || z64_game.pause_ctxt.item_cursor == 0x04 || z64_game.pause_ctxt.item_cursor == 0x0A || z64_game.pause_ctxt.item_cursor == 0x10) // Arrow Toggling
+				set_dpad_slot(pad_pressed, 0x05);
+			else if (z64_game.pause_ctxt.item_cursor == 0x17) // Adult Trade
+				set_dpad_slot(pad_pressed, 0x09);
+		}
+		else if(z64_file.link_age) {
+			if (z64_game.pause_ctxt.item_cursor == 0x16) // Child Trade
+			set_dpad_slot(pad_pressed, 0x08);
+		}
+		if (z64_game.pause_ctxt.item_cursor == 0x07) // Ocarina
+			set_dpad_slot(pad_pressed, 0x0A);
+		else if (z64_game.pause_ctxt.item_cursor == 0x0D) // Lens of Truth
+			set_dpad_slot(pad_pressed, 0x0B);
+		else if (z64_game.pause_ctxt.item_cursor == 0x01) // Deku Nuts
+			set_dpad_slot(pad_pressed, 0x0C);
+		else if (z64_game.pause_ctxt.item_cursor == 0x05) // Din's Fire
+			set_dpad_slot(pad_pressed, 0x0D);
+		else if (z64_game.pause_ctxt.item_cursor == 0x0B) // Farore's Wind
+			set_dpad_slot(pad_pressed, 0x0E);
+		else if (z64_game.pause_ctxt.item_cursor == 0x11) // Nayru's Love
+			set_dpad_slot(pad_pressed, 0x0F);
+	}
+}
+
+void set_dpad_slot(pad_t pad_pressed, uint8_t action) {
+	if (pad_pressed.du) {
+		if (!z64_file.link_age && !DPAD_ALT)
+			(DPAD_ADULT_SET1_UP == action) ? (DPAD_ADULT_SET1_UP = 0) : (DPAD_ADULT_SET1_UP = action);
+		else if (!z64_file.link_age &&  DPAD_ALT)
+			(DPAD_ADULT_SET2_UP == action) ? (DPAD_ADULT_SET2_UP = 0) : (DPAD_ADULT_SET2_UP = action);
+		else if (z64_file.link_age  && !DPAD_ALT)
+			(DPAD_CHILD_SET1_UP == action) ? (DPAD_CHILD_SET1_UP = 0) : (DPAD_CHILD_SET1_UP = action);
+		else if (z64_file.link_age  &&  DPAD_ALT)
+			(DPAD_CHILD_SET2_UP == action) ? (DPAD_CHILD_SET2_UP = 0) : (DPAD_CHILD_SET2_UP = action);
+		z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	}
+	else if (pad_pressed.dr) {
+		if (!z64_file.link_age && !DPAD_ALT)
+			(DPAD_ADULT_SET1_RIGHT == action) ? (DPAD_ADULT_SET1_RIGHT = 0) : (DPAD_ADULT_SET1_RIGHT = action);
+		else if (!z64_file.link_age &&  DPAD_ALT)
+			(DPAD_ADULT_SET2_RIGHT == action) ? (DPAD_ADULT_SET2_RIGHT = 0) : (DPAD_ADULT_SET2_RIGHT = action);
+		else if (z64_file.link_age  && !DPAD_ALT)
+			(DPAD_CHILD_SET1_RIGHT == action) ? (DPAD_CHILD_SET1_RIGHT = 0) : (DPAD_CHILD_SET1_RIGHT = action);
+		else if (z64_file.link_age  &&  DPAD_ALT)
+			(DPAD_CHILD_SET2_RIGHT == action) ? (DPAD_CHILD_SET2_RIGHT = 0) : (DPAD_CHILD_SET2_RIGHT = action);
+		z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	}
+	else if (pad_pressed.dd) {
+		if (!z64_file.link_age && !DPAD_ALT)
+			(DPAD_ADULT_SET1_DOWN == action) ? (DPAD_ADULT_SET1_DOWN = 0) : (DPAD_ADULT_SET1_DOWN = action);
+		else if (!z64_file.link_age &&  DPAD_ALT)
+			(DPAD_ADULT_SET2_DOWN == action) ? (DPAD_ADULT_SET2_DOWN = 0) : (DPAD_ADULT_SET2_DOWN = action);
+		else if (z64_file.link_age  && !DPAD_ALT)
+			(DPAD_CHILD_SET1_DOWN == action) ? (DPAD_CHILD_SET1_DOWN = 0) : (DPAD_CHILD_SET1_DOWN = action);
+		else if (z64_file.link_age  &&  DPAD_ALT)
+			(DPAD_CHILD_SET2_DOWN == action) ? (DPAD_CHILD_SET2_DOWN = 0) : (DPAD_CHILD_SET2_DOWN = action);
+		z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	}
+	else if (pad_pressed.dl) {
+		if (!z64_file.link_age && !DPAD_ALT)
+			(DPAD_ADULT_SET1_LEFT == action) ? (DPAD_ADULT_SET1_LEFT = 0) : (DPAD_ADULT_SET1_LEFT = action);
+		else if (!z64_file.link_age &&  DPAD_ALT)
+			(DPAD_ADULT_SET2_LEFT == action) ? (DPAD_ADULT_SET2_LEFT = 0) : (DPAD_ADULT_SET2_LEFT = action);
+		else if (z64_file.link_age  && !DPAD_ALT)
+			(DPAD_CHILD_SET1_LEFT == action) ? (DPAD_CHILD_SET1_LEFT = 0) : (DPAD_CHILD_SET1_LEFT = action);
+		else if (z64_file.link_age  &&  DPAD_ALT)
+			(DPAD_CHILD_SET2_LEFT == action) ? (DPAD_CHILD_SET2_LEFT = 0) : (DPAD_CHILD_SET2_LEFT = action);
+		z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	}
+}
+
+
 
 void swap_item(z64_slot_t slot, z64_item_t item, z64_item_t swap) {
 	if (z64_file.items[slot] == item) {
@@ -53,6 +165,8 @@ void handle_dpad_paused() {
 	if (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 6 || CFG_DPAD_ENABLED == 0) 
 		return;
     pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
+	
+	set_dpad_slots(pad_pressed);
 	
 	if (CFG_INVENTORY_EDITOR_ENABLED) {
 		if (pad_pressed.dr && z64_game.pause_ctxt.unk_02_[1] == 0)
