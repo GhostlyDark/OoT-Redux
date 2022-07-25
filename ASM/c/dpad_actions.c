@@ -2,7 +2,6 @@
 #include "dpad_actions.h"
 
 extern uint8_t CFG_UNEQUIP_GEAR_ENABLED;
-
 extern uint8_t CFG_ALLOW_KOKIRI_SWORD;
 extern uint8_t CFG_ALLOW_MASTER_SWORD;
 extern uint8_t CFG_ALLOW_GIANTS_KNIFE;
@@ -10,6 +9,9 @@ extern uint8_t CFG_ALLOW_DEKU_SHIELD;
 extern uint8_t CFG_ALLOW_MIRROR_SHIELD;
 extern uint8_t CFG_ALLOW_TUNIC;
 extern uint8_t CFG_ALLOW_BOOTS;
+
+typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
+typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uint8_t button);
 
 extern uint8_t DPAD_ADULT_SET1_UP;
 extern uint8_t DPAD_ADULT_SET1_RIGHT;
@@ -31,14 +33,6 @@ extern uint8_t DPAD_CHILD_SET2_LEFT;
 extern uint8_t DPAD_ALT;
 extern uint16_t DPAD_X;
 extern uint16_t DPAD_Y;
-
-//unknown 00 is a pointer to some vector transformation when the sound is tied to an actor. actor + 0x3E, when not tied to an actor (map), always 80104394
-//unknown 01 is always 4 in my testing
-//unknown 02 is a pointer to some kind of audio configuration Always 801043A0 in my testing
-//unknown 03 is always a3 in my testing
-//unknown 04 is always a3 + 0x08 in my testing (801043A8)
-typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
-typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uint8_t button);
 
 #define z64_playsfx   ((playsfx_t)      0x800C806C)
 #define z64_usebutton ((usebutton_t)    0x8038C9A0)
@@ -222,149 +216,144 @@ uint8_t * check_dpad_actions() {
 }
 
 void run_action(uint8_t action) {
-	if (action == 0x01)
+	if (action == DPAD_SWORD)
 		toggle_sword();
-	else if (action == 0x02)
+	else if (action == DPAD_BOOTS)
 		toggle_boots();
-	else if (action == 0x03)
+	else if (action == DPAD_SHIELD)
 		toggle_shield();
-	else if (action == 0x04)
+	else if (action == DPAD_TUNIC)
 		toggle_tunic();
-	else if (action == 0x05)
+	else if (action == DPAD_ARROWS)
 		toggle_arrow();
-	else if (action == 0x06)
+	else if (action == DPAD_IRON_BOOTS)
 		swap_iron_boots();
-	else if (action == 0x07)
+	else if (action == DPAD_HOVER_BOOTS)
 		swap_hover_boots();
-	else if (action == 0x08)
+	else if (action == DPAD_CHILD_TRADE)
 		use_child_trade();
-	else if (action == 0x09)
+	else if (action == DPAD_ADULT_TRADE)
 		use_adult_trade();
-	else if (action == 0x0A)
+	else if (action == DPAD_OCARINA)
 		use_ocarina();
-	else if (action == 0x0B)
-		use_item(Z64_SLOT_LENS);
-	else if (action == 0x0C)
+	else if (action == DPAD_LENS)
+		use_lens();
+	else if (action == DPAD_NUT)
 		use_item(Z64_SLOT_NUT);
-	else if (action == 0x0D)
+	else if (action == DPAD_DINS_FIRE)
 		use_item(Z64_SLOT_DINS_FIRE);
-	else if (action == 0x0E)
+	else if (action == DPAD_FARORES_WIND)
 		use_item(Z64_SLOT_FARORES_WIND);
-	else if (action == 0x0F)
+	else if (action == DPAD_NAYRUS_LOVE)
 		use_item(Z64_SLOT_NAYRUS_LOVE);
 	
 }
 
 void draw_action(uint8_t action, z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
-	if (action == 0x01)
+	if (action == DPAD_SWORD)
 		draw_sword_icon(db, alpha, icon_x, icon_y);
-	else if (action == 0x02)
+	else if (action == DPAD_BOOTS)
 		draw_boots_icon(db, alpha, icon_x, icon_y);
-	else if (action == 0x03)
+	else if (action == DPAD_SHIELD)
 		draw_shield_icon(db, alpha, icon_x, icon_y);
-	else if (action == 0x04)
+	else if (action == DPAD_TUNIC)
 		draw_tunic_icon(db, alpha, icon_x, icon_y);
-	else if (action == 0x05)
+	else if (action == DPAD_ARROWS)
 		draw_arrow_icon(db, alpha, icon_x, icon_y);
-	else if (action == 0x06)
+	else if (action == DPAD_IRON_BOOTS)
 		draw_iron_boots_icon(db, alpha, icon_x, icon_y);
-	else if (action == 0x07)
+	else if (action == DPAD_HOVER_BOOTS)
 		draw_hover_boots_icon(db, alpha, icon_x, icon_y);
-	else if (action == 0x08)
+	else if (action == DPAD_CHILD_TRADE)
 		draw_child_trade_icon(db, alpha, icon_x, icon_y);
-	else if (action == 0x09)
+	else if (action == DPAD_ADULT_TRADE)
 		draw_adult_trade_icon(db, alpha, icon_x, icon_y);
-	else if (action == 0x0A)
+	else if (action == DPAD_OCARINA)
 		draw_ocarina_icon(db, alpha, icon_x, icon_y);
-	else if (action == 0x0B)
+	else if (action == DPAD_LENS)
 		draw_item_icon(db, alpha, icon_x, icon_y, Z64_SLOT_LENS, Z64_ITEM_LENS);
-	else if (action == 0x0C)
+	else if (action == DPAD_NUT)
 		draw_item_icon(db, alpha, icon_x, icon_y, Z64_SLOT_NUT, Z64_ITEM_NUT);
-	else if (action == 0x0D)
+	else if (action == DPAD_DINS_FIRE)
 		draw_item_icon(db, alpha, icon_x, icon_y, Z64_SLOT_DINS_FIRE, Z64_ITEM_DINS_FIRE);
-	else if (action == 0x0E)
+	else if (action == DPAD_FARORES_WIND)
 		draw_item_icon(db, alpha, icon_x, icon_y, Z64_SLOT_FARORES_WIND, Z64_ITEM_FARORES_WIND);
-	else if (action == 0x0F)
+	else if (action == DPAD_NAYRUS_LOVE)
 		draw_item_icon(db, alpha, icon_x, icon_y, Z64_SLOT_NAYRUS_LOVE, Z64_ITEM_NAYRUS_LOVE);
 }
 
 void check_action(uint8_t button, uint8_t action) {
-	if (action == 0x01) { // Sword
+	if (action == DPAD_SWORD) { // Sword
 		if (z64_file.kokiri_sword || z64_file.master_sword || z64_file.giants_knife)
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x02) { // Boots
+	else if (action == DPAD_BOOTS) { // Boots
 		if (z64_file.kokiri_boots && (z64_file.iron_boots || z64_file.hover_boots) )
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x03) { // Shield
+	else if (action == DPAD_SHIELD) { // Shield
 		if (z64_file.deku_shield || z64_file.hylian_shield || z64_file.mirror_shield)
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x04) { // Tunic
+	else if (action == DPAD_TUNIC) { // Tunic
 		if (z64_file.kokiri_tunic && (z64_file.goron_tunic || z64_file.zora_tunic) )
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x05) { // Arrow
+	else if (action == DPAD_ARROWS) { // Arrow
 		if (z64_file.items[Z64_SLOT_BOW] == Z64_ITEM_BOW && (z64_file.items[Z64_SLOT_FIRE_ARROW] == Z64_ITEM_FIRE_ARROW || z64_file.items[Z64_SLOT_ICE_ARROW] == Z64_ITEM_ICE_ARROW || z64_file.items[Z64_SLOT_LIGHT_ARROW] == Z64_ITEM_LIGHT_ARROW) )
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x06) { // Iron Boots
+	else if (action == DPAD_IRON_BOOTS) { // Iron Boots
 		if (z64_file.iron_boots && (!z64_file.link_age || CFG_ALLOW_BOOTS) )
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x07) { // Hover Boots
+	else if (action == DPAD_HOVER_BOOTS) { // Hover Boots
 		if (z64_file.hover_boots && (!z64_file.link_age || CFG_ALLOW_BOOTS) )
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x08) { // Child Trade
+	else if (action == DPAD_CHILD_TRADE) { // Child Trade
 		if (z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH && z64_file.link_age)
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x09) { // Adult Trade
+	else if (action == DPAD_ADULT_TRADE) { // Adult Trade
 		if (z64_file.items[Z64_SLOT_ADULT_TRADE] >= Z64_ITEM_POCKET_EGG && z64_file.items[Z64_SLOT_ADULT_TRADE] <= Z64_ITEM_CLAIM_CHECK && !z64_file.link_age)
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x0A) { // Ocarina
+	else if (action == DPAD_OCARINA) { // Ocarina
 		if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA || z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME)
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x0A) { // Lens of Truth
+	else if (action == DPAD_LENS) { // Lens of Truth
 		if (z64_file.items[Z64_SLOT_LENS] == Z64_ITEM_LENS)
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x0B) { // Lens of Truth
-		if (z64_file.items[Z64_SLOT_LENS] == Z64_ITEM_LENS)
-			DPAD_ACTIVE[button] = 1;
-		else DPAD_ACTIVE[button] = 0;
-	}
-	else if (action == 0x0C) { // Deku Nut
+	else if (action == DPAD_NUT) { // Deku Nut
 		if (z64_file.items[Z64_SLOT_NUT] == Z64_ITEM_NUT)
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x0D) { // Din's Fire
+	else if (action == DPAD_DINS_FIRE) { // Din's Fire
 		if (z64_file.items[Z64_SLOT_DINS_FIRE] == Z64_ITEM_DINS_FIRE)
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x0E) { // Farore's Wind
+	else if (action == DPAD_FARORES_WIND) { // Farore's Wind
 		if (z64_file.items[Z64_SLOT_FARORES_WIND] == Z64_ITEM_FARORES_WIND)
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
 	}
-	else if (action == 0x0F) { // Nayru's Love
+	else if (action == DPAD_NAYRUS_LOVE) { // Nayru's Love
 		if (z64_file.items[Z64_SLOT_NAYRUS_LOVE] == Z64_ITEM_NAYRUS_LOVE)
 			DPAD_ACTIVE[button] = 1;
 		else DPAD_ACTIVE[button] = 0;
@@ -546,6 +535,11 @@ void use_ocarina() {
 		z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_OCARINA], 2);
 }
 
+void use_lens() {
+	if (CAN_USE_LENS)
+		z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_LENS], 2);
+}
+
 void use_item(z64_slot_t slot) {
 	if (CAN_USE_ITEMS)
 		z64_usebutton(&z64_game,&z64_link,z64_file.items[slot], 2);
@@ -652,6 +646,16 @@ void draw_ocarina_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_OCARINA], 1);
+		sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12,12);
+	}
+}
+
+void draw_item_kebs(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
+	if (z64_file.items[Z64_SLOT_LENS] == Z64_ITEM_LENS) {
+		if (alpha==0xFF && !CAN_USE_LENS)
+			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
+		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
+		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_LENS], 1);
 		sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12,12);
 	}
 }

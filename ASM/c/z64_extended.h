@@ -3,6 +3,25 @@
 
 #include "z64.h"
 
+typedef enum
+{
+  DPAD_SWORD = 0,
+  DPAD_SHIELD,
+  DPAD_TUNIC,
+  DPAD_BOOTS,
+  DPAD_IRON_BOOTS,
+  DPAD_HOVER_BOOTS,
+  DPAD_ARROWS,
+  DPAD_NUT,
+  DPAD_LENS,
+  DPAD_OCARINA,
+  DPAD_CHILD_TRADE,
+  DPAD_ADULT_TRADE,
+  DPAD_DINS_FIRE,
+  DPAD_FARORES_WIND,
+  DPAD_NAYRUS_LOVE,
+} dpad_action_t;
+
 /* dram addresses & data*/
 #define z64_camera_view					(*(uint8_t*)	0x801DB0CD)
 #define z64_has_minimap					(*(uint16_t*)	0x8018884C)	// 0x8011B9B3, 8017643C, 8018884C
