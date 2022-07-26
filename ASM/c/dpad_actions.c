@@ -650,7 +650,7 @@ void draw_ocarina_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint
 	}
 }
 
-void draw_item_kebs(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
+void draw_lens_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.items[Z64_SLOT_LENS] == Z64_ITEM_LENS) {
 		if (alpha==0xFF && !CAN_USE_LENS)
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);

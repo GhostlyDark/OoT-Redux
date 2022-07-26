@@ -30,6 +30,11 @@ typedef enum
 #define z64_b_button_label_y			(*(uint16_t*)	0x801C7C3E)
 #define z64_mask_equipped				(*(uint8_t*)	0x801DAB7F)
 
+/* dram addresses & data for D-Pad */
+#define z64_dpad_lens_1					(*(uint16_t*)	0x80072D40)
+#define z64_dpad_lens_2					(*(uint16_t*)	0x80072D4C)
+#define z64_dpad_lens_3					(*(uint16_t*)	0x80072D58)
+
 /* dram addresses & data for 30 FPS */
 #define z64_fps_limit					(*(uint8_t*)	0x801C6FA1)
 #define z64_jump_gravity				(*(uint16_t*)	0x801DAA9C)
