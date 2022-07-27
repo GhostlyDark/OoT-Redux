@@ -28,7 +28,9 @@ void toggle_minimap() {
 }
 
 void handle_l_button() {
-	if (z64_game.pause_ctxt.state != 0 && CFG_DPAD_ENABLED != 2 && !CFG_FPS_ENABLED && !HUD_HIDE)
+	if (z64_game.pause_ctxt.state != 0)
+		return;
+	if (CFG_DPAD_ENABLED != 2 && !CFG_FPS_ENABLED && !HUD_HIDE)
 		return;
 	
 	pad_t pad_released = z64_game.common.input[0].pad_released;

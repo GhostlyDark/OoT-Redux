@@ -5,7 +5,7 @@
 
 typedef enum
 {
-  DPAD_SWORD = 0,
+  DPAD_SWORD = 1,
   DPAD_SHIELD,
   DPAD_TUNIC,
   DPAD_BOOTS,
@@ -21,6 +21,44 @@ typedef enum
   DPAD_FARORES_WIND,
   DPAD_NAYRUS_LOVE,
 } dpad_action_t;
+
+typedef enum
+{
+  DPAD_ADULT_SET1_UP = 0,
+  DPAD_ADULT_SET1_RIGHT,
+  DPAD_ADULT_SET1_DOWN,
+  DPAD_ADULT_SET1_LEFT,
+  DPAD_ADULT_SET2_UP,
+  DPAD_ADULT_SET2_RIGHT,
+  DPAD_ADULT_SET2_DOWN,
+  DPAD_ADULT_SET2_LEFT,
+  DPAD_CHILD_SET1_UP,
+  DPAD_CHILD_SET1_RIGHT,
+  DPAD_CHILD_SET1_DOWN,
+  DPAD_CHILD_SET1_LEFT,
+  DPAD_CHILD_SET2_UP,
+  DPAD_CHILD_SET2_RIGHT,
+  DPAD_CHILD_SET2_DOWN,
+  DPAD_CHILD_SET2_LEFT,
+} dpad_button;
+
+typedef enum
+{
+  Z64_AMMO_STICK = 0,		// Used
+  Z64_AMMO_NUT,				// Used
+  Z64_AMMO_BOMB,			// Used
+  Z64_AMMO_FIRE_ARROW,		// Unused 1
+  Z64_AMMO_DINS_FIRE,		// Unused 2
+  Z64_AMMO_SLINGSHOT,		// Unused 3
+  Z64_AMMO_OCARINA,			// Unused 4
+  Z64_AMMO_BOMBCHU,			// Used
+  Z64_AMMO_HOOKSHOT,		// Unused 5
+  Z64_AMMO_ICE_ARROW,		// Unused 6
+  Z64_AMMO_FARORES_WIND,	// Unused 7
+  Z64_AMMO_BOOMERANG,		// Unused 8
+  Z64_AMMO_LENS,			// Unused 9
+  Z64_AMMO_BEANS,			// Used
+} z64_ammo_t;
 
 /* dram addresses & data*/
 #define z64_camera_view					(*(uint8_t*)	0x801DB0CD)
