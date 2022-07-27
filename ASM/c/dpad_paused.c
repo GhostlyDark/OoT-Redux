@@ -18,6 +18,7 @@ extern uint8_t DPAD_ALT;
 
 void handle_dpad_paused() {
 	check_lens();
+	check_default_dpad_actions();
 	
 	if (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 6 || CFG_DPAD_ENABLED == 0) 
 		return;
@@ -81,6 +82,44 @@ void handle_dpad_slots(pad_t pad_pressed) {
 	}
 }
 
+void check_default_dpad_actions() {
+	if (z64_file.unk_1E_[DPAD_ADULT_SET1_UP] == 0)
+		z64_file.unk_1E_[DPAD_ADULT_SET1_UP]	= DPAD_ARROWS;
+	if (z64_file.unk_1E_[DPAD_ADULT_SET1_RIGHT] == 0)
+		z64_file.unk_1E_[DPAD_ADULT_SET1_RIGHT]	= DPAD_IRON_BOOTS;
+	if (z64_file.unk_1E_[DPAD_ADULT_SET1_DOWN] == 0)
+		z64_file.unk_1E_[DPAD_ADULT_SET1_DOWN]	= DPAD_OCARINA;
+	if (z64_file.unk_1E_[DPAD_ADULT_SET1_LEFT] == 0)
+		z64_file.unk_1E_[DPAD_ADULT_SET1_LEFT]	= DPAD_HOVER_BOOTS;
+	
+	if (z64_file.unk_1E_[DPAD_ADULT_SET2_UP] == 0)
+		z64_file.unk_1E_[DPAD_ADULT_SET2_UP]	= DPAD_SWORD;
+	if (z64_file.unk_1E_[DPAD_ADULT_SET2_RIGHT] == 0)
+		z64_file.unk_1E_[DPAD_ADULT_SET2_RIGHT]	= DPAD_BOOTS;
+	if (z64_file.unk_1E_[DPAD_ADULT_SET2_DOWN] == 0)
+		z64_file.unk_1E_[DPAD_ADULT_SET2_DOWN]	= DPAD_SHIELD;
+	if (z64_file.unk_1E_[DPAD_ADULT_SET2_LEFT] == 0)
+		z64_file.unk_1E_[DPAD_ADULT_SET2_LEFT]	= DPAD_TUNIC;
+	
+	if (z64_file.unk_1E_[DPAD_CHILD_SET1_UP] == 0)
+		z64_file.unk_1E_[DPAD_CHILD_SET1_UP]	= DPAD_LENS;
+	if (z64_file.unk_1E_[DPAD_CHILD_SET1_RIGHT] == 0)
+		z64_file.unk_1E_[DPAD_CHILD_SET1_RIGHT]	= DPAD_CHILD_TRADE;
+	if (z64_file.unk_1E_[DPAD_CHILD_SET1_DOWN] == 0)
+		z64_file.unk_1E_[DPAD_CHILD_SET1_DOWN]	= DPAD_OCARINA;
+	if (z64_file.unk_1E_[DPAD_CHILD_SET1_LEFT] == 0)
+		z64_file.unk_1E_[DPAD_CHILD_SET1_LEFT]	= DPAD_NULL;
+	
+	if (z64_file.unk_1E_[DPAD_CHILD_SET2_UP] == 0)
+		z64_file.unk_1E_[DPAD_CHILD_SET2_UP]	= DPAD_SWORD;
+	if (z64_file.unk_1E_[DPAD_CHILD_SET2_RIGHT] == 0)
+		z64_file.unk_1E_[DPAD_CHILD_SET2_RIGHT] = DPAD_BOOTS;
+	if (z64_file.unk_1E_[DPAD_CHILD_SET2_DOWN] == 0)
+		z64_file.unk_1E_[DPAD_CHILD_SET2_DOWN]	= DPAD_SHIELD;
+	if (z64_file.unk_1E_[DPAD_CHILD_SET2_LEFT] == 0)
+		z64_file.unk_1E_[DPAD_CHILD_SET2_LEFT]	= DPAD_TUNIC;
+}
+
 void check_lens() {
 	if (CHECKED_LENS || !CAN_USE_DPAD || CFG_DPAD_ENABLED == 0)
 		return;
@@ -129,88 +168,88 @@ void set_dpad_action(pad_t pad_pressed, uint8_t action) {
 	
 	if (pad_pressed.du) {
 		if (!z64_file.link_age && !DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_ADULT_SET1_UP] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET1_UP] = 0) : (z64_file.unk_1E_[DPAD_ADULT_SET1_UP] = action);
+			(z64_file.unk_1E_[DPAD_ADULT_SET1_UP] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET1_UP] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_ADULT_SET1_UP] = action);
 			if (z64_file.unk_1E_[DPAD_ADULT_SET1_UP] == 0)
 				sfx = 0x480A;
 		}
 		else if (!z64_file.link_age &&  DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_ADULT_SET2_UP] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET2_UP] = 0) : (z64_file.unk_1E_[DPAD_ADULT_SET2_UP] = action);
+			(z64_file.unk_1E_[DPAD_ADULT_SET2_UP] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET2_UP] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_ADULT_SET2_UP] = action);
 			if (z64_file.unk_1E_[DPAD_ADULT_SET2_UP] == 0)
 				sfx = 0x480A;
 		}
 		else if (z64_file.link_age  && !DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_CHILD_SET1_UP] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET1_UP] = 0) : (z64_file.unk_1E_[DPAD_CHILD_SET1_UP] = action);
+			(z64_file.unk_1E_[DPAD_CHILD_SET1_UP] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET1_UP] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_CHILD_SET1_UP] = action);
 			if (z64_file.unk_1E_[DPAD_CHILD_SET1_UP] == 0)
 				sfx = 0x480A;
 		}
 		else if (z64_file.link_age  &&  DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_CHILD_SET2_UP] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET2_UP] = 0) : (z64_file.unk_1E_[DPAD_CHILD_SET2_UP] = action);
+			(z64_file.unk_1E_[DPAD_CHILD_SET2_UP] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET2_UP] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_CHILD_SET2_UP] = action);
 			if (z64_file.unk_1E_[DPAD_CHILD_SET2_UP] == 0)
 				sfx = 0x480A;
 		}
 	}
 	else if (pad_pressed.dr) {
 		if (!z64_file.link_age && !DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_ADULT_SET1_RIGHT] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET1_RIGHT] = 0) : (z64_file.unk_1E_[DPAD_ADULT_SET1_RIGHT] = action);
+			(z64_file.unk_1E_[DPAD_ADULT_SET1_RIGHT] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET1_RIGHT] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_ADULT_SET1_RIGHT] = action);
 			if (z64_file.unk_1E_[DPAD_ADULT_SET1_RIGHT] == 0)
 				sfx = 0x480A;
 		}
 		else if (!z64_file.link_age &&  DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_ADULT_SET2_RIGHT] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET2_RIGHT] = 0) : (z64_file.unk_1E_[DPAD_ADULT_SET2_RIGHT] = action);
+			(z64_file.unk_1E_[DPAD_ADULT_SET2_RIGHT] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET2_RIGHT] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_ADULT_SET2_RIGHT] = action);
 			if (z64_file.unk_1E_[DPAD_ADULT_SET2_RIGHT] == 0)
 				sfx = 0x480A;
 		}
 		else if (z64_file.link_age  && !DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_CHILD_SET1_RIGHT] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET1_RIGHT] = 0) : (z64_file.unk_1E_[DPAD_CHILD_SET1_RIGHT] = action);
+			(z64_file.unk_1E_[DPAD_CHILD_SET1_RIGHT] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET1_RIGHT] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_CHILD_SET1_RIGHT] = action);
 			if (z64_file.unk_1E_[DPAD_CHILD_SET1_RIGHT] == 0)
 				sfx = 0x480A;
 		}
 		else if (z64_file.link_age  &&  DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_CHILD_SET2_RIGHT] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET2_RIGHT] = 0) : (z64_file.unk_1E_[DPAD_CHILD_SET2_RIGHT] = action);
+			(z64_file.unk_1E_[DPAD_CHILD_SET2_RIGHT] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET2_RIGHT] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_CHILD_SET2_RIGHT] = action);
 			if (z64_file.unk_1E_[DPAD_CHILD_SET2_RIGHT] == 0)
 				sfx = 0x480A;
 		}
 	}
 	else if (pad_pressed.dd) {
 		if (!z64_file.link_age && !DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_ADULT_SET1_DOWN] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET1_DOWN] = 0) : (z64_file.unk_1E_[DPAD_ADULT_SET1_DOWN] = action);
+			(z64_file.unk_1E_[DPAD_ADULT_SET1_DOWN] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET1_DOWN] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_ADULT_SET1_DOWN] = action);
 			if (z64_file.unk_1E_[DPAD_ADULT_SET1_DOWN] == 0)
 				sfx = 0x480A;
 		}
 		else if (!z64_file.link_age &&  DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_ADULT_SET2_DOWN] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET2_DOWN] = 0) : (z64_file.unk_1E_[DPAD_ADULT_SET2_DOWN] = action);
+			(z64_file.unk_1E_[DPAD_ADULT_SET2_DOWN] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET2_DOWN] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_ADULT_SET2_DOWN] = action);
 			if (z64_file.unk_1E_[DPAD_ADULT_SET2_DOWN] == 0)
 				sfx = 0x480A;
 		}
 		else if (z64_file.link_age  && !DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_CHILD_SET1_DOWN] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET1_DOWN] = 0) : (z64_file.unk_1E_[DPAD_CHILD_SET1_DOWN] = action);
+			(z64_file.unk_1E_[DPAD_CHILD_SET1_DOWN] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET1_DOWN] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_CHILD_SET1_DOWN] = action);
 			if (z64_file.unk_1E_[DPAD_CHILD_SET1_DOWN] == 0)
 				sfx = 0x480A;
 		}
 		else if (z64_file.link_age  &&  DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_CHILD_SET2_DOWN] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET2_DOWN] = 0) : (z64_file.unk_1E_[DPAD_CHILD_SET2_DOWN] = action);
+			(z64_file.unk_1E_[DPAD_CHILD_SET2_DOWN] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET2_DOWN] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_CHILD_SET2_DOWN] = action);
 			if (z64_file.unk_1E_[DPAD_CHILD_SET2_DOWN] == 0)
 				sfx = 0x480A;
 		}
 	}
 	else if (pad_pressed.dl) {
 		if (!z64_file.link_age && !DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_ADULT_SET1_LEFT] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET1_LEFT] = 0) : (z64_file.unk_1E_[DPAD_ADULT_SET1_LEFT] = action);
+			(z64_file.unk_1E_[DPAD_ADULT_SET1_LEFT] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET1_LEFT] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_ADULT_SET1_LEFT] = action);
 			if (z64_file.unk_1E_[DPAD_ADULT_SET1_LEFT] == 0)
 				sfx = 0x480A;
 		}
 		else if (!z64_file.link_age &&  DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_ADULT_SET2_LEFT] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET2_LEFT] = 0) : (z64_file.unk_1E_[DPAD_ADULT_SET2_LEFT] = action);
+			(z64_file.unk_1E_[DPAD_ADULT_SET2_LEFT] == action) ? (z64_file.unk_1E_[DPAD_ADULT_SET2_LEFT] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_ADULT_SET2_LEFT] = action);
 			if (z64_file.unk_1E_[DPAD_ADULT_SET2_LEFT] == 0)
 				sfx = 0x480A;
 		}
 		else if (z64_file.link_age  && !DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_CHILD_SET1_LEFT] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET1_LEFT] = 0) : (z64_file.unk_1E_[DPAD_CHILD_SET1_LEFT] = action);
+			(z64_file.unk_1E_[DPAD_CHILD_SET1_LEFT] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET1_LEFT] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_CHILD_SET1_LEFT] = action);
 			if (z64_file.unk_1E_[DPAD_CHILD_SET1_LEFT] == 0)
 				sfx = 0x480A;
 		}
 		else if (z64_file.link_age  &&  DPAD_ALT) {
-			(z64_file.unk_1E_[DPAD_CHILD_SET2_LEFT] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET2_LEFT] = 0) : (z64_file.unk_1E_[DPAD_CHILD_SET2_LEFT] = action);
+			(z64_file.unk_1E_[DPAD_CHILD_SET2_LEFT] == action) ? (z64_file.unk_1E_[DPAD_CHILD_SET2_LEFT] = DPAD_NULL) : (z64_file.unk_1E_[DPAD_CHILD_SET2_LEFT] = action);
 			if (z64_file.unk_1E_[DPAD_CHILD_SET2_LEFT] == 0)
 				sfx = 0x480A;
 		}
