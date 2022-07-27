@@ -226,7 +226,7 @@ void run_action(uint8_t action) {
 	else if (action == DPAD_DINS_FIRE)
 		use_item(Z64_SLOT_DINS_FIRE);
 	else if (action == DPAD_FARORES_WIND)
-		use_item(Z64_SLOT_FARORES_WIND);
+		use_farores_wind();
 	else if (action == DPAD_NAYRUS_LOVE)
 		use_item(Z64_SLOT_NAYRUS_LOVE);
 	
@@ -260,7 +260,7 @@ void draw_action(uint8_t action, z64_disp_buf_t *db, uint16_t alpha, uint16_t ic
 	else if (action == DPAD_DINS_FIRE)
 		draw_item_icon(db, alpha, icon_x, icon_y, Z64_SLOT_DINS_FIRE, Z64_ITEM_DINS_FIRE);
 	else if (action == DPAD_FARORES_WIND)
-		draw_item_icon(db, alpha, icon_x, icon_y, Z64_SLOT_FARORES_WIND, Z64_ITEM_FARORES_WIND);
+		draw_farores_wind_icon(db, alpha, icon_x, icon_y);
 	else if (action == DPAD_NAYRUS_LOVE)
 		draw_item_icon(db, alpha, icon_x, icon_y, Z64_SLOT_NAYRUS_LOVE, Z64_ITEM_NAYRUS_LOVE);
 }
@@ -505,22 +505,27 @@ void swap_hover_boots() {
 
 void use_child_trade() {
 	if (CAN_USE_CHILD_TRADE)
-		z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_CHILD_TRADE], 2);
+		z64_usebutton(&z64_game, &z64_link,z64_file.items[Z64_SLOT_CHILD_TRADE], 2);
 }
 
 void use_adult_trade() {
 	if (CAN_USE_ADULT_TRADE)
-		z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_ADULT_TRADE], 2);
+		z64_usebutton(&z64_game, &z64_link,z64_file.items[Z64_SLOT_ADULT_TRADE], 2);
 }
 
 void use_ocarina() {
 	if (CAN_USE_OCARINA)
-		z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_OCARINA], 2);
+		z64_usebutton(&z64_game, &z64_link,z64_file.items[Z64_SLOT_OCARINA], 2);
 }
 
 void use_lens() {
 	if (CAN_USE_LENS)
-		z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_LENS], 2);
+		z64_usebutton(&z64_game, &z64_link,z64_file.items[Z64_SLOT_LENS], 2);
+}
+
+void use_farores_wind() {
+	if (CAN_USE_FARORES_WIND)
+		z64_usebutton(&z64_game, &z64_link,z64_file.items[Z64_SLOT_FARORES_WIND], 2);
 }
 
 void use_item(z64_slot_t slot) {
@@ -636,6 +641,16 @@ void draw_ocarina_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint
 void draw_lens_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.items[Z64_SLOT_LENS] == Z64_ITEM_LENS) {
 		if (alpha > 0x46 && !CAN_USE_LENS)
+			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
+		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
+		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_LENS], 1);
+		sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12,12);
+	}
+}
+
+void draw_farores_wind_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
+	if (z64_file.items[Z64_SLOT_FARORES_WIND] == Z64_ITEM_FARORES_WIND) {
+		if (alpha > 0x46 && !CAN_USE_FARORES_WIND)
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_LENS], 1);
