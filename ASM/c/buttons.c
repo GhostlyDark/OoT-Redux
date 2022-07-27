@@ -1,17 +1,15 @@
 #include "buttons.h"
 
+typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
+
 extern uint8_t CFG_HUD_LAYOUT;
 extern uint8_t CFG_HIDE_HUD_ENABLED;
 extern uint8_t CFG_B_BUTTON_ITEM_ENABLED;
-
-typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 
 uint8_t HUD_HIDE		= 0;
 uint8_t HUD_HEARTS_HIDE	= 1;
 uint8_t HUD_COUNTER		= 0;
 uint16_t LAST_SCENE		= 0xFFFF;
-
-#define z64_playsfx   ((playsfx_t)      0x800C806C)
 
 void handle_layout() {
 	if (CFG_HUD_LAYOUT == 0 || !CAN_DRAW_HUD || z64_game.scene_index == LAST_SCENE)
@@ -149,7 +147,7 @@ void handle_buttons() {
 		return;
 	pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 	
-	if (z64_game.pause_ctxt.state == 6 && pad_pressed.a && z64_game.pause_ctxt.screen_idx == 0 && z64_game.pause_ctxt.cursor_pos != 0x0A && z64_game.pause_ctxt.cursor_pos != 0x0B) {
+	if (pad_pressed.a && z64_game.pause_ctxt.screen_idx == 0 && z64_game.pause_ctxt.cursor_pos != 0x0A && z64_game.pause_ctxt.cursor_pos != 0x0B) {
 		if (z64_game.pause_ctxt.item_cursor >= Z64_SLOT_STICK && z64_game.pause_ctxt.item_cursor <= Z64_SLOT_CHILD_TRADE && CFG_B_BUTTON_ITEM_ENABLED) {
 			z64_item_t item = 0xFF;
 			
@@ -183,17 +181,5 @@ void handle_buttons() {
 				z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 			}
 		}
-	}
-	
-	if (pad_pressed.l) {
-		if (z64_game.pause_ctxt.state == 6 && CFG_HIDE_HUD_ENABLED) {
-			HUD_HIDE ^= 1;
-			if (HUD_HIDE)
-				z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-			else z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-		}
-	
-		if (z64_game.pause_ctxt.state == 0 && HUD_HIDE)
-			HUD_HEARTS_HIDE ^= 1;
 	}
 }

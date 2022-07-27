@@ -60,6 +60,7 @@ typedef enum {
 } z64_ammo_t;
 
 /* dram addresses & data*/
+#define z64_playsfx   					((playsfx_t)    0x800C806C)
 #define z64_camera_view					(*(uint8_t*)	0x801DB0CD)
 #define z64_has_minimap					(*(uint16_t*)	0x8018884C)	// 0x8011B9B3, 8017643C, 8018884C
 #define z64_dungeon_scene				(*(uint16_t*)	0x801D8BEA)

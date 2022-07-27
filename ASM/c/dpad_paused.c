@@ -1,20 +1,17 @@
 #include "dpad_paused.h"
 
+typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
+
 extern uint8_t CFG_INVENTORY_EDITOR_ENABLED;
 extern uint8_t CFG_DPAD_ENABLED;
 extern uint8_t CFG_UNEQUIP_GEAR_ENABLED;
 extern uint8_t CFG_UNEQUIP_ITEM_ENABLED;
 extern uint8_t CFG_SWAP_ITEM_ENABLED;
 
-typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
-
 uint8_t KNIFE_COUNTER	= 0xFF;
-uint8_t PREVENT_EDITOR  = 0;
 uint8_t CHECKED_LENS	= 0;
 
 extern uint8_t DPAD_ALT;
-
-#define z64_playsfx   ((playsfx_t)      0x800C806C)
 
 void handle_dpad_paused() {
 	check_lens();
@@ -31,14 +28,12 @@ void handle_dpad_paused() {
 		//handle_downgrading(pad_pressed);
 	}
 	
-	if (CFG_INVENTORY_EDITOR_ENABLED && !PREVENT_EDITOR) {
-		if (pad_pressed.l && z64_game.pause_ctxt.unk_02_[1] == 0)
+	if (CFG_INVENTORY_EDITOR_ENABLED) {
+		if (z64_game.pause_ctxt.unk_02_[1] == 0 && (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.z) || (z64_game.common.input[0].raw.pad.z && z64_game.common.input[0].pad_pressed.l) )
 			z64_game.pause_ctxt.unk_02_[1] = 2;
-		else if ( (pad_pressed.l || pad_pressed.s) && z64_game.pause_ctxt.unk_02_[1] == 2)
+		else if (z64_game.pause_ctxt.unk_02_[1] == 2 && (pad_pressed.l || pad_pressed.r || pad_pressed.s) )
 			z64_game.pause_ctxt.unk_02_[1] = 0;
 	}
-	
-	PREVENT_EDITOR = 0;
 }
 
 void handle_dpad_slots(pad_t pad_pressed) {
@@ -300,7 +295,6 @@ void handle_unequipping(pad_t pad_pressed) {
 /*void handle_downgrading(pad_t pad_pressed) {
 	if (!pad_pressed.l)
 		return;
-	PREVENT_EDITOR = 1;
 	
 	if (z64_game.pause_ctxt.screen_idx == 3 && CFG_SWAP_ITEM_ENABLED) { // Swap knife
 		if (z64_game.pause_ctxt.equip_cursor == 3 && (z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 1 || z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 4 || z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 5 || z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 7 || z64_file.bgs_flag) ) {

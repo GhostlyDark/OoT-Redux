@@ -12,6 +12,10 @@ extern uint8_t CFG_HUD_LAYOUT;
 extern uint8_t CFG_KEEP_MASK;
 extern uint8_t CFG_WS;
 
+typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
+
+#define z64_playsfx   ((playsfx_t)      0x800C806C)
+
 uint8_t DPAD_ALT			= 0;
 uint16_t DPAD_X				= 0;
 uint16_t DPAD_Y				= 0;
@@ -40,7 +44,7 @@ void handle_dpad() {
 }
 
 void handle_dpad_ingame() {
-	if (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 0 || z64_camera_view != 0 || CFG_DPAD_ENABLED == 0) 
+	if (!CAN_USE_DPAD || z64_camera_view != 0 || CFG_DPAD_ENABLED == 0) 
 		return;
     pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 	
@@ -48,10 +52,12 @@ void handle_dpad_ingame() {
 		if ( (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.r) || (z64_game.common.input[0].raw.pad.r && z64_game.common.input[0].pad_pressed.l) ) {
 			DPAD_ALT ^= 1;
 			CHECKED_LENS = 0;
+			z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 		}
 	}
 	
-	run_dpad_actions(pad_pressed);
+	if (z64_game.pause_ctxt.state == 0) 
+		run_dpad_actions(pad_pressed);
 }
 
 void draw_dpad() {
