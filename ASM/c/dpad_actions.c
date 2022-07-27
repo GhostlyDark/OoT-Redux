@@ -271,7 +271,7 @@ void draw_action(uint8_t action, z64_disp_buf_t *db, uint16_t alpha, uint16_t ic
 	else if (action == DPAD_OCARINA)
 		draw_ocarina_icon(db, alpha, icon_x, icon_y);
 	else if (action == DPAD_LENS)
-		draw_item_icon(db, alpha, icon_x, icon_y, Z64_SLOT_LENS, Z64_ITEM_LENS);
+		draw_lens_icon(db, alpha, icon_x, icon_y);
 	else if (action == DPAD_NUT)
 		draw_item_icon(db, alpha, icon_x, icon_y, Z64_SLOT_NUT, Z64_ITEM_NUT);
 	else if (action == DPAD_DINS_FIRE)
@@ -618,7 +618,7 @@ void draw_hover_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, 
 
 void draw_child_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH) {
-		if(alpha==0xFF && !CAN_USE_CHILD_TRADE)
+		if(alpha > 0x46 && !CAN_USE_CHILD_TRADE)
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_CHILD_TRADE], 1);
@@ -630,7 +630,7 @@ void draw_child_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, 
 
 void draw_adult_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.items[Z64_SLOT_ADULT_TRADE] >= Z64_ITEM_POCKET_EGG && z64_file.items[Z64_SLOT_ADULT_TRADE] <= Z64_ITEM_CLAIM_CHECK) {
-		if(alpha==0xFF && !CAN_USE_CHILD_TRADE)
+		if(alpha > 0x46 && !CAN_USE_CHILD_TRADE)
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_ADULT_TRADE], 1);
@@ -642,7 +642,7 @@ void draw_adult_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, 
 
 void draw_ocarina_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA || z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME) {
-		if (alpha==0xFF && !CAN_USE_OCARINA)
+		if (alpha > 0x46 && !CAN_USE_OCARINA)
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_OCARINA], 1);
@@ -652,7 +652,7 @@ void draw_ocarina_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint
 
 void draw_lens_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.items[Z64_SLOT_LENS] == Z64_ITEM_LENS) {
-		if (alpha==0xFF && !CAN_USE_LENS)
+		if (alpha > 0x46 && !CAN_USE_LENS)
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_LENS], 1);
@@ -662,7 +662,7 @@ void draw_lens_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_
 
 void draw_item_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y, z64_slot_t slot, z64_item_t item) {
 	if (z64_file.items[slot] == item) {
-		if (alpha==0xFF && !CAN_USE_ITEMS)
+		if (alpha > 0x46 && !CAN_USE_ITEMS)
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[slot], 1);

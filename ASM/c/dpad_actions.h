@@ -13,7 +13,7 @@
 #define CAN_USE_CHILD_TRADE (z64_game.pause_ctxt.state == 0 && (z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG     && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH)   && !z64_game.restriction_flags.trade_items && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
 #define CAN_USE_ADULT_TRADE (z64_game.pause_ctxt.state == 0 && (z64_file.items[Z64_SLOT_ADULT_TRADE] >= Z64_ITEM_POCKET_EGG    && z64_file.items[Z64_SLOT_ADULT_TRADE] <= Z64_ITEM_CLAIM_CHECK)     && !z64_game.restriction_flags.trade_items && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
 #define CAN_USE_ITEMS       (z64_game.pause_ctxt.state == 0 && !z64_game.restriction_flags.all && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
-#define CAN_USE_LENS        (CAN_USE_ITEMS)
+#define CAN_USE_LENS        (z64_game.pause_ctxt.state == 0 && (!z64_game.restriction_flags.all || z64_scene == 0x0010) && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
 
 #endif
 

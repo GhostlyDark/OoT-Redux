@@ -26,6 +26,7 @@ typedef enum
 #define z64_camera_view					(*(uint8_t*)	0x801DB0CD)
 #define z64_has_minimap					(*(uint16_t*)	0x8018884C)	// 0x8011B9B3, 8017643C, 8018884C
 #define z64_dungeon_scene				(*(uint16_t*)	0x801D8BEA)
+#define z64_scene						(*(uint16_t*)	0x801C8544)
 #define z64_b_button_label_x			(*(uint16_t*)	0x801C7C3A)
 #define z64_b_button_label_y			(*(uint16_t*)	0x801C7C3E)
 #define z64_mask_equipped				(*(uint8_t*)	0x801DAB7F)
