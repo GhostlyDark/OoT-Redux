@@ -31,6 +31,7 @@ uint8_t * check_dpad_actions();
 void run_action(uint8_t action);
 void draw_action(uint8_t action, z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 void check_action(uint8_t button, uint8_t action);
+void check_action_item(uint8_t button, uint8_t action, unused_sram_t dpad, z64_slot_t slot, z64_item_t item);
 
 void toggle_sword();
 void toggle_shield();
@@ -39,12 +40,7 @@ void toggle_boots();
 void toggle_arrow();
 void swap_iron_boots();
 void swap_hover_boots();
-void use_child_trade();
-void use_adult_trade();
-void use_ocarina();
-void use_lens();
-void use_farores_wind();
-void use_item(z64_slot_t slot);
+void use_item(z64_slot_t slot, uint8_t usability);
 
 void draw_sword_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 void draw_shield_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
@@ -56,6 +52,4 @@ void draw_hover_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, 
 void draw_child_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 void draw_adult_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 void draw_ocarina_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
-void draw_lens_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
-void draw_farores_wind_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
-void draw_item_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y, z64_slot_t slot, z64_item_t item);
+void draw_item_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y, z64_slot_t slot, z64_item_t item, uint8_t usability);
