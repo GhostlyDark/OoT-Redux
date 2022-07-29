@@ -3,7 +3,6 @@
 #include "dpad_paused.h"
 #include "dpad_actions.h"
 #include "buttons.h"
-#include "l_button.h"
 #include "fps.h"
 
 extern uint8_t CFG_DISPLAY_DPAD;
@@ -25,11 +24,9 @@ uint16_t LAST_MASK_SCENE	= 0xFFFF;
 extern uint8_t CHECKED_LENS;
 
 void handle_dpad() {
-	handle_layout();
 	handle_buttons();
 	handle_dpad_ingame();
 	handle_dpad_paused();
-    handle_hud();
 	handle_fps();
 	handle_l_button();
 	

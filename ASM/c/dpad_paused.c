@@ -2,7 +2,6 @@
 
 typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 
-extern uint8_t CFG_INVENTORY_EDITOR_ENABLED;
 extern uint8_t CFG_DPAD_ENABLED;
 extern uint8_t CFG_UNEQUIP_GEAR_ENABLED;
 extern uint8_t CFG_UNEQUIP_ITEM_ENABLED;
@@ -17,23 +16,12 @@ void handle_dpad_paused() {
 	check_lens();
 	check_default_dpad_actions();
 	
-	if (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 6 || CFG_DPAD_ENABLED == 0) 
+	if (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 6 || CFG_DPAD_ENABLED == 0 || z64_game.pause_ctxt.unk_02_[1] != 0 || z64_game.pause_ctxt.cursor_pos == 0x0A || z64_game.pause_ctxt.cursor_pos == 0x0B) 
 		return;
     pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 	
-	
-	if (z64_game.pause_ctxt.unk_02_[1] != 2 && z64_game.pause_ctxt.cursor_pos != 0x0A && z64_game.pause_ctxt.cursor_pos != 0x0B) {
-		handle_dpad_slots(pad_pressed);
-		handle_unequipping(pad_pressed);
-		//handle_downgrading(pad_pressed);
-	}
-	
-	if (CFG_INVENTORY_EDITOR_ENABLED) {
-		if (z64_game.pause_ctxt.unk_02_[1] == 0 && (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.z) || (z64_game.common.input[0].raw.pad.z && z64_game.common.input[0].pad_pressed.l) )
-			z64_game.pause_ctxt.unk_02_[1] = 2;
-		else if (z64_game.pause_ctxt.unk_02_[1] == 2 && (pad_pressed.l || pad_pressed.r || pad_pressed.s) )
-			z64_game.pause_ctxt.unk_02_[1] = 0;
-	}
+	handle_dpad_slots(pad_pressed);
+	handle_unequipping(pad_pressed);
 }
 
 void handle_dpad_slots(pad_t pad_pressed) {
@@ -292,13 +280,13 @@ void handle_unequipping(pad_t pad_pressed) {
 	}
 }
 
-/*void handle_downgrading(pad_t pad_pressed) {
-	if (!pad_pressed.l)
+void handle_downgrading() {
+	if (!CFG_SWAP_ITEM_ENABLED || z64_game.pause_ctxt.unk_02_[1] != 0)
 		return;
 	
-	if (z64_game.pause_ctxt.screen_idx == 3 && CFG_SWAP_ITEM_ENABLED) { // Swap knife
-		if (z64_game.pause_ctxt.equip_cursor == 3 && (z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 1 || z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 4 || z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 5 || z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 7 || z64_file.bgs_flag) ) {
-			z64_file.ammo[Z64_AMMO_FIRE_ARROW] ^= 1; 
+	if (z64_game.pause_ctxt.screen_idx == 3) { // Swap knife
+		if (z64_game.pause_ctxt.equip_cursor == 3 && (z64_file.unk_1E_[DOWNGRADE_GIANTS_KNIFE] || z64_file.bgs_flag) ) {
+			z64_file.unk_1E_[DOWNGRADE_GIANTS_KNIFE] ^= 1; 
 			z64_file.bgs_flag ^= 1;
 			if (!z64_file.bgs_flag)
 				if (KNIFE_COUNTER != 0xFF)
@@ -311,17 +299,17 @@ void handle_unequipping(pad_t pad_pressed) {
 		}
 	}
 			
-	if (z64_game.pause_ctxt.screen_idx == 0 && CFG_SWAP_ITEM_ENABLED) { // Downgrade / Upgrade items
-		if (z64_game.pause_ctxt.item_cursor == 7 && (z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 2 || z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 4 || z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 6 || z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 7 || z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME) ) {
-			z64_file.ammo[Z64_AMMO_FIRE_ARROW] ^= 2;
+	if (z64_game.pause_ctxt.screen_idx == 0) { // Downgrade / Upgrade items
+		if (z64_game.pause_ctxt.item_cursor == 7 && (z64_file.unk_1E_[DOWNGRADE_OCARINA] || z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME) ) {
+			z64_file.unk_1E_[DOWNGRADE_OCARINA] ^= 1;
 			if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME)
 				swap_item(Z64_SLOT_OCARINA, Z64_ITEM_OCARINA_OF_TIME, Z64_ITEM_FAIRY_OCARINA);
 			else if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA)
 				swap_item(Z64_SLOT_OCARINA, Z64_ITEM_FAIRY_OCARINA, Z64_ITEM_OCARINA_OF_TIME);
 		}
 		
-		if (z64_game.pause_ctxt.item_cursor == 9 && (z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 3 || z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 5 || z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 6 || z64_file.ammo[Z64_AMMO_FIRE_ARROW] == 7 || z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_LONGSHOT) ) {
-			z64_file.ammo[Z64_AMMO_FIRE_ARROW] ^= 3;
+		if (z64_game.pause_ctxt.item_cursor == 9 && (z64_file.unk_1E_[DOWNGRADE_HOOKSHOT] || z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_LONGSHOT) ) {
+			z64_file.unk_1E_[DOWNGRADE_HOOKSHOT] ^= 1;
 			if (z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_LONGSHOT)
 				swap_item(Z64_SLOT_HOOKSHOT, Z64_ITEM_LONGSHOT, Z64_ITEM_HOOKSHOT);
 			else if (z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_HOOKSHOT)
@@ -344,7 +332,7 @@ void swap_item(z64_slot_t slot, z64_item_t item, z64_item_t swap) {
 		z64_file.items[slot] = swap;
 		z64_playsfx(0x4808, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 	}
-}*/
+}
 
 void unequip_sword(uint8_t play) {
 	z64_file.equip_sword				= 0;
