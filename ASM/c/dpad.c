@@ -53,7 +53,7 @@ void handle_dpad_ingame() {
 		}
 	}
 	
-	if (z64_game.pause_ctxt.state == 0) 
+	if (z64_game.pause_ctxt.state == 0 && CFG_DPAD_ENABLED > 0) 
 		run_dpad_actions(pad_pressed);
 }
 

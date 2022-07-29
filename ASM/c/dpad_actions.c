@@ -10,6 +10,26 @@ extern uint8_t CFG_ALLOW_MIRROR_SHIELD;
 extern uint8_t CFG_ALLOW_TUNIC;
 extern uint8_t CFG_ALLOW_BOOTS;
 
+uint8_t DPAD_ADULT_SET1_UP		= 0;
+uint8_t DPAD_ADULT_SET1_RIGHT	= 0;
+uint8_t DPAD_ADULT_SET1_DOWN	= 0;
+uint8_t DPAD_ADULT_SET1_LEFT	= 0;
+uint8_t DPAD_ADULT_SET2_UP		= 0;
+uint8_t DPAD_ADULT_SET2_RIGHT	= 0;
+uint8_t DPAD_ADULT_SET2_DOWN	= 0;
+uint8_t DPAD_ADULT_SET2_LEFT	= 0;
+uint8_t DPAD_CHILD_SET1_UP		= 0;
+uint8_t DPAD_CHILD_SET1_RIGHT	= 0;
+uint8_t DPAD_CHILD_SET1_DOWN	= 0;
+uint8_t DPAD_CHILD_SET1_LEFT	= 0;
+uint8_t DPAD_CHILD_SET2_UP		= 0;
+uint8_t DPAD_CHILD_SET2_RIGHT	= 0;
+uint8_t DPAD_CHILD_SET2_DOWN	= 0;
+uint8_t DPAD_CHILD_SET2_LEFT	= 0;
+
+
+
+
 typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uint8_t button);
 
@@ -80,120 +100,120 @@ void change_equipment() {
 void run_dpad_actions(pad_t pad_pressed) {
 	if (pad_pressed.du) {
 		if (!z64_file.link_age && !DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_ADULT_SET1_UP]);
+			run_action(DPAD_ADULT_SET1_UP);
 		else if (!z64_file.link_age &&  DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_ADULT_SET2_UP]);
+			run_action(DPAD_ADULT_SET2_UP);
 		else if ( z64_file.link_age && !DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_CHILD_SET1_UP]);
+			run_action(DPAD_CHILD_SET1_UP);
 		else if ( z64_file.link_age &&  DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_CHILD_SET2_UP]);
+			run_action(DPAD_CHILD_SET2_UP);
 	}
 	else if (pad_pressed.dr) {
 		if (!z64_file.link_age && !DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_ADULT_SET1_RIGHT]);
+			run_action(DPAD_ADULT_SET1_RIGHT);
 		else if (!z64_file.link_age &&  DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_ADULT_SET2_RIGHT]);
+			run_action(DPAD_ADULT_SET2_RIGHT);
 		else if ( z64_file.link_age && !DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_CHILD_SET1_RIGHT]);
+			run_action(DPAD_CHILD_SET1_RIGHT);
 		else if ( z64_file.link_age &&  DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_CHILD_SET2_RIGHT]);
+			run_action(DPAD_CHILD_SET2_RIGHT);
 	}
 	else if (pad_pressed.dd) {
 		if (!z64_file.link_age && !DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_ADULT_SET1_DOWN]);
+			run_action(DPAD_ADULT_SET1_DOWN);
 		else if (!z64_file.link_age &&  DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_ADULT_SET2_DOWN]);
+			run_action(DPAD_ADULT_SET2_DOWN);
 		else if ( z64_file.link_age && !DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_CHILD_SET1_DOWN]);
+			run_action(DPAD_CHILD_SET1_DOWN);
 		else if ( z64_file.link_age &&  DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_CHILD_SET2_DOWN]);
+			run_action(DPAD_CHILD_SET2_DOWN);
 	}
 	else if (pad_pressed.dl) {
 		if (!z64_file.link_age && !DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_ADULT_SET1_LEFT]);
+			run_action(DPAD_ADULT_SET1_LEFT);
 		else if (!z64_file.link_age &&  DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_ADULT_SET2_LEFT]);
+			run_action(DPAD_ADULT_SET2_LEFT);
 		else if ( z64_file.link_age && !DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_CHILD_SET1_LEFT]);
+			run_action(DPAD_CHILD_SET1_LEFT);
 		else if ( z64_file.link_age &&  DPAD_ALT)
-			run_action(z64_file.unk_1E_[DPAD_CHILD_SET2_LEFT]);
+			run_action(DPAD_CHILD_SET2_LEFT);
 	}
 }
 
 void draw_dpad_actions(z64_disp_buf_t *db, uint16_t alpha) {
 	if (!z64_file.link_age && !DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_ADULT_SET1_UP], db, alpha, 2, -10);
+		draw_action(DPAD_ADULT_SET1_UP, db, alpha, 2, -10);
 	else if (!z64_file.link_age &&  DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_ADULT_SET2_UP], db, alpha, 2, -10);
+		draw_action(DPAD_ADULT_SET2_UP, db, alpha, 2, -10);
 	else if ( z64_file.link_age && !DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_CHILD_SET1_UP], db, alpha, 2, -10);
+		draw_action(DPAD_CHILD_SET1_UP, db, alpha, 2, -10);
 	else if ( z64_file.link_age &&  DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_CHILD_SET2_UP], db, alpha, 2, -10);
+		draw_action(DPAD_CHILD_SET2_UP, db, alpha, 2, -10);
 	
 	if (!z64_file.link_age && !DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_ADULT_SET1_RIGHT], db, alpha, 14, 2);
+		draw_action(DPAD_ADULT_SET1_RIGHT, db, alpha, 14, 2);
 	else if (!z64_file.link_age &&  DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_ADULT_SET2_RIGHT], db, alpha, 14, 2);
+		draw_action(DPAD_ADULT_SET2_RIGHT, db, alpha, 14, 2);
 	else if ( z64_file.link_age && !DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_CHILD_SET1_RIGHT], db, alpha, 14, 2);
+		draw_action(DPAD_CHILD_SET1_RIGHT, db, alpha, 14, 2);
 	else if ( z64_file.link_age &&  DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_CHILD_SET2_RIGHT], db, alpha, 14, 2);
+		draw_action(DPAD_CHILD_SET2_RIGHT, db, alpha, 14, 2);
 	
 	if (!z64_file.link_age && !DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_ADULT_SET1_DOWN], db, alpha, 2, 15);
+		draw_action(DPAD_ADULT_SET1_DOWN, db, alpha, 2, 15);
 	else if (!z64_file.link_age &&  DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_ADULT_SET2_DOWN], db, alpha, 2, 15);
+		draw_action(DPAD_ADULT_SET2_DOWN, db, alpha, 2, 15);
 	else if ( z64_file.link_age && !DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_CHILD_SET1_DOWN], db, alpha, 2, 15);
+		draw_action(DPAD_CHILD_SET1_DOWN, db, alpha, 2, 15);
 	else if ( z64_file.link_age &&  DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_CHILD_SET2_DOWN], db, alpha, 2, 15);
+		draw_action(DPAD_CHILD_SET2_DOWN, db, alpha, 2, 15);
 	
 	if (!z64_file.link_age && !DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_ADULT_SET1_LEFT], db, alpha, -11, 2);
+		draw_action(DPAD_ADULT_SET1_LEFT, db, alpha, -11, 2);
 	else if (!z64_file.link_age &&  DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_ADULT_SET2_LEFT], db, alpha, -11, 2);
+		draw_action(DPAD_ADULT_SET2_LEFT, db, alpha, -11, 2);
 	else if ( z64_file.link_age && !DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_CHILD_SET1_LEFT], db, alpha, -11, 2);
+		draw_action(DPAD_CHILD_SET1_LEFT, db, alpha, -11, 2);
 	else if ( z64_file.link_age &&  DPAD_ALT)
-		draw_action(z64_file.unk_1E_[DPAD_CHILD_SET2_LEFT], db, alpha, -11, 2);
+		draw_action(DPAD_CHILD_SET2_LEFT, db, alpha, -11, 2);
 }
 
 uint8_t * check_dpad_actions() {
 	if (!z64_file.link_age && !DPAD_ALT)
-		check_action(0, z64_file.unk_1E_[DPAD_ADULT_SET1_UP]);
+		check_action(0, DPAD_ADULT_SET1_UP);
 	else if (!z64_file.link_age &&  DPAD_ALT)
-		check_action(0, z64_file.unk_1E_[DPAD_ADULT_SET2_UP]);
+		check_action(0, DPAD_ADULT_SET2_UP);
 	else if ( z64_file.link_age && !DPAD_ALT)
-		check_action(0, z64_file.unk_1E_[DPAD_CHILD_SET1_UP]);
+		check_action(0, DPAD_CHILD_SET1_UP);
 	else if ( z64_file.link_age &&  DPAD_ALT)
-		check_action(0, z64_file.unk_1E_[DPAD_CHILD_SET2_UP]);
+		check_action(0, DPAD_CHILD_SET2_UP);
 	
 	if (!z64_file.link_age && !DPAD_ALT)
-		check_action(1, z64_file.unk_1E_[DPAD_ADULT_SET1_RIGHT]);
+		check_action(1, DPAD_ADULT_SET1_RIGHT);
 	else if (!z64_file.link_age &&  DPAD_ALT)
-		check_action(1, z64_file.unk_1E_[DPAD_ADULT_SET2_RIGHT]);
+		check_action(1, DPAD_ADULT_SET2_RIGHT);
 	else if ( z64_file.link_age && !DPAD_ALT)
-		check_action(1, z64_file.unk_1E_[DPAD_CHILD_SET1_RIGHT]);
+		check_action(1, DPAD_CHILD_SET1_RIGHT);
 	else if ( z64_file.link_age &&  DPAD_ALT)
-		check_action(1, z64_file.unk_1E_[DPAD_CHILD_SET2_RIGHT]);
+		check_action(1, DPAD_CHILD_SET2_RIGHT);
 	
 	if (!z64_file.link_age && !DPAD_ALT)
-		check_action(2, z64_file.unk_1E_[DPAD_ADULT_SET1_DOWN]);
+		check_action(2, DPAD_ADULT_SET1_DOWN);
 	else if (!z64_file.link_age &&  DPAD_ALT)
-		check_action(2, z64_file.unk_1E_[DPAD_ADULT_SET2_DOWN]);
+		check_action(2, DPAD_ADULT_SET2_DOWN);
 	else if ( z64_file.link_age && !DPAD_ALT)
-		check_action(2, z64_file.unk_1E_[DPAD_CHILD_SET1_DOWN]);
+		check_action(2, DPAD_CHILD_SET1_DOWN);
 	else if ( z64_file.link_age &&  DPAD_ALT)
-		check_action(2, z64_file.unk_1E_[DPAD_CHILD_SET2_DOWN]);
+		check_action(2, DPAD_CHILD_SET2_DOWN);
 	
 	if (!z64_file.link_age && !DPAD_ALT)
-		check_action(3, z64_file.unk_1E_[DPAD_ADULT_SET1_LEFT]);
+		check_action(3, DPAD_ADULT_SET1_LEFT);
 	else if (!z64_file.link_age &&  DPAD_ALT)
-		check_action(3, z64_file.unk_1E_[DPAD_ADULT_SET2_LEFT]);
+		check_action(3, DPAD_ADULT_SET2_LEFT);
 	else if ( z64_file.link_age && !DPAD_ALT)
-		check_action(3, z64_file.unk_1E_[DPAD_CHILD_SET1_LEFT]);
+		check_action(3, DPAD_CHILD_SET1_LEFT);
 	else if ( z64_file.link_age &&  DPAD_ALT)
-		check_action(3, z64_file.unk_1E_[DPAD_CHILD_SET2_LEFT]);
+		check_action(3, DPAD_CHILD_SET2_LEFT);
 	
 	return DPAD_ACTIVE;
 }

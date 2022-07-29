@@ -44,7 +44,7 @@ void handle_l_button() {
 			toggle_minimap();
 			hide_hud();
 			inventory_editor();
-			handle_downgrading();
+			//handle_downgrading();
 		}
 		if (!z64_game.common.input[0].raw.pad.l)
 			PRESSED_R = PRESSED_Z = 0;

@@ -11,8 +11,8 @@ void check_lens();
 void unlock_lens(uint8_t button);
 void set_dpad_action(pad_t pad_pressed, uint8_t action);
 void handle_unequipping(pad_t pad_pressed);
-void handle_downgrading();
-void swap_item(z64_slot_t slot, z64_item_t original, z64_item_t swap);
+//void handle_downgrading();
+//void swap_item(z64_slot_t slot, z64_item_t original, z64_item_t swap);
 void unequip_sword(uint8_t play);
 void unequip_shield();
 
