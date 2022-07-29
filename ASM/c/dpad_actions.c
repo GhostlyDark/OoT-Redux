@@ -214,9 +214,9 @@ void run_action(uint8_t action) {
 	else if (action == DPAD_HOVER_BOOTS)
 		swap_hover_boots();
 	else if (action == DPAD_CHILD_TRADE)
-		use_item(Z64_SLOT_CHILD_TRADE, CAN_USE_ITEMS);
+		use_item(Z64_SLOT_CHILD_TRADE, CAN_USE_CHILD_TRADE);
 	else if (action == DPAD_ADULT_TRADE)
-		use_item(Z64_SLOT_ADULT_TRADE, CAN_USE_ITEMS);
+		use_item(Z64_SLOT_ADULT_TRADE, CAN_USE_ADULT_TRADE);
 	else if (action == DPAD_OCARINA)
 		use_item(Z64_SLOT_OCARINA, CAN_USE_OCARINA);
 	else if (action == DPAD_LENS)
