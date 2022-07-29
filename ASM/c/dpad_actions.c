@@ -218,7 +218,7 @@ void run_action(uint8_t action) {
 	else if (action == DPAD_ADULT_TRADE)
 		use_item(Z64_SLOT_ADULT_TRADE, CAN_USE_ITEMS);
 	else if (action == DPAD_OCARINA)
-		use_item(Z64_SLOT_OCARINA, CAN_USE_ITEMS);
+		use_item(Z64_SLOT_OCARINA, CAN_USE_OCARINA);
 	else if (action == DPAD_LENS)
 		use_item(Z64_SLOT_LENS, CAN_USE_ITEMS);
 	else if (action == DPAD_NUT)
@@ -535,16 +535,21 @@ void draw_arrow_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16
 		if (z64_file.button_items[i] == Z64_ITEM_BOW || z64_file.button_items[i] == Z64_ITEM_BOW_FIRE_ARROW || z64_file.button_items[i] == Z64_ITEM_BOW_ICE_ARROW || z64_file.button_items[i] == Z64_ITEM_BOW_LIGHT_ARROW) {
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 			if (z64_file.button_items[i] == Z64_ITEM_BOW)
-				sprite_load(db, &items_sprite, 0x03, 1);
+				sprite_load(db, &items_sprite, Z64_ITEM_BOW, 1);
 			if (z64_file.button_items[i] == Z64_ITEM_BOW_FIRE_ARROW)
-				sprite_load(db, &items_sprite, 0x38, 1);
+				sprite_load(db, &items_sprite, Z64_ITEM_BOW_FIRE_ARROW, 1);
 			if (z64_file.button_items[i] == Z64_ITEM_BOW_ICE_ARROW)
-				sprite_load(db, &items_sprite, 0x39, 1);
+				sprite_load(db, &items_sprite, Z64_ITEM_BOW_ICE_ARROW, 1);
 			if (z64_file.button_items[i] == Z64_ITEM_BOW_LIGHT_ARROW)
-				sprite_load(db, &items_sprite, 0x3A, 1);
+				sprite_load(db, &items_sprite, Z64_ITEM_BOW_LIGHT_ARROW, 1);
 			sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
-			break;
+			return;
 		}
+	}
+	if (z64_game.pause_ctxt.state == 6) {
+		sprite_load(db, &items_sprite, Z64_ITEM_BOW, 1);
+		gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
+		sprite_draw(db, &items_sprite, 0, (DPAD_X + icon_x), (DPAD_Y + icon_y), 12, 12);
 	}
 }
 
@@ -570,7 +575,7 @@ void draw_hover_boots_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, 
 
 void draw_child_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH) {
-		if(alpha > 0x46 && !CAN_USE_CHILD_TRADE)
+		if(alpha > 0x46 && !CAN_USE_CHILD_TRADE && z64_game.pause_ctxt.state == 0)
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_CHILD_TRADE], 1);
@@ -582,7 +587,7 @@ void draw_child_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, 
 
 void draw_adult_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.items[Z64_SLOT_ADULT_TRADE] >= Z64_ITEM_POCKET_EGG && z64_file.items[Z64_SLOT_ADULT_TRADE] <= Z64_ITEM_CLAIM_CHECK) {
-		if(alpha > 0x46 && !CAN_USE_CHILD_TRADE)
+		if(alpha > 0x46 && !CAN_USE_CHILD_TRADE && z64_game.pause_ctxt.state == 0)
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_ADULT_TRADE], 1);
@@ -594,7 +599,7 @@ void draw_adult_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, 
 
 void draw_ocarina_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y) {
 	if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA || z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME) {
-		if (alpha > 0x46 && !CAN_USE_OCARINA)
+		if (alpha > 0x46 && !CAN_USE_OCARINA && z64_game.pause_ctxt.state == 0)
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[Z64_SLOT_OCARINA], 1);
@@ -604,7 +609,7 @@ void draw_ocarina_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint
 
 void draw_item_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y, z64_slot_t slot, z64_item_t item, uint8_t usability) {
 	if (z64_file.items[slot] == item) {
-		if (alpha > 0x46 && !usability)
+		if (alpha > 0x46 && !usability && z64_game.pause_ctxt.state == 0)
 			gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 		else gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 		sprite_load(db, &items_sprite, z64_file.items[slot], 1);

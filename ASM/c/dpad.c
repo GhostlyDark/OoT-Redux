@@ -62,8 +62,9 @@ void draw_dpad() {
 		return;
 	
 	uint8_t *dpad_active  = check_dpad_actions();
-	if (!dpad_active[0] && !dpad_active[1] && !dpad_active[2] && !dpad_active[3])
-		return;
+	if (z64_game.pause_ctxt.state == 0)
+		if (!dpad_active[0] && !dpad_active[1] && !dpad_active[2] && !dpad_active[3])
+			return;
 	
 	z64_disp_buf_t *db = &(z64_ctxt.gfx->overlay);
 	
@@ -102,14 +103,13 @@ void draw_dpad() {
 	gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
 	uint16_t alpha = z64_game.hud_alpha_channels.minimap;
 	
+	if (z64_game.pause_ctxt.state != 0)
+		alpha = 0xFF;
 	if (alpha == 0xAA)
 		alpha = 0xFF;
 	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 	sprite_load(db, &dpad_sprite, 0, 1);
 	sprite_draw(db, &dpad_sprite, 0, DPAD_X, DPAD_Y, 16, 16);
-	
-	if (alpha == 0xFF && z64_game.pause_ctxt.state != 0)
-		gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 	
 	draw_dpad_actions(db, alpha);
 	gDPPipeSync(db->p++);
