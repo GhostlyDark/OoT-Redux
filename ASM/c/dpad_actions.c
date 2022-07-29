@@ -226,7 +226,7 @@ void run_action(uint8_t action) {
 	else if (action == DPAD_DINS_FIRE)
 		use_item(Z64_SLOT_DINS_FIRE, CAN_USE_ITEMS);
 	else if (action == DPAD_FARORES_WIND)
-		use_item(Z64_SLOT_FARORES_WIND, CAN_USE_ITEMS);
+		use_item(Z64_SLOT_FARORES_WIND, CAN_USE_FARORES_WIND);
 	else if (action == DPAD_NAYRUS_LOVE)
 		use_item(Z64_SLOT_NAYRUS_LOVE, CAN_USE_ITEMS);
 	
