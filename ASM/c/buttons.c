@@ -35,20 +35,18 @@ void handle_l_button() {
 	
 	pad_t pad_released = z64_game.common.input[0].pad_released;
 	
-	if (CFG_DPAD_ENABLED == 2) {
-		if (z64_game.common.input[0].raw.pad.r)
-			PRESSED_R = 1;
-		if (CFG_FPS_ENABLED && z64_game.common.input[0].raw.pad.z)
-			PRESSED_Z = 1;
-		if (pad_released.l && !PRESSED_R && !PRESSED_Z) {
-			toggle_minimap();
-			hide_hud();
-			inventory_editor();
-			//handle_downgrading();
-		}
-		if (!z64_game.common.input[0].raw.pad.l)
-			PRESSED_R = PRESSED_Z = 0;
+	if (z64_game.common.input[0].raw.pad.r)
+		PRESSED_R = 1;
+	if (CFG_FPS_ENABLED && z64_game.common.input[0].raw.pad.z)
+		PRESSED_Z = 1;
+	if (pad_released.l && !PRESSED_R && !PRESSED_Z) {
+		toggle_minimap();
+		hide_hud();
+		inventory_editor();
+		//handle_downgrading();
 	}
+	if (!z64_game.common.input[0].raw.pad.l)
+		PRESSED_R = PRESSED_Z = 0;
 	
 	if (z64_game.common.input[0].pad_pressed.l && !z64_game.common.input[0].raw.pad.r && CFG_DPAD_ENABLED == 2)
 		BLOCK = 1;
