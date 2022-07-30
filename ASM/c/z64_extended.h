@@ -3,57 +3,26 @@
 
 #include "z64.h"
 
-#define BLOCK_DPAD (0x00000001 | \
-	                0x00000002 | \
-                    0x00000080 | \
-                    0x00000400 | \
-                    0x10000000 | \
-                    0x20000000)
-				
-
-#define CAN_USE_DPAD        (((z64_link.state_flags_1 & BLOCK_DPAD) == 0) && \
-                            ((uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && \
-                            (z64_file.game_mode == 0) && \
-                            ((z64_event_state_1 & 0x20) == 0))
-
 typedef enum {
-	DPAD_NULL			= 0x00,
-	DPAD_SWORD			= 0x01,
-	DPAD_SHIELD			= 0x02,
-	DPAD_TUNIC			= 0x03,
-	DPAD_BOOTS			= 0x04,
-	DPAD_IRON_BOOTS		= 0x05,
-	DPAD_HOVER_BOOTS	= 0x06,
-	DPAD_ARROWS			= 0x07,
-	DPAD_NUT			= 0x08,
-	DPAD_LENS			= 0x09,
-	DPAD_OCARINA		= 0x0A,
-	DPAD_CHILD_TRADE	= 0x0B,
-	DPAD_ADULT_TRADE	= 0x0C,
-	DPAD_DINS_FIRE		= 0x0D,
-	DPAD_FARORES_WIND	= 0x0E,
-	DPAD_NAYRUS_LOVE	= 0x0F,
+	DPAD_NULL			= 0x0,
+	DPAD_SWORD			= 0x1,
+	DPAD_SHIELD			= 0x2,
+	DPAD_TUNIC			= 0x3,
+	DPAD_BOOTS			= 0x4,
+	DPAD_IRON_BOOTS		= 0x5,
+	DPAD_HOVER_BOOTS	= 0x6,
+	DPAD_ARROWS			= 0x7,
+	DPAD_NUT			= 0x8,
+	DPAD_LENS			= 0x9,
+	DPAD_OCARINA		= 0xA,
+	DPAD_CHILD_TRADE	= 0xB,
+	DPAD_ADULT_TRADE	= 0xC,
+	DPAD_DINS_FIRE		= 0xD,
+	DPAD_FARORES_WIND	= 0xE,
+	DPAD_NAYRUS_LOVE	= 0xF,
 } dpad_action_t;
 
-typedef enum {
-	Z64_AMMO_STICK			= 0x00,		// Used
-	Z64_AMMO_NUT			= 0x01,		// Used
-	Z64_AMMO_BOMB			= 0x02,		// Used
-	Z64_AMMO_BOW			= 0x03,		// Used
-	Z64_AMMO_FIRE_ARROW		= 0x04,		// Unused 1
-	Z64_AMMO_DINS_FIRE		= 0x05,		// Unused 2
-	Z64_AMMO_SLINGSHOT		= 0x06,		// Used
-	Z64_AMMO_OCARINA		= 0x07,		// Unused 3
-	Z64_AMMO_BOMBCHU		= 0x08,		// Used
-	Z64_AMMO_HOOKSHOT		= 0x09,		// Unused 4
-	Z64_AMMO_ICE_ARROW		= 0x0A,		// Unused 5
-	Z64_AMMO_FARORES_WIND	= 0x0B,		// Unused 6
-	Z64_AMMO_BOOMERANG		= 0x0C,		// Unused 7
-	Z64_AMMO_LENS			= 0x0D,		// Unused 8
-	Z64_AMMO_BEANS			= 0x0E,		// Used
-} z64_ammo_t;
-
-/* dram addresses & data*/
+/* DRAM addresses & data */
 #define z64_playsfx   					((playsfx_t)    0x800C806C)
 #define z64_camera_view					(*(uint8_t*)	0x801DB0CD)
 #define z64_has_minimap					(*(uint16_t*)	0x8018884C)	// 0x8011B9B3, 8017643C, 8018884C
@@ -63,12 +32,12 @@ typedef enum {
 #define z64_b_button_label_y			(*(uint16_t*)	0x801C7C3E)
 #define z64_mask_equipped				(*(uint8_t*)	0x801DAB7F)
 
-/* dram addresses & data for D-Pad */
+/* DRAM addresses & data for Lens of Truth on D-Pad */
 #define z64_dpad_lens_1					(*(uint16_t*)	0x80072D40)
 #define z64_dpad_lens_2					(*(uint16_t*)	0x80072D4C)
 #define z64_dpad_lens_3					(*(uint16_t*)	0x80072D58)
 
-/* dram addresses & data for 30 FPS */
+/* DRAM addresses & data for 30 FPS */
 #define z64_fps_limit					(*(uint8_t*)	0x801C6FA1)
 #define z64_jump_gravity				(*(uint16_t*)	0x801DAA9C)
 #define z64_link_animation				(*(uint16_t*)	0x801DABDE)
@@ -90,36 +59,53 @@ typedef enum {
 #define z64_fishing						(*(uint8_t*)	0x801C8C41)
 #define z64_frogs						(*(uint8_t*)	0x801C8835)
 
-#define DPAD_ADULT_UP		(z64_file.ammo[0x04])
-#define DPAD_CHILD_UP		(z64_file.ammo[0x05])
-#define DPAD_ADULT_RIGHT	(z64_file.ammo[0x07])
-#define DPAD_CHILD_RIGHT	(z64_file.ammo[0x09])
-#define DPAD_ADULT_DOWN		(z64_file.ammo[0x0A])
-#define DPAD_CHILD_DOWN		(z64_file.ammo[0x0B])
-#define DPAD_ADULT_LEFT		(z64_file.ammo[0x0C])
-#define DPAD_CHILD_LEFT		(z64_file.ammo[0x0D])
+/* D-Pad Availability */
+#define BLOCK_DPAD						(0x00000001 | 0x00000002 | 0x00000080 | 0x00000400 | 0x10000000 | 0x20000000)
+#define CAN_USE_DPAD					( ( (z64_link.state_flags_1 & BLOCK_DPAD) == 0) && ( (uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && (z64_file.game_mode == 0) && ( (z64_event_state_1 & 0x20) == 0) )
+#define CAN_DRAW_HUD					( ( (uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && (z64_file.game_mode == 0) && ( (z64_event_state_1 & 0x20) == 0) )
 
-#define DPAD_ADULT_SET1_UP		( (DPAD_ADULT_UP >> 4) & 0xF)
-#define DPAD_ADULT_SET2_UP		(DPAD_ADULT_UP & 0xF)
-#define DPAD_CHILD_SET1_UP		( (DPAD_CHILD_UP >> 4) & 0xF)
-#define DPAD_CHILD_SET2_UP		(DPAD_CHILD_UP & 0xF)
-#define DPAD_ADULT_SET1_RIGHT	( (DPAD_ADULT_RIGHT >> 4) & 0xF)
-#define DPAD_ADULT_SET2_RIGHT	(DPAD_ADULT_RIGHT & 0xF)
-#define DPAD_CHILD_SET1_RIGHT	( (DPAD_CHILD_RIGHT >> 4) & 0xF)
-#define DPAD_CHILD_SET2_RIGHT	(DPAD_CHILD_RIGHT & 0xF)
-#define DPAD_ADULT_SET1_DOWN	( (DPAD_ADULT_DOWN >> 4) & 0xF)
-#define DPAD_ADULT_SET2_DOWN	(DPAD_ADULT_DOWN & 0xF)
-#define DPAD_CHILD_SET1_DOWN	( (DPAD_CHILD_DOWN >> 4) & 0xF)
-#define DPAD_CHILD_SET2_DOWN	(DPAD_CHILD_DOWN & 0xF)
-#define DPAD_ADULT_SET1_LEFT	( (DPAD_ADULT_LEFT >> 4) & 0xF)
-#define DPAD_ADULT_SET2_LEFT	(DPAD_ADULT_LEFT & 0xF)
-#define DPAD_CHILD_SET1_LEFT	( (DPAD_CHILD_LEFT >> 4) & 0xF)
-#define DPAD_CHILD_SET2_LEFT	(DPAD_CHILD_LEFT & 0xF)
+/* D-Pad Usability for Items */
+#define BLOCK_ITEMS						(0x00800000 | 0x00000800 | 0x00200000 | 0x08000000)
+#define CAN_USE_OCARINA					(z64_game.pause_ctxt.state == 0 && (z64_file.items[Z64_SLOT_OCARINA]     == Z64_ITEM_FAIRY_OCARINA || z64_file.items[Z64_SLOT_OCARINA]     == Z64_ITEM_OCARINA_OF_TIME) && !z64_game.restriction_flags.ocarina     && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
+#define CAN_USE_CHILD_TRADE				(z64_game.pause_ctxt.state == 0 && (z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG     && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH)   && !z64_game.restriction_flags.trade_items && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
+#define CAN_USE_ADULT_TRADE				(z64_game.pause_ctxt.state == 0 && (z64_file.items[Z64_SLOT_ADULT_TRADE] >= Z64_ITEM_POCKET_EGG    && z64_file.items[Z64_SLOT_ADULT_TRADE] <= Z64_ITEM_CLAIM_CHECK)     && !z64_game.restriction_flags.trade_items && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
+#define CAN_USE_ITEMS					(z64_game.pause_ctxt.state == 0 && !z64_game.restriction_flags.all && ( (z64_link.state_flags_1 & BLOCK_ITEMS) == 0) )
+#define CAN_USE_LENS					(z64_game.pause_ctxt.state == 0 && (!z64_game.restriction_flags.all || z64_game.scene_index == 0x0010) && ( (z64_link.state_flags_1 & BLOCK_ITEMS) == 0) )
+#define CAN_USE_FARORES_WIND			(z64_game.pause_ctxt.state == 0 && !z64_game.restriction_flags.farores_wind && ( (z64_link.state_flags_1 & BLOCK_ITEMS) == 0) )
 
-#define EXTRA_SRAM				(z64_file.unk_08_[0])
-#define DPAD_INIT_SETUP			(EXTRA_SRAM & (1 << 0) )
-#define DOWNGRADE_GIANTS_KNIFE	(EXTRA_SRAM & (1 << 1) )
-#define DOWNGRADE_OCARINA		(EXTRA_SRAM & (1 << 2) )
-#define DOWNGRADE_HOOKSHOT		(EXTRA_SRAM & (1 << 3) )
+/* D-Pad SRAM locations */
+#define DPAD_ADULT_UP					(z64_file.ammo[0x04])
+#define DPAD_CHILD_UP					(z64_file.ammo[0x05])
+#define DPAD_ADULT_RIGHT				(z64_file.ammo[0x07])
+#define DPAD_CHILD_RIGHT				(z64_file.ammo[0x09])
+#define DPAD_ADULT_DOWN					(z64_file.ammo[0x0A])
+#define DPAD_CHILD_DOWN					(z64_file.ammo[0x0B])
+#define DPAD_ADULT_LEFT					(z64_file.ammo[0x0C])
+#define DPAD_CHILD_LEFT					(z64_file.ammo[0x0D])
+
+/* D-Pad Button Mappings */
+#define DPAD_ADULT_SET1_UP				( (DPAD_ADULT_UP >> 4) & 0xF)
+#define DPAD_ADULT_SET2_UP				(DPAD_ADULT_UP & 0xF)
+#define DPAD_CHILD_SET1_UP				( (DPAD_CHILD_UP >> 4) & 0xF)
+#define DPAD_CHILD_SET2_UP				(DPAD_CHILD_UP & 0xF)
+#define DPAD_ADULT_SET1_RIGHT			( (DPAD_ADULT_RIGHT >> 4) & 0xF)
+#define DPAD_ADULT_SET2_RIGHT			(DPAD_ADULT_RIGHT & 0xF)
+#define DPAD_CHILD_SET1_RIGHT			( (DPAD_CHILD_RIGHT >> 4) & 0xF)
+#define DPAD_CHILD_SET2_RIGHT			(DPAD_CHILD_RIGHT & 0xF)
+#define DPAD_ADULT_SET1_DOWN			( (DPAD_ADULT_DOWN >> 4) & 0xF)
+#define DPAD_ADULT_SET2_DOWN			(DPAD_ADULT_DOWN & 0xF)
+#define DPAD_CHILD_SET1_DOWN			( (DPAD_CHILD_DOWN >> 4) & 0xF)
+#define DPAD_CHILD_SET2_DOWN			(DPAD_CHILD_DOWN & 0xF)
+#define DPAD_ADULT_SET1_LEFT			( (DPAD_ADULT_LEFT >> 4) & 0xF)
+#define DPAD_ADULT_SET2_LEFT			(DPAD_ADULT_LEFT & 0xF)
+#define DPAD_CHILD_SET1_LEFT			( (DPAD_CHILD_LEFT >> 4) & 0xF)
+#define DPAD_CHILD_SET2_LEFT			(DPAD_CHILD_LEFT & 0xF)
+
+/* Extra saving for Redux */
+#define EXTRA_SRAM						(z64_file.unk_08_[0])
+#define DPAD_INIT_SETUP					(EXTRA_SRAM & (1 << 0) )
+#define DOWNGRADE_GIANTS_KNIFE			(EXTRA_SRAM & (1 << 1) )
+#define DOWNGRADE_OCARINA				(EXTRA_SRAM & (1 << 2) )
+#define DOWNGRADE_HOOKSHOT				(EXTRA_SRAM & (1 << 3) )
 
 #endif

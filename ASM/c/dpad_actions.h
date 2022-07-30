@@ -4,18 +4,6 @@
 #include "z64.h"
 #include "z64_extended.h"
 
-#define BLOCK_ITEMS (0x00800000 | \
-                     0x00000800 | \
-                     0x00200000 | \
-                     0x08000000)
-
-#define CAN_USE_OCARINA			(z64_game.pause_ctxt.state == 0 && (z64_file.items[Z64_SLOT_OCARINA]     == Z64_ITEM_FAIRY_OCARINA || z64_file.items[Z64_SLOT_OCARINA]     == Z64_ITEM_OCARINA_OF_TIME) && !z64_game.restriction_flags.ocarina     && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
-#define CAN_USE_CHILD_TRADE		(z64_game.pause_ctxt.state == 0 && (z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_WEIRD_EGG     && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH)   && !z64_game.restriction_flags.trade_items && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
-#define CAN_USE_ADULT_TRADE		(z64_game.pause_ctxt.state == 0 && (z64_file.items[Z64_SLOT_ADULT_TRADE] >= Z64_ITEM_POCKET_EGG    && z64_file.items[Z64_SLOT_ADULT_TRADE] <= Z64_ITEM_CLAIM_CHECK)     && !z64_game.restriction_flags.trade_items && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
-#define CAN_USE_ITEMS			(z64_game.pause_ctxt.state == 0 && !z64_game.restriction_flags.all && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
-#define CAN_USE_LENS			(z64_game.pause_ctxt.state == 0 && (!z64_game.restriction_flags.all || z64_game.scene_index == 0x0010) && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
-#define CAN_USE_FARORES_WIND	(z64_game.pause_ctxt.state == 0 && !z64_game.restriction_flags.farores_wind && ((z64_link.state_flags_1 & BLOCK_ITEMS) == 0))
-
 #endif
 
 void change_sword(uint8_t sword);
