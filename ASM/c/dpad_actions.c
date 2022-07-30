@@ -322,6 +322,9 @@ void check_action(uint8_t button, uint8_t action) {
 	check_action_item(button, action, DPAD_DINS_FIRE,    Z64_SLOT_DINS_FIRE,    Z64_ITEM_DINS_FIRE);
 	check_action_item(button, action, DPAD_FARORES_WIND, Z64_SLOT_FARORES_WIND, Z64_ITEM_FARORES_WIND);
 	check_action_item(button, action, DPAD_NAYRUS_LOVE,  Z64_SLOT_NAYRUS_LOVE , Z64_ITEM_NAYRUS_LOVE);
+	
+	if (action == DPAD_NULL)
+		DPAD_ACTIVE[button] = 0;
 }
 
 void check_action_item(uint8_t button, uint8_t action, uint8_t dpad, z64_slot_t slot, z64_item_t item) {
