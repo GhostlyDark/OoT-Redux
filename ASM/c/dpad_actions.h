@@ -31,7 +31,7 @@ uint8_t * check_dpad_actions();
 void run_action(uint8_t action);
 void draw_action(uint8_t action, z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 void check_action(uint8_t button, uint8_t action);
-void check_action_item(uint8_t button, uint8_t action, unused_sram_t dpad, z64_slot_t slot, z64_item_t item);
+void check_action_item(uint8_t button, uint8_t action, uint8_t dpad, z64_slot_t slot, z64_item_t item);
 
 void toggle_sword();
 void toggle_shield();

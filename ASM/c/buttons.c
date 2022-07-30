@@ -43,7 +43,7 @@ void handle_l_button() {
 		toggle_minimap();
 		hide_hud();
 		inventory_editor();
-		//handle_downgrading();
+		handle_downgrading();
 	}
 	if (!z64_game.common.input[0].raw.pad.l)
 		PRESSED_R = PRESSED_Z = 0;
@@ -66,9 +66,8 @@ void handle_l_button() {
 }
 
 void handle_layout() {
-	if (CFG_HUD_LAYOUT == 0 || !CAN_DRAW_HUD || z64_game.scene_index == LAST_SCENE)
+	if (CFG_HUD_LAYOUT == 0 || !CAN_DRAW_HUD || z64_gameinfo.a_button_y == 9)
 		return;
-	LAST_SCENE = z64_game.scene_index;
 	
 	uint16_t a_x = 0, a_y = 0, b_x = 0, b_y = 0, c_left_x = 0, c_left_y = 0, c_down_x = 0, c_down_y = 0, c_right_x = 0, c_right_y = 0, c_up_x = 0, c_up_y = 0;
 	

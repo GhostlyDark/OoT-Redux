@@ -10,26 +10,6 @@ extern uint8_t CFG_ALLOW_MIRROR_SHIELD;
 extern uint8_t CFG_ALLOW_TUNIC;
 extern uint8_t CFG_ALLOW_BOOTS;
 
-uint8_t DPAD_ADULT_SET1_UP		= 0;
-uint8_t DPAD_ADULT_SET1_RIGHT	= 0;
-uint8_t DPAD_ADULT_SET1_DOWN	= 0;
-uint8_t DPAD_ADULT_SET1_LEFT	= 0;
-uint8_t DPAD_ADULT_SET2_UP		= 0;
-uint8_t DPAD_ADULT_SET2_RIGHT	= 0;
-uint8_t DPAD_ADULT_SET2_DOWN	= 0;
-uint8_t DPAD_ADULT_SET2_LEFT	= 0;
-uint8_t DPAD_CHILD_SET1_UP		= 0;
-uint8_t DPAD_CHILD_SET1_RIGHT	= 0;
-uint8_t DPAD_CHILD_SET1_DOWN	= 0;
-uint8_t DPAD_CHILD_SET1_LEFT	= 0;
-uint8_t DPAD_CHILD_SET2_UP		= 0;
-uint8_t DPAD_CHILD_SET2_RIGHT	= 0;
-uint8_t DPAD_CHILD_SET2_DOWN	= 0;
-uint8_t DPAD_CHILD_SET2_LEFT	= 0;
-
-
-
-
 typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uint8_t button);
 
@@ -344,7 +324,7 @@ void check_action(uint8_t button, uint8_t action) {
 	check_action_item(button, action, DPAD_NAYRUS_LOVE,  Z64_SLOT_NAYRUS_LOVE , Z64_ITEM_NAYRUS_LOVE);
 }
 
-void check_action_item(uint8_t button, uint8_t action, unused_sram_t dpad, z64_slot_t slot, z64_item_t item) {
+void check_action_item(uint8_t button, uint8_t action, uint8_t dpad, z64_slot_t slot, z64_item_t item) {
 	if (action == dpad) { // Nayru's Love
 		if (z64_file.items[slot] == item)
 			DPAD_ACTIVE[button] = 1;

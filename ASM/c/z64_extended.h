@@ -9,6 +9,7 @@
                     0x00000400 | \
                     0x10000000 | \
                     0x20000000)
+				
 
 #define CAN_USE_DPAD        (((z64_link.state_flags_1 & BLOCK_DPAD) == 0) && \
                             ((uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && \
@@ -33,17 +34,6 @@ typedef enum {
 	DPAD_FARORES_WIND	= 0x0E,
 	DPAD_NAYRUS_LOVE	= 0x0F,
 } dpad_action_t;
-
-typedef enum {
-	DPAD_ADULT_UP		= 0x04,
-	DPAD_ADULT_RIGHT	= 0x05,
-	DPAD_ADULT_DOWN		= 0x07,
-	DPAD_ADULT_LEFT		= 0x09,
-	DPAD_CHILD_UP		= 0x0A,
-	DPAD_CHILD_RIGHT	= 0x0B,
-	DPAD_CHILD_DOWN		= 0x0C,
-	DPAD_CHILD_LEFT		= 0x0D,
-} unused_sram_t;
 
 typedef enum {
 	Z64_AMMO_STICK			= 0x00,		// Used
@@ -99,5 +89,37 @@ typedef enum {
 #define z64_bottle_action				(*(uint32_t*)	0x801C86B2)
 #define z64_fishing						(*(uint8_t*)	0x801C8C41)
 #define z64_frogs						(*(uint8_t*)	0x801C8835)
+
+#define DPAD_ADULT_UP		(z64_file.ammo[0x04])
+#define DPAD_CHILD_UP		(z64_file.ammo[0x05])
+#define DPAD_ADULT_RIGHT	(z64_file.ammo[0x07])
+#define DPAD_CHILD_RIGHT	(z64_file.ammo[0x09])
+#define DPAD_ADULT_DOWN		(z64_file.ammo[0x0A])
+#define DPAD_CHILD_DOWN		(z64_file.ammo[0x0B])
+#define DPAD_ADULT_LEFT		(z64_file.ammo[0x0C])
+#define DPAD_CHILD_LEFT		(z64_file.ammo[0x0D])
+
+#define DPAD_ADULT_SET1_UP		( (DPAD_ADULT_UP >> 4) & 0xF)
+#define DPAD_ADULT_SET2_UP		(DPAD_ADULT_UP & 0xF)
+#define DPAD_CHILD_SET1_UP		( (DPAD_CHILD_UP >> 4) & 0xF)
+#define DPAD_CHILD_SET2_UP		(DPAD_CHILD_UP & 0xF)
+#define DPAD_ADULT_SET1_RIGHT	( (DPAD_ADULT_RIGHT >> 4) & 0xF)
+#define DPAD_ADULT_SET2_RIGHT	(DPAD_ADULT_RIGHT & 0xF)
+#define DPAD_CHILD_SET1_RIGHT	( (DPAD_CHILD_RIGHT >> 4) & 0xF)
+#define DPAD_CHILD_SET2_RIGHT	(DPAD_CHILD_RIGHT & 0xF)
+#define DPAD_ADULT_SET1_DOWN	( (DPAD_ADULT_DOWN >> 4) & 0xF)
+#define DPAD_ADULT_SET2_DOWN	(DPAD_ADULT_DOWN & 0xF)
+#define DPAD_CHILD_SET1_DOWN	( (DPAD_CHILD_DOWN >> 4) & 0xF)
+#define DPAD_CHILD_SET2_DOWN	(DPAD_CHILD_DOWN & 0xF)
+#define DPAD_ADULT_SET1_LEFT	( (DPAD_ADULT_LEFT >> 4) & 0xF)
+#define DPAD_ADULT_SET2_LEFT	(DPAD_ADULT_LEFT & 0xF)
+#define DPAD_CHILD_SET1_LEFT	( (DPAD_CHILD_LEFT >> 4) & 0xF)
+#define DPAD_CHILD_SET2_LEFT	(DPAD_CHILD_LEFT & 0xF)
+
+#define EXTRA_SRAM				(z64_file.unk_08_[0])
+#define DPAD_INIT_SETUP			(EXTRA_SRAM & (1 << 0) )
+#define DOWNGRADE_GIANTS_KNIFE	(EXTRA_SRAM & (1 << 1) )
+#define DOWNGRADE_OCARINA		(EXTRA_SRAM & (1 << 2) )
+#define DOWNGRADE_HOOKSHOT		(EXTRA_SRAM & (1 << 3) )
 
 #endif
