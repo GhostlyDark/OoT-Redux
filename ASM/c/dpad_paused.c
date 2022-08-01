@@ -7,9 +7,8 @@ extern uint8_t CFG_UNEQUIP_GEAR_ENABLED;
 extern uint8_t CFG_UNEQUIP_ITEM_ENABLED;
 extern uint8_t CFG_SWAP_ITEM_ENABLED;
 
-uint8_t KNIFE_COUNTER		= 0xFF;
-uint8_t CHECKED_LENS		= 0;
-uint16_t LAST_DPAD_SCENE	= 0xFFFF;
+uint8_t knife_counter		= 0xFF;
+uint8_t checked_lens		= 0;
 
 extern uint8_t DPAD_ALT;
 
@@ -38,22 +37,14 @@ void handle_dpad_slots(pad_t pad_pressed) {
 			set_dpad_action(pad_pressed, DPAD_SHIELD);
 		else if (z64_game.pause_ctxt.equip_cursor == 0x09 || z64_game.pause_ctxt.equip_cursor == 0x0A || z64_game.pause_ctxt.equip_cursor == 0x0B)
 			set_dpad_action(pad_pressed, DPAD_TUNIC);
-		else if (z64_game.pause_ctxt.equip_cursor == 0x0E)
-			set_dpad_action(pad_pressed, DPAD_IRON_BOOTS);
-		else if (z64_game.pause_ctxt.equip_cursor == 0x0F)
-			set_dpad_action(pad_pressed, DPAD_HOVER_BOOTS);
+		else if (!z64_file.link_age) {
+			if (z64_game.pause_ctxt.equip_cursor == 0x0E)
+				set_dpad_action(pad_pressed, DPAD_IRON_BOOTS);
+			else if (z64_game.pause_ctxt.equip_cursor == 0x0F)
+				set_dpad_action(pad_pressed, DPAD_HOVER_BOOTS);
+		}
 	}
 	else if (z64_game.pause_ctxt.screen_idx == 0) {
-		if (!z64_file.link_age) {
-			if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_BOW)
-				set_dpad_action(pad_pressed, DPAD_ARROWS);
-			else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_ADULT_TRADE)
-				set_dpad_action(pad_pressed, DPAD_ADULT_TRADE);
-		}
-		else if(z64_file.link_age) {
-			if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_CHILD_TRADE)
-			set_dpad_action(pad_pressed, DPAD_CHILD_TRADE);
-		}
 		if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_OCARINA)
 			set_dpad_action(pad_pressed, DPAD_OCARINA);
 		else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_LENS)
@@ -66,6 +57,16 @@ void handle_dpad_slots(pad_t pad_pressed) {
 			set_dpad_action(pad_pressed, DPAD_FARORES_WIND);
 		else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_NAYRUS_LOVE)
 			set_dpad_action(pad_pressed, DPAD_NAYRUS_LOVE);
+		else if (!z64_file.link_age) {
+			if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_BOW)
+				set_dpad_action(pad_pressed, DPAD_ARROWS);
+			else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_ADULT_TRADE)
+				set_dpad_action(pad_pressed, DPAD_ADULT_TRADE);
+		}
+		else if (z64_file.link_age) {
+			if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_CHILD_TRADE)
+				set_dpad_action(pad_pressed, DPAD_CHILD_TRADE);
+		}
 	}
 }
 
@@ -85,9 +86,9 @@ void check_default_dpad_actions() {
 }
 
 void check_lens() {
-	if (CHECKED_LENS || !CAN_USE_DPAD || CFG_DPAD_ENABLED == 0)
+	if (checked_lens || !CAN_USE_DPAD || CFG_DPAD_ENABLED == 0)
 		return;
-	CHECKED_LENS = 1;
+	checked_lens = 1;
 	
 	z64_dpad_lens_1 = 0x504E;
 	z64_dpad_lens_2 = 0x504F;
@@ -302,9 +303,9 @@ void handle_downgrading() {
 			EXTRA_SRAM			|= 2;
 			z64_file.bgs_flag	^= 1;
 			if (!z64_file.bgs_flag)
-				if (KNIFE_COUNTER != 0xFF)
-					z64_file.bgs_hits_left = KNIFE_COUNTER;
-			else KNIFE_COUNTER = z64_file.bgs_hits_left;
+				if (knife_counter != 0xFF)
+					z64_file.bgs_hits_left = knife_counter;
+			else knife_counter = z64_file.bgs_hits_left;
 			if (z64_file.equip_sword == 3)
 				unequip_sword(0);
 			z64_UpdateEquipment(&z64_game, &z64_link);
