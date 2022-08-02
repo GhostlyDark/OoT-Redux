@@ -79,6 +79,7 @@ typedef struct {
 #define z64_b_button_label_x			(*(uint16_t*)			0x801C7C3A)
 #define z64_b_button_label_y			(*(uint16_t*)			0x801C7C3E)
 #define z64_mask_equipped				(*(uint8_t*)			0x801DAB7F)
+#define z64_throwing_nut				(*(uint8_t*)			0x80124696)
 
 /* DRAM addresses & data for Lens of Truth on D-Pad */
 #define z64_dpad_lens_1					(*(uint16_t*)			0x80072D40)
