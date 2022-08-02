@@ -29,44 +29,50 @@ void handle_dpad_slots(pad_t pad_pressed) {
 		return;
 	
 	if (z64_game.pause_ctxt.screen_idx == 3) {
-		if (z64_game.pause_ctxt.equip_cursor == 0x01 || z64_game.pause_ctxt.equip_cursor == 0x02 || z64_game.pause_ctxt.equip_cursor == 0x03)
-			set_dpad_action(pad_pressed, DPAD_SWORD);
+		if (z64_game.pause_ctxt.equip_cursor == 0x01)
+			set_dpad_action(pad_pressed, DPAD_SWORD, LIMIT_KOKIRI_SWORD);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x02)
+			set_dpad_action(pad_pressed, DPAD_SWORD, LIMIT_MASTER_SWORD);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x03)
+			set_dpad_action(pad_pressed, DPAD_SWORD, LIMIT_GIANTS_KNIFE);
 		else if (z64_game.pause_ctxt.equip_cursor == 0x0D) 
-			set_dpad_action(pad_pressed, DPAD_BOOTS);
-		else if (z64_game.pause_ctxt.equip_cursor == 0x05 || z64_game.pause_ctxt.equip_cursor == 0x06 || z64_game.pause_ctxt.equip_cursor == 0x07)
-			set_dpad_action(pad_pressed, DPAD_SHIELD);
-		else if (z64_game.pause_ctxt.equip_cursor == 0x09 || z64_game.pause_ctxt.equip_cursor == 0x0A || z64_game.pause_ctxt.equip_cursor == 0x0B)
-			set_dpad_action(pad_pressed, DPAD_TUNIC);
-		else if (!z64_file.link_age) {
-			if (z64_game.pause_ctxt.equip_cursor == 0x0E)
-				set_dpad_action(pad_pressed, DPAD_IRON_BOOTS);
-			else if (z64_game.pause_ctxt.equip_cursor == 0x0F)
-				set_dpad_action(pad_pressed, DPAD_HOVER_BOOTS);
-		}
+			set_dpad_action(pad_pressed, DPAD_BOOTS, LIMIT_KOKIRI_BOOTS);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x05)
+			set_dpad_action(pad_pressed, DPAD_SHIELD, LIMIT_DEKU_SHIELD);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x06)
+			set_dpad_action(pad_pressed, DPAD_SHIELD, LIMIT_HYLIAN_SHIELD);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x07)
+			set_dpad_action(pad_pressed, DPAD_SHIELD, LIMIT_MIRROR_SHIELD);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x09)
+			set_dpad_action(pad_pressed, DPAD_TUNIC, LIMIT_KOKIRI_TUNIC);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x0A)
+			set_dpad_action(pad_pressed, DPAD_TUNIC, LIMIT_GORON_TUNIC);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x0B)
+			set_dpad_action(pad_pressed, DPAD_TUNIC, LIMIT_ZORA_TUNIC);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x0E)
+			set_dpad_action(pad_pressed, DPAD_IRON_BOOTS, LIMIT_IRON_BOOTS);
+		else if (z64_game.pause_ctxt.equip_cursor == 0x0F)
+			set_dpad_action(pad_pressed, DPAD_HOVER_BOOTS, LIMIT_HOVER_BOOTS);
 	}
 	else if (z64_game.pause_ctxt.screen_idx == 0) {
 		if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_OCARINA)
-			set_dpad_action(pad_pressed, DPAD_OCARINA);
+			set_dpad_action(pad_pressed, DPAD_OCARINA, LIMIT_OCARINA);
 		else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_LENS)
-			set_dpad_action(pad_pressed, DPAD_LENS);
+			set_dpad_action(pad_pressed, DPAD_LENS, LIMIT_LENS);
 		else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_NUT)
-			set_dpad_action(pad_pressed, DPAD_NUT);
+			set_dpad_action(pad_pressed, DPAD_NUT, LIMIT_NUT);
 		else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_DINS_FIRE)
-			set_dpad_action(pad_pressed, DPAD_DINS_FIRE);
+			set_dpad_action(pad_pressed, DPAD_DINS_FIRE, LIMIT_DINS_FIRE);
 		else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_FARORES_WIND)
-			set_dpad_action(pad_pressed, DPAD_FARORES_WIND);
+			set_dpad_action(pad_pressed, DPAD_FARORES_WIND, LIMIT_FARORES_WIND);
 		else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_NAYRUS_LOVE)
-			set_dpad_action(pad_pressed, DPAD_NAYRUS_LOVE);
-		else if (!z64_file.link_age) {
-			if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_BOW)
-				set_dpad_action(pad_pressed, DPAD_ARROWS);
-			else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_ADULT_TRADE)
-				set_dpad_action(pad_pressed, DPAD_ADULT_TRADE);
-		}
-		else if (z64_file.link_age) {
-			if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_CHILD_TRADE)
-				set_dpad_action(pad_pressed, DPAD_CHILD_TRADE);
-		}
+			set_dpad_action(pad_pressed, DPAD_NAYRUS_LOVE, LIMIT_NAYRUS_LOVE);
+		else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_BOW)
+			set_dpad_action(pad_pressed, DPAD_ARROWS, LIMIT_BOW);
+		else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_ADULT_TRADE)
+			set_dpad_action(pad_pressed, DPAD_ADULT_TRADE, LIMIT_ADULT_TRADE);
+		else if (z64_game.pause_ctxt.item_cursor == Z64_SLOT_CHILD_TRADE)
+			set_dpad_action(pad_pressed, DPAD_CHILD_TRADE, LIMIT_CHILD_TRADE);
 	}
 }
 
@@ -128,7 +134,9 @@ void unlock_lens(uint8_t button) {
 	}
 }
 
-void set_dpad_action(pad_t pad_pressed, uint8_t action) {
+void set_dpad_action(pad_t pad_pressed, dpad_action_t action, limit_item_t limit) {
+	if ( (!z64_file.link_age && z64_usability.item[limit] == 1) || (z64_file.link_age && z64_usability.item[limit] == 0) )
+		return;
 	uint16_t sfx = 0x4808;
 	
 	if (pad_pressed.du) {
@@ -254,7 +262,7 @@ void set_dpad_action(pad_t pad_pressed, uint8_t action) {
 	
 	if (pad_pressed.du || pad_pressed.dr || pad_pressed.dd || pad_pressed.dl) {
 		if (action == DPAD_LENS)
-			CHECKED_LENS = 0;
+			checked_lens = 0;
 		z64_playsfx(sfx, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 	}
 }

@@ -231,24 +231,11 @@ void set_b_button(pad_t pad_pressed) {
 	
 	z64_item_t item = 0xFF;
 	for (uint8_t i=0; i<18; i++)
-		if (z64_game.pause_ctxt.item_cursor == i)
-			item = z64_file.items[i];
-			
-	if (!z64_file.link_age) {
-		if		(item == Z64_ITEM_STICK)		item = 0xFF;
-		else if (item == Z64_ITEM_SLINGSHOT)	item = 0xFF;
-		else if (item == Z64_ITEM_BOOMERANG)	item = 0xFF;
-		else if (item == Z64_ITEM_BEANS)		item = 0xFF;
-	}
-	else {
-		if		(item == Z64_ITEM_BOW)			item = 0xFF;
-		else if (item == Z64_ITEM_FIRE_ARROW)	item = 0xFF;
-		else if (item == Z64_ITEM_ICE_ARROW)	item = 0xFF;
-		else if (item == Z64_ITEM_LIGHT_ARROW)	item = 0xFF;
-		else if (item == Z64_ITEM_HOOKSHOT)		item = 0xFF;
-		else if (item == Z64_ITEM_LONGSHOT)		item = 0xFF;
-		else if (item == Z64_ITEM_HAMMER)		item = 0xFF;
-	}
+		if (z64_game.pause_ctxt.item_cursor == i) {
+			if ( (!z64_file.link_age && z64_usability.item[i] == 1) || (z64_file.link_age && z64_usability.item[i] == 0) )
+				item = 0xFF;
+			else item = z64_file.items[i];
+		}
 	
 	if (item != Z64_ITEM_SLINGSHOT && item != Z64_ITEM_BOW && item != Z64_ITEM_BOMBCHU && item != Z64_ITEM_LENS && item <= Z64_ITEM_NAYRUS_LOVE) {
 		z64_file.button_items[0] = item;
