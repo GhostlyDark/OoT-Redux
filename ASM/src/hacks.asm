@@ -161,6 +161,58 @@ Gameplay_InitSkybox:
     nop
 
 ;==================================================================================================
+; Easier Fishing
+;==================================================================================================
+
+; Make fishing less obnoxious
+.orga 0xDBF428
+    jal     easier_fishing
+    lui     at, 0x4282
+    mtc1    at, f8
+    mtc1    t8, f18
+    swc1    f18, 0x019C(s2)
+
+.orga 0xDBF484
+    nop
+
+.orga 0xDBF4A8
+    nop
+
+; set adult fish size requirement
+.orga 0xDCBEA8
+    lui     at, 0x4248
+
+.orga 0xDCBF24
+    lui     at, 0x4248
+
+; set child fish size requirements
+.orga 0xDCBF30
+    lui     at, 0x4230
+
+.orga 0xDCBF9C
+    lui     at, 0x4230
+
+; Fish bite guaranteed when the hook is stable
+; Replaces: lwc1    f10, 0x0198(s0)
+;           mul.s   f4, f10, f2
+.orga 0xDC7090
+    jal     fishing_bite_when_stable
+    lwc1    f10, 0x0198(s0)
+
+; Remove most fish loss branches
+.orga 0xDC87A0
+    nop
+.orga 0xDC87BC
+    nop
+.orga 0xDC87CC
+    nop
+
+; Prevent RNG fish loss
+; Replaces: addiu   at, zero, 0x0002
+.orga 0xDC8828
+    move    at, t5
+
+;==================================================================================================
 ; DPAD Display
 ;==================================================================================================
 ;
