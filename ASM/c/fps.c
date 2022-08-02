@@ -1,15 +1,13 @@
 #include "fps.h"
 
-extern uint8_t CFG_FPS_ENABLED;
-extern uint8_t FPS_SWITCH;
-
 typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 
+extern uint8_t CFG_FPS_ENABLED;
+
+uint8_t	 FPS_SWITCH					= 1;
 uint16_t DEKU_STICK_TIMER_SWITCH	= 0;
 uint16_t LAST_TIME					= 0;
 uint16_t STARTED_TIMER				= 0;
-
-#define z64_playsfx   ((playsfx_t)      0x800C806C)
 
 void handle_fps() {
 	if (!CFG_FPS_ENABLED || z64_game.pause_ctxt.state != 0)
