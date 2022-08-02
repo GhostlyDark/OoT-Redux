@@ -85,28 +85,6 @@ typedef struct {
 #define z64_dpad_lens_2					(*(uint16_t*)			0x80072D4C)
 #define z64_dpad_lens_3					(*(uint16_t*)			0x80072D58)
 
-/* DRAM addresses & data for 30 FPS */
-#define z64_fps_limit					(*(uint8_t*)			0x801C6FA1)
-#define z64_jump_gravity				(*(uint16_t*)			0x801DAA9C)
-#define z64_link_animation				(*(uint16_t*)			0x801DABDE)
-#define z64_link_animation_parameter	(*(uint32_t*)			0x801DABF0)
-#define z64_control_link				(*(uint16_t*)			0x801DAADE)
-#define z64_deku_stick_timer			(*(uint16_t*)			0x801DB280)
-#define z64_hover_boots_length			(*(uint16_t*)			0x8039E612)
-#define z64_time_of_day_speed			(*(uint16_t*)			0x800F1650)
-#define z64_timer_type					(*(uint8_t*)			0x8011B99F)
-#define z64_time_remaining				(*(uint16_t*)			0x8011B9A0)
-#define z64_seconds_left				(*(uint8_t*)			0x8011BF31)
-#define z64_is_demo						(*(uint8_t*)			0x801DB09D)
-#define z64_boomerang_active			(*(uint16_t*)			0x800E8B8E)
-#define z64_hookshot_active				(*(uint16_t*)			0x801DAA50)
-#define z64_talking_to_npc				(*(uint8_t*)			0x801DAA36)
-#define z64_change_scene				(*(uint8_t*)			0x801DB09C)
-#define z64_playing_ocarina				(*(uint8_t*)			0x80102208)
-#define z64_bottle_action				(*(uint32_t*)			0x801C86B2)
-#define z64_fishing						(*(uint8_t*)			0x801C8C41)
-#define z64_frogs						(*(uint8_t*)			0x801C8835)
-
 /* D-Pad Availability */
 #define BLOCK_DPAD						(0x00000001 | 0x00000002 | 0x00000080 | 0x00000400 | 0x10000000 | 0x20000000)
 #define CAN_USE_DPAD					( ( (z64_link.state_flags_1 & BLOCK_DPAD) == 0) && ( (uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && (z64_file.game_mode == 0) && ( (z64_event_state_1 & 0x20) == 0) )
