@@ -3,7 +3,6 @@
 #include "dpad_paused.h"
 #include "dpad_actions.h"
 #include "buttons.h"
-#include "l_button.h"
 #include "fps.h"
 
 extern uint8_t CFG_DISPLAY_DPAD;
@@ -12,18 +11,22 @@ extern uint8_t CFG_HUD_LAYOUT;
 extern uint8_t CFG_KEEP_MASK;
 extern uint8_t CFG_WS;
 
+typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
+
+#define z64_playsfx   ((playsfx_t)      0x800C806C)
+
 uint8_t DPAD_ALT			= 0;
 uint16_t DPAD_X				= 0;
 uint16_t DPAD_Y				= 0;
 uint16_t LAST_MASK			= 0;
 uint16_t LAST_MASK_SCENE	= 0xFFFF;
 
+extern uint8_t CHECKED_LENS;
+
 void handle_dpad() {
-	handle_layout();
 	handle_buttons();
 	handle_dpad_ingame();
 	handle_dpad_paused();
-    handle_hud();
 	handle_fps();
 	handle_l_button();
 	
@@ -38,16 +41,20 @@ void handle_dpad() {
 }
 
 void handle_dpad_ingame() {
-	if (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 0 || z64_camera_view != 0 || CFG_DPAD_ENABLED == 0) 
+	if (!CAN_USE_DPAD || z64_camera_view != 0 || CFG_DPAD_ENABLED == 0) 
 		return;
     pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 	
 	if (CFG_DPAD_ENABLED == 2) {
-		if ( (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.r) || (z64_game.common.input[0].raw.pad.r && z64_game.common.input[0].pad_pressed.l) )
+		if ( (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.r) || (z64_game.common.input[0].raw.pad.r && z64_game.common.input[0].pad_pressed.l) ) {
 			DPAD_ALT ^= 1;
+			CHECKED_LENS = 0;
+			z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+		}
 	}
 	
-	run_dpad_actions(pad_pressed);
+	if (z64_game.pause_ctxt.state == 0 && CFG_DPAD_ENABLED > 0) 
+		run_dpad_actions(pad_pressed);
 }
 
 void draw_dpad() {
@@ -55,8 +62,9 @@ void draw_dpad() {
 		return;
 	
 	uint8_t *dpad_active  = check_dpad_actions();
-	if (!dpad_active[0] && !dpad_active[1] && !dpad_active[2] && !dpad_active[3])
-		return;
+	if (z64_game.pause_ctxt.state == 0)
+		if (!dpad_active[0] && !dpad_active[1] && !dpad_active[2] && !dpad_active[3])
+			return;
 	
 	z64_disp_buf_t *db = &(z64_ctxt.gfx->overlay);
 	
@@ -95,14 +103,13 @@ void draw_dpad() {
 	gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
 	uint16_t alpha = z64_game.hud_alpha_channels.minimap;
 	
+	if (z64_game.pause_ctxt.state != 0)
+		alpha = 0xFF;
 	if (alpha == 0xAA)
 		alpha = 0xFF;
 	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 	sprite_load(db, &dpad_sprite, 0, 1);
 	sprite_draw(db, &dpad_sprite, 0, DPAD_X, DPAD_Y, 16, 16);
-	
-	if (alpha == 0xFF && z64_game.pause_ctxt.state != 0)
-		gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0x46);
 	
 	draw_dpad_actions(db, alpha);
 	gDPPipeSync(db->p++);
