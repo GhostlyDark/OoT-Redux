@@ -11,15 +11,10 @@ extern uint8_t CFG_HUD_LAYOUT;
 extern uint8_t CFG_KEEP_MASK;
 extern uint8_t CFG_WS;
 
-typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
-
-#define z64_playsfx   ((playsfx_t)      0x800C806C)
-
-uint8_t DPAD_ALT			= 0;
-uint16_t DPAD_X				= 0;
-uint16_t DPAD_Y				= 0;
-uint16_t LAST_MASK			= 0;
-uint16_t LAST_MASK_SCENE	= 0xFFFF;
+uint8_t dpad_alt			= 0;
+uint16_t dpad_x				= 0;
+uint16_t dpad_y				= 0;
+uint16_t last_mask			= 0;
 
 extern uint8_t CHECKED_LENS;
 
@@ -31,12 +26,10 @@ void handle_dpad() {
 	handle_l_button();
 	
 	if (CFG_KEEP_MASK) {
-		if (LAST_MASK != z64_mask_equipped && z64_change_scene != 0x20)
-			LAST_MASK = z64_mask_equipped;
-		if (z64_game.scene_index != LAST_MASK_SCENE && LAST_MASK > 0) {
-			z64_mask_equipped = LAST_MASK;
-			LAST_MASK_SCENE = z64_game.scene_index;
-		}
+		if (z64_change_scene == 0x20000001)
+			last_mask = z64_mask_equipped;
+		if (z64_change_scene == 0x20000000 && last_mask > 0)
+			z64_mask_equipped = last_mask;
 	}
 }
 
@@ -47,9 +40,11 @@ void handle_dpad_ingame() {
 	
 	if (CFG_DPAD_ENABLED == 2) {
 		if ( (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.r) || (z64_game.common.input[0].raw.pad.r && z64_game.common.input[0].pad_pressed.l) ) {
-			DPAD_ALT ^= 1;
+			dpad_alt ^= 1;
 			CHECKED_LENS = 0;
-			z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+			if (dpad_alt)
+				z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+			else z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 		}
 	}
 	
@@ -69,35 +64,35 @@ void draw_dpad() {
 	z64_disp_buf_t *db = &(z64_ctxt.gfx->overlay);
 	
 	if (CFG_DISPLAY_DPAD == 1) {
-		DPAD_X = 21;
-		DPAD_Y = 44;
+		dpad_x = 21;
+		dpad_y = 44;
 		if (z64_file.magic_acquired && z64_file.energy_capacity > 0xA0)
-			DPAD_Y += 23;
+			dpad_y += 23;
 		else if (z64_file.energy_capacity > 0xA0)
-			DPAD_Y += 10;
+			dpad_y += 10;
 		else if (z64_file.magic_acquired)
-			DPAD_Y += 14;
+			dpad_y += 14;
 		if (z64_file.timer_1_state > 0 || z64_file.timer_2_state > 0)
-			DPAD_Y += 18;
+			dpad_y += 18;
 	}
 	else {
-		DPAD_X = 271;
-		DPAD_Y = 64;
+		dpad_x = 271;
+		dpad_y = 64;
 		if (CFG_HUD_LAYOUT == 2 || CFG_HUD_LAYOUT == 3) {
-			DPAD_X += 10;
-			DPAD_Y += 14;
+			dpad_x += 10;
+			dpad_y += 14;
 		}
 		else if (CFG_HUD_LAYOUT == 4 || CFG_HUD_LAYOUT == 5)
-			DPAD_Y += 15;
+			dpad_y += 15;
 		if (CFG_WS)
-			DPAD_X += 104;
+			dpad_x += 104;
 	}
 	if (CFG_DISPLAY_DPAD == 3) {
-		DPAD_X = 35;
-		DPAD_Y = 175;
+		dpad_x = 35;
+		dpad_y = 175;
 		if (z64_dungeon_scene != 0xFF)
 			if (z64_file.dungeon_keys[z64_dungeon_scene] > 0)
-				DPAD_Y = 158;
+				dpad_y = 158;
 	}
 	
 	gSPDisplayList(db->p++, &setup_db);
@@ -111,7 +106,7 @@ void draw_dpad() {
 		alpha = 0xFF;
 	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 	sprite_load(db, &dpad_sprite, 0, 1);
-	sprite_draw(db, &dpad_sprite, 0, DPAD_X, DPAD_Y, 16, 16);
+	sprite_draw(db, &dpad_sprite, 0, dpad_x, dpad_y, 16, 16);
 	
 	draw_dpad_actions(db, alpha);
 	gDPPipeSync(db->p++);
