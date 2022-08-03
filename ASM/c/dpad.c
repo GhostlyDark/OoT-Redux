@@ -77,6 +77,8 @@ void draw_dpad() {
 			DPAD_Y += 10;
 		else if (z64_file.magic_acquired)
 			DPAD_Y += 14;
+		if (z64_file.timer_1_state > 0 || z64_file.timer_2_state > 0)
+			DPAD_Y += 18;
 	}
 	else {
 		DPAD_X = 271;
