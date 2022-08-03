@@ -3,6 +3,9 @@
 
 #include "z64.h"
 
+typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
+typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uint8_t button);
+
 typedef enum {
 	DPAD_NULL			= 0x0,
 	DPAD_SWORD			= 0x1,
@@ -69,17 +72,24 @@ typedef struct {
 	char      item[0x002C];
 } z64_usability_t;
 
+#define R_MINIMAP_DISABLED           	WREG(31)
+
+/* Functions */
+#define z64_playsfx						((playsfx_t)			0x800C806C)
+#define z64_usebutton					((usebutton_t)			0x8038C9A0)
+
 /* DRAM addresses & data */
 #define z64_usability					(*(z64_usability_t*)	0x8039F114)
-#define z64_playsfx						((playsfx_t)			0x800C806C)
-#define z64_camera_view					(*(uint8_t*)			0x801DB0CD)
+#define z64_change_scene				(*(uint32_t*)			0x801DB09C)
 #define z64_has_minimap					(*(uint16_t*)			0x8018884C)	// 0x8011B9B3, 8017643C, 8018884C
 #define z64_dungeon_scene				(*(uint16_t*)			0x801D8BEA)
 #define z64_scene						(*(uint16_t*)			0x801C8544)
 #define z64_b_button_label_x			(*(uint16_t*)			0x801C7C3A)
 #define z64_b_button_label_y			(*(uint16_t*)			0x801C7C3E)
+#define z64_camera_view					(*(uint8_t*)			0x801DB0CD)
 #define z64_mask_equipped				(*(uint8_t*)			0x801DAB7F)
 #define z64_throwing_nut				(*(uint8_t*)			0x80124696)
+
 
 /* DRAM addresses & data for Lens of Truth on D-Pad */
 #define z64_dpad_lens_1					(*(uint16_t*)			0x80072D40)
