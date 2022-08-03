@@ -1,7 +1,5 @@
 #include "dpad_paused.h"
 
-typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
-
 extern uint8_t CFG_DPAD_ENABLED;
 extern uint8_t CFG_UNEQUIP_GEAR_ENABLED;
 extern uint8_t CFG_UNEQUIP_ITEM_ENABLED;
