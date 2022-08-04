@@ -164,10 +164,12 @@ void toggle_minimap() {
 	if (z64_game.pause_ctxt.state != 0 || hud_hide)
 		return;
 	
-	z64_gameinfo.minimap_disabled ^= 1;
-	if (z64_gameinfo.minimap_disabled)
-		z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-	else z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	if ( (z64_game.scene_index >= 0x00 && z64_game.scene_index <= 0x09 ) || (z64_game.scene_index >= 0x51 && z64_game.scene_index <= 0x64) ) {
+		z64_gameinfo.minimap_disabled ^= 1;
+		if (z64_gameinfo.minimap_disabled)
+			z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+		else z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	}
 }
 
 void handle_hud() {
