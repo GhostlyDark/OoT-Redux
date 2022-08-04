@@ -14,5 +14,6 @@ void set_b_button(pad_t pad_pressed);
 void inventory_editor();
 void handle_downgrading();
 void swap_item(z64_slot_t slot, z64_item_t original, z64_item_t swap);
+void handle_infinite();
 
 #endif
