@@ -69,10 +69,19 @@ typedef enum {
 } limit_item_t;
 
 typedef struct {
-	char      item[0x002C];
+	char		item[0x002C];
 } z64_usability_t;
 
-#define R_MINIMAP_DISABLED           	WREG(31)
+typedef struct {
+	uint16_t	quiver[4];			// 0,  30,  40,  50
+	uint16_t	bomb_bag[4];		// 0,  20,  30,  40
+	uint16_t	u1[8];				// Unused
+	uint16_t	wallet[4];			// 99, 200, 500, 500
+	uint16_t	bullet_bag[4];		// 0,  30,  40,  50
+	uint16_t	stick_upgrade[4];	// 0,  20,  30,  40
+	uint16_t	nut_upgrade[4];		// 0,  10,  20,  30
+	
+} z64_capacity;
 
 /* Functions */
 #define z64_playsfx						((playsfx_t)			0x800C806C)
@@ -80,6 +89,7 @@ typedef struct {
 
 /* DRAM addresses & data */
 #define z64_usability					(*(z64_usability_t*)	0x8039F114)
+#define z64_capacity					(*(z64_capacity*)		0x800F8CCC)
 #define z64_change_scene				(*(uint32_t*)			0x801DB09C)
 #define z64_has_minimap					(*(uint16_t*)			0x8018884C)	// 0x8011B9B3, 8017643C, 8018884C
 #define z64_dungeon_scene				(*(uint16_t*)			0x801D8BEA)

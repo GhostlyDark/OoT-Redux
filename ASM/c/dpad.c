@@ -24,6 +24,7 @@ void handle_dpad() {
 	handle_dpad_paused();
 	handle_fps();
 	handle_l_button();
+	handle_infinite();
 	
 	if (CFG_KEEP_MASK) {
 		if (z64_change_scene == 0x20000001)
@@ -111,4 +112,3 @@ void draw_dpad() {
 	draw_dpad_actions(db, alpha);
 	gDPPipeSync(db->p++);
 }
-

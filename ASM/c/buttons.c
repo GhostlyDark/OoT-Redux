@@ -4,6 +4,10 @@ extern uint8_t CFG_HUD_LAYOUT;
 extern uint8_t CFG_HIDE_HUD_ENABLED;
 extern uint8_t CFG_B_BUTTON_ITEM_ENABLED;
 extern uint8_t CFG_INVENTORY_EDITOR_ENABLED;
+extern uint8_t CFG_INFINITE_HEALTH;
+extern uint8_t CFG_INFINITE_MAGIC;
+extern uint8_t CFG_INFINITE_AMMO;
+extern uint8_t CFG_INFINITE_RUPEES;
 
 uint8_t hud_hide		= 0;
 uint8_t hud_hearts_hide	= 1;
@@ -248,5 +252,71 @@ void inventory_editor() {
 	else if (z64_game.pause_ctxt.unk_02_[1] == 2) {
 		z64_game.pause_ctxt.unk_02_[1] = 0;
 		z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	}
+}
+
+void handle_infinite() {
+	if (CFG_INFINITE_HEALTH) {
+		if (z64_file.energy < z64_file.energy_capacity)
+			z64_file.energy = z64_file.energy_capacity;
+	}
+	
+	if (CFG_INFINITE_MAGIC) {
+		if (z64_file.magic_acquired && z64_file.magic_capacity_set) {
+			if (z64_file.magic_capacity)
+				z64_file.magic = 0x60;
+			else z64_file.magic = 0x30;
+		}
+	}
+	
+	if (CFG_INFINITE_AMMO) {
+		if (z64_file.nut_upgrade == 1)
+			z64_file.ammo[0x01] = z64_capacity.nut_upgrade[1];
+		else if (z64_file.nut_upgrade == 2)
+			z64_file.ammo[0x01] = z64_capacity.nut_upgrade[2];
+		else if (z64_file.nut_upgrade == 3)
+			z64_file.ammo[0x01] = z64_capacity.nut_upgrade[3];
+		
+		if (z64_file.stick_upgrade == 1)
+			z64_file.ammo[0x00] = z64_capacity.stick_upgrade[1];
+		else if (z64_file.stick_upgrade == 2)
+			z64_file.ammo[0x00] = z64_capacity.stick_upgrade[2];
+		else if (z64_file.stick_upgrade == 3)
+			z64_file.ammo[0x00] = z64_capacity.stick_upgrade[3];
+		
+		if (z64_file.bullet_bag == 1)
+			z64_file.ammo[0x06] = z64_capacity.bullet_bag[1];
+		else if (z64_file.bullet_bag == 2)
+			z64_file.ammo[0x06] = z64_capacity.bullet_bag[1];
+		else if (z64_file.bullet_bag == 3)
+			z64_file.ammo[0x06] = z64_capacity.bullet_bag[1];
+		
+		if (z64_file.quiver == 1)
+			z64_file.ammo[0x03] = z64_capacity.quiver[1];
+		else if (z64_file.quiver == 2)
+			z64_file.ammo[0x03] = z64_capacity.quiver[2];
+		else if (z64_file.quiver == 3)
+			z64_file.ammo[0x03] = z64_capacity.quiver[3];
+		
+		if (z64_file.bomb_bag == 1)
+			z64_file.ammo[0x02] = z64_capacity.bomb_bag[1];
+		else if (z64_file.bomb_bag == 2)
+			z64_file.ammo[0x02] = z64_capacity.bomb_bag[2];
+		else if (z64_file.bomb_bag == 3)
+			z64_file.ammo[0x02] = z64_capacity.bomb_bag[3];
+		
+		if (z64_file.items[Z64_SLOT_BOMBCHU] == Z64_ITEM_BOMBCHU)
+			z64_file.ammo[0x08] = 50;
+	}
+	
+	if (CFG_INFINITE_RUPEES) {
+		if (z64_file.wallet == 0)
+			z64_file.rupees = z64_capacity.wallet[0];
+		else if (z64_file.wallet == 1)
+			z64_file.rupees = z64_capacity.wallet[1];
+		else if (z64_file.wallet == 2)
+			z64_file.rupees = z64_capacity.wallet[2];
+		else if (z64_file.wallet == 3)
+			z64_file.rupees = z64_capacity.wallet[3];
 	}
 }
