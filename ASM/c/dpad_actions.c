@@ -445,20 +445,27 @@ void toggle_arrow() {
 	if (arrow == 0)
 		return;
 	
-	if (arrow == Z64_ITEM_BOW)
-		arrow = Z64_ITEM_BOW_FIRE_ARROW;
-	else if (arrow == Z64_ITEM_BOW_FIRE_ARROW)
-		arrow = Z64_ITEM_BOW_ICE_ARROW;
-	else if (arrow == Z64_ITEM_BOW_ICE_ARROW)
-		arrow = Z64_ITEM_BOW_LIGHT_ARROW;
+	if (arrow == Z64_ITEM_BOW) {
+		if (z64_file.items[Z64_SLOT_FIRE_ARROW] == Z64_ITEM_FIRE_ARROW)
+			arrow = Z64_ITEM_BOW_FIRE_ARROW;
+		else if (z64_file.items[Z64_SLOT_ICE_ARROW] == Z64_ITEM_ICE_ARROW)
+			arrow = Z64_ITEM_BOW_ICE_ARROW;
+		else if (z64_file.items[Z64_SLOT_LIGHT_ARROW] == Z64_ITEM_LIGHT_ARROW)
+			arrow = Z64_ITEM_BOW_LIGHT_ARROW;
+	}
+	else if (arrow == Z64_ITEM_BOW_FIRE_ARROW) {
+		if (z64_file.items[Z64_SLOT_ICE_ARROW] == Z64_ITEM_ICE_ARROW)
+			arrow = Z64_ITEM_BOW_ICE_ARROW;
+		else if (z64_file.items[Z64_SLOT_LIGHT_ARROW] == Z64_ITEM_LIGHT_ARROW)
+			arrow = Z64_ITEM_BOW_LIGHT_ARROW;
+		else arrow = Z64_ITEM_BOW;
+	}
+	else if (arrow == Z64_ITEM_BOW_ICE_ARROW) {
+		if (z64_file.items[Z64_SLOT_LIGHT_ARROW] == Z64_ITEM_LIGHT_ARROW)
+			arrow = Z64_ITEM_BOW_LIGHT_ARROW;
+		else arrow = Z64_ITEM_BOW;
+	}
 	else arrow = Z64_ITEM_BOW;
-	
-	if (arrow == Z64_ITEM_BOW && z64_file.items[Z64_SLOT_FIRE_ARROW] != Z64_ITEM_FIRE_ARROW)
-		arrow = Z64_ITEM_BOW_ICE_ARROW;
-	else if (arrow == Z64_ITEM_BOW_FIRE_ARROW && z64_file.items[Z64_SLOT_ICE_ARROW] != Z64_ITEM_ICE_ARROW)
-		arrow = Z64_ITEM_BOW_LIGHT_ARROW;
-	else if (arrow == Z64_ITEM_BOW_ICE_ARROW && z64_file.items[Z64_SLOT_LIGHT_ARROW] != Z64_ITEM_LIGHT_ARROW)
-		arrow = Z64_ITEM_BOW;
 	
 	if (arrow != z64_file.button_items[slot]) {
 		if (arrow == 0x03)
