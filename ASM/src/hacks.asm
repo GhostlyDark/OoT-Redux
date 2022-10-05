@@ -179,18 +179,18 @@ Gameplay_InitSkybox:
     nop
 
 ; set adult fish size requirement
-.orga 0xDCBEA8
-    lui     at, 0x4248
+;.orga 0xDCBEA8
+;    lui     at, 0x4248
 
-.orga 0xDCBF24
-    lui     at, 0x4248
+;.orga 0xDCBF24
+;    lui     at, 0x4248
 
 ; set child fish size requirements
-.orga 0xDCBF30
-    lui     at, 0x4230
+;.orga 0xDCBF30
+;    lui     at, 0x4230
 
-.orga 0xDCBF9C
-    lui     at, 0x4230
+;.orga 0xDCBF9C
+;    lui     at, 0x4230
 
 ; Fish bite guaranteed when the hook is stable
 ; Replaces: lwc1    f10, 0x0198(s0)
@@ -200,17 +200,17 @@ Gameplay_InitSkybox:
     lwc1    f10, 0x0198(s0)
 
 ; Remove most fish loss branches
-.orga 0xDC87A0
-    nop
-.orga 0xDC87BC
-    nop
-.orga 0xDC87CC
-    nop
+;.orga 0xDC87A0
+;    nop
+;.orga 0xDC87BC
+;    nop
+;.orga 0xDC87CC
+;    nop
 
 ; Prevent RNG fish loss
 ; Replaces: addiu   at, zero, 0x0002
-.orga 0xDC8828
-    move    at, t5
+;.orga 0xDC8828
+;    move    at, t5
 
 ;==================================================================================================
 ; DPAD Display
