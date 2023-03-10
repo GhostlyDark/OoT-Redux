@@ -4,6 +4,7 @@ extern uint8_t CFG_DPAD_ENABLED;
 extern uint8_t CFG_UNEQUIP_GEAR_ENABLED;
 extern uint8_t CFG_UNEQUIP_ITEM_ENABLED;
 extern uint8_t CFG_SWAP_ITEM_ENABLED;
+extern uint8_t CFG_ABILITIES_ENABLED;
 
 uint8_t knife_counter		= 0xFF;
 uint8_t checked_lens		= 0;
@@ -269,11 +270,16 @@ void handle_unequipping(pad_t pad_pressed) {
 	if (!pad_pressed.cu)
 		return;
 	
-	if (z64_game.pause_ctxt.screen_idx == 3 && CFG_UNEQUIP_GEAR_ENABLED) { // Unequip gear
-		if ( (z64_game.pause_ctxt.equip_cursor == 1 && z64_file.equip_sword  == 1) || (z64_game.pause_ctxt.equip_cursor == 2 && z64_file.equip_sword  == 2) || (z64_game.pause_ctxt.equip_cursor == 3 && z64_file.equip_sword  == 3) )
-			unequip_sword(1);
-		if ( (z64_game.pause_ctxt.equip_cursor == 5 && z64_file.equip_shield == 1) || (z64_game.pause_ctxt.equip_cursor == 6 && z64_file.equip_shield == 2) || (z64_game.pause_ctxt.equip_cursor == 7 && z64_file.equip_shield == 3) )
-			unequip_shield();
+	if (z64_game.pause_ctxt.screen_idx == 3) {
+		if (CFG_UNEQUIP_GEAR_ENABLED) { // Unequip gear
+			if ( (z64_game.pause_ctxt.equip_cursor == 1 && z64_file.equip_sword  == 1) || (z64_game.pause_ctxt.equip_cursor == 2 && z64_file.equip_sword  == 2) || (z64_game.pause_ctxt.equip_cursor == 3 && z64_file.equip_sword  == 3) )
+				unequip_sword(1);
+			if ( (z64_game.pause_ctxt.equip_cursor == 5 && z64_file.equip_shield == 1) || (z64_game.pause_ctxt.equip_cursor == 6 && z64_file.equip_shield == 2) || (z64_game.pause_ctxt.equip_cursor == 7 && z64_file.equip_shield == 3) )
+				unequip_shield();
+		}
+		if (CFG_ABILITIES_ENABLED)
+			if ( (z64_game.pause_ctxt.equip_cursor == 9 && z64_file.equip_tunic == 1) || (z64_game.pause_ctxt.equip_cursor == 10 && z64_file.equip_tunic == 2) || (z64_game.pause_ctxt.equip_cursor == 11 && z64_file.equip_tunic == 3) )
+				unequip_tunic();
 	}
 	
 	if (z64_game.pause_ctxt.screen_idx == 0 && CFG_UNEQUIP_ITEM_ENABLED) { // Unset item from C button
@@ -371,6 +377,15 @@ void unequip_shield() {
 	if (z64_file.link_age)
 		z64_file.child_equip_shield		= 0;
 	else z64_file.adult_equip_shield	= 0;
+	z64_UpdateEquipment(&z64_game, &z64_link);
+	z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+}
+
+void unequip_tunic() {
+	z64_file.equip_tunic				= 0;
+	if (z64_file.link_age)
+		z64_file.child_equip_tunic		= 0;
+	else z64_file.adult_equip_tunic		= 0;
 	z64_UpdateEquipment(&z64_game, &z64_link);
 	z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 }

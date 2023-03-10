@@ -25,6 +25,9 @@ void handle_dpad() {
 	handle_fps();
 	handle_l_button();
 	handle_infinite();
+	handle_rupee_dash();
+	handle_weaker_swords();
+	handle_abilities();
 	
 	if (CFG_KEEP_MASK) {
 		if (z64_change_scene == 0x20000001)
@@ -54,10 +57,10 @@ void handle_dpad_ingame() {
 }
 
 void draw_dpad() {
-    if (CFG_DISPLAY_DPAD == 0 || CFG_DPAD_ENABLED == 0)
+    if (CFG_DISPLAY_DPAD == 0 || CFG_DPAD_ENABLED == 0 || (z64_game.pause_ctxt.state > 0x7 && z64_game.pause_ctxt.state < 0x12) )
 		return;
 	
-	uint8_t *dpad_active  = check_dpad_actions();
+	uint8_t *dpad_active = check_dpad_actions();
 	if (z64_game.pause_ctxt.state == 0)
 		if (!dpad_active[0] && !dpad_active[1] && !dpad_active[2] && !dpad_active[3])
 			return;

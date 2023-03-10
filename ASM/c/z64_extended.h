@@ -26,7 +26,7 @@ typedef enum {
 } dpad_action_t;
 
 typedef enum {
-	LIMIT_STICK			= 0x00,
+	LIMIT_STICK			= 0x0,
 	LIMIT_NUT,
 	LIMIT_BOMB,
 	LIMIT_BOW,
@@ -68,6 +68,16 @@ typedef enum {
 	LIMIT_HOVER_BOOTS,
 } limit_item_t;
 
+typedef enum {
+	COLOR_KOKIRI		= 0x0,
+	COLOR_GORON			= 0x1,
+	COLOR_ZORA			= 0x2,
+	COLOR_FOREST		= 0x10,
+	COLOR_FIRE			= 0x4,
+	COLOR_WATER			= 0x5,
+	COLOR_SHADOW		= 0xC0,
+} tunic_color_t;
+
 typedef struct {
 	char		item[0x002C];
 } z64_usability_t;
@@ -105,6 +115,18 @@ typedef struct {
 #define z64_dpad_lens_1					(*(uint16_t*)			0x80072D40)
 #define z64_dpad_lens_2					(*(uint16_t*)			0x80072D4C)
 #define z64_dpad_lens_3					(*(uint16_t*)			0x80072D58)
+
+/* DRAM addresses & data for FPS */
+#define fps_limit						(*(uint8_t*)			0x801C6FA1)
+#define is_demo							(*(uint8_t*)			0x801DB09D)
+#define control_link					(*(uint16_t*)			0x801DAADE)
+
+/* DRAM addresses & data for Medallion Abilities */
+#define z64_tunic_color					(*(uint8_t*)			0x801DAB6C)
+#define z64_move_speed					(*(uint16_t*)			0x801DB258)
+#define z64_damage_frames				(*(uint8_t*)			0x801DB498)
+#define z64_sword_damage_1				(*(uint8_t*)			0x801DAF1E)
+#define z64_sword_damage_2				(*(uint8_t*)			0x801DAF9E)
 
 /* D-Pad Availability */
 #define BLOCK_DPAD						(0x00000001 | 0x00000002 | 0x00000080 | 0x00000400 | 0x10000000 | 0x20000000)

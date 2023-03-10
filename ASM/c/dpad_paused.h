@@ -15,5 +15,6 @@ void handle_downgrading();
 void swap_item(z64_slot_t slot, z64_item_t original, z64_item_t swap);
 void unequip_sword(uint8_t play);
 void unequip_shield();
+void unequip_tunic();
 
 #endif

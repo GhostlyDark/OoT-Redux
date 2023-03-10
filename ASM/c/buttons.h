@@ -15,5 +15,8 @@ void inventory_editor();
 void handle_downgrading();
 void swap_item(z64_slot_t slot, z64_item_t original, z64_item_t swap);
 void handle_infinite();
+void handle_rupee_dash();
+void handle_weaker_swords();
+void handle_abilities();
 
 #endif
