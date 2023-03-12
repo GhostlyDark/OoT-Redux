@@ -10,7 +10,7 @@ extern uint8_t CFG_ALLOW_MIRROR_SHIELD;
 extern uint8_t CFG_ALLOW_TUNIC;
 extern uint8_t CFG_ALLOW_BOOTS;
 
-extern uint8_t dpad_alt;
+extern uint8_t  dpad_alt;
 extern uint16_t dpad_x;
 extern uint16_t dpad_y;
 

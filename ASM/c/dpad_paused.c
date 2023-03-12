@@ -15,12 +15,12 @@ void handle_dpad_paused() {
 	check_lens();
 	check_default_dpad_actions();
 	
-	if (!CAN_USE_DPAD || z64_game.pause_ctxt.state != 6 || CFG_DPAD_ENABLED == 0 || z64_game.pause_ctxt.unk_02_[1] != 0 || z64_game.pause_ctxt.cursor_pos == 0x0A || z64_game.pause_ctxt.cursor_pos == 0x0B) 
-		return;
-    pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
-	
-	handle_dpad_slots(pad_pressed);
-	handle_unequipping(pad_pressed);
+	if (IS_PAUSE_SCREEN_CURSOR) {
+		pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
+		if (CAN_USE_DPAD && CFG_DPAD_ENABLED > 0)
+			handle_dpad_slots(pad_pressed);
+		handle_unequipping(pad_pressed);
+	}
 }
 
 void handle_dpad_slots(pad_t pad_pressed) {
@@ -267,22 +267,21 @@ void set_dpad_action(pad_t pad_pressed, dpad_action_t action, limit_item_t limit
 }
 
 void handle_unequipping(pad_t pad_pressed) {
-	if (!pad_pressed.cu)
-		return;
 	
-	if (z64_game.pause_ctxt.screen_idx == 3) {
+	
+	if (z64_game.pause_ctxt.screen_idx == 3 && pad_pressed.a) {
 		if (CFG_UNEQUIP_GEAR_ENABLED) { // Unequip gear
-			if ( (z64_game.pause_ctxt.equip_cursor == 1 && z64_file.equip_sword  == 1) || (z64_game.pause_ctxt.equip_cursor == 2 && z64_file.equip_sword  == 2) || (z64_game.pause_ctxt.equip_cursor == 3 && z64_file.equip_sword  == 3) )
+			if ( (z64_game.pause_ctxt.equip_cursor == 1  && z64_file.equip_sword  == 1) || (z64_game.pause_ctxt.equip_cursor == 2  && z64_file.equip_sword  == 2) || (z64_game.pause_ctxt.equip_cursor == 3  && z64_file.equip_sword  == 3) )
 				unequip_sword(1);
-			if ( (z64_game.pause_ctxt.equip_cursor == 5 && z64_file.equip_shield == 1) || (z64_game.pause_ctxt.equip_cursor == 6 && z64_file.equip_shield == 2) || (z64_game.pause_ctxt.equip_cursor == 7 && z64_file.equip_shield == 3) )
+			if ( (z64_game.pause_ctxt.equip_cursor == 5  && z64_file.equip_shield == 1) || (z64_game.pause_ctxt.equip_cursor == 6  && z64_file.equip_shield == 2) || (z64_game.pause_ctxt.equip_cursor == 7  && z64_file.equip_shield == 3) )
 				unequip_shield();
 		}
-		if (CFG_ABILITIES_ENABLED)
-			if ( (z64_game.pause_ctxt.equip_cursor == 9 && z64_file.equip_tunic == 1) || (z64_game.pause_ctxt.equip_cursor == 10 && z64_file.equip_tunic == 2) || (z64_game.pause_ctxt.equip_cursor == 11 && z64_file.equip_tunic == 3) )
+		if (CFG_ABILITIES_ENABLED || CFG_UNEQUIP_GEAR_ENABLED)
+			if ( (z64_game.pause_ctxt.equip_cursor == 9  && z64_file.equip_tunic  == 1) || (z64_game.pause_ctxt.equip_cursor == 10 && z64_file.equip_tunic  == 2) || (z64_game.pause_ctxt.equip_cursor == 11 && z64_file.equip_tunic  == 3) )
 				unequip_tunic();
 	}
 	
-	if (z64_game.pause_ctxt.screen_idx == 0 && CFG_UNEQUIP_ITEM_ENABLED) { // Unset item from C button
+	if (z64_game.pause_ctxt.screen_idx == 0 && CFG_UNEQUIP_ITEM_ENABLED && pad_pressed.cu) { // Unset item from C button
 		for (uint8_t item=0; item<24; item++) {
 			if (z64_game.pause_ctxt.item_cursor == item) {
 				for (uint8_t button=1; button<=3; button++) {
@@ -360,6 +359,13 @@ void swap_item(z64_slot_t slot, z64_item_t item, z64_item_t swap) {
 	}
 }
 
+void unequip_gear(uint8_t play) {
+	z64_game.common.input[0].raw.pad.a = z64_game.common.input[0].pad_pressed.a = 0;
+	z64_UpdateEquipment(&z64_game, &z64_link);
+	if (play)
+		z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+}
+
 void unequip_sword(uint8_t play) {
 	z64_file.equip_sword				= 0;
 	if (z64_file.link_age)
@@ -367,9 +373,7 @@ void unequip_sword(uint8_t play) {
 	else z64_file.adult_equip_sword		= 0;
 	z64_file.inf_table[29]				= 1;
 	z64_file.button_items[0]			= -1;
-	z64_UpdateEquipment(&z64_game, &z64_link);
-	if (play)
-		z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	unequip_gear(play);
 }
 
 void unequip_shield() {
@@ -377,8 +381,7 @@ void unequip_shield() {
 	if (z64_file.link_age)
 		z64_file.child_equip_shield		= 0;
 	else z64_file.adult_equip_shield	= 0;
-	z64_UpdateEquipment(&z64_game, &z64_link);
-	z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	unequip_gear(1);
 }
 
 void unequip_tunic() {
@@ -386,6 +389,5 @@ void unequip_tunic() {
 	if (z64_file.link_age)
 		z64_file.child_equip_tunic		= 0;
 	else z64_file.adult_equip_tunic		= 0;
-	z64_UpdateEquipment(&z64_game, &z64_link);
-	z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	unequip_gear(1);
 }

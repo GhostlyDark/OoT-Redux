@@ -109,7 +109,20 @@ typedef struct {
 #define z64_camera_view					(*(uint8_t*)			0x801DB0CD)
 #define z64_mask_equipped				(*(uint8_t*)			0x801DAB7F)
 #define z64_throwing_nut				(*(uint8_t*)			0x80124696)
+#define z64_triswipe					(*(uint8_t*)			0x8011B9ED)
+#define z64_y_axis_input				(*(int8_t*)				0x801C84C9)
+#define z64_link_animation_parameter	(*(uint16_t*)			0x801DABF0)
+#define z64_link_a_action				(*(uint16_t*)			0x801DAA90)
 
+/*
+#define test1							(*(int8_t*)				0x8011D733)
+#define test2							(*(int8_t*)				0x8011D739)
+#define test3							(*(int8_t*)				0x8011D745)
+#define test4							(*(int8_t*)				0x8011D793)
+#define test5							(*(int8_t*)				0x801C84B7)
+#define test6							(*(int8_t*)				0x801C84BD)
+#define test8							(*(int8_t*)				0x801DAA8F)
+*/
 
 /* DRAM addresses & data for Lens of Truth on D-Pad */
 #define z64_dpad_lens_1					(*(uint16_t*)			0x80072D40)
@@ -127,8 +140,20 @@ typedef struct {
 #define z64_damage_frames				(*(uint8_t*)			0x801DB498)
 #define z64_sword_damage_1				(*(uint8_t*)			0x801DAF1E)
 #define z64_sword_damage_2				(*(uint8_t*)			0x801DAF9E)
+#define z64_inner_red_trail_r			(*(uint8_t*)			0x80273794)
+#define z64_inner_red_trail_g			(*(uint8_t*)			0x80273795)
+#define z64_inner_red_trail_b			(*(uint8_t*)			0x80273796)
+#define z64_outer_red_trail_r			(*(uint8_t*)			0x802738B4)
+#define z64_outer_red_trail_g			(*(uint8_t*)			0x802738B5)
+#define z64_outer_red_trail_b			(*(uint8_t*)			0x802738B6)
 
-/* D-Pad Availability */
+/* Availability */
+#define IS_INTRO						(is_demo == 0x80 || is_demo == 0xFB)
+#define HAS_MAGIC						(z64_file.magic_acquired && z64_file.magic_capacity_set)
+#define CAN_CONTROL_LINK				(control_link == 0x3208 && z64_game.pause_ctxt.state == 0 && CAN_USE_DPAD)
+#define IS_PAUSE_SCREEN_CURSOR			(z64_game.pause_ctxt.state == 6 && z64_game.pause_ctxt.unk_02_[1] == 0 && z64_game.pause_ctxt.cursor_pos != 0xA && z64_game.pause_ctxt.cursor_pos != 0xB)
+
+/* D-Pad & Controls Availability */
 #define BLOCK_DPAD						(0x00000001 | 0x00000002 | 0x00000080 | 0x00000400 | 0x10000000 | 0x20000000)
 #define CAN_USE_DPAD					( ( (z64_link.state_flags_1 & BLOCK_DPAD) == 0) && ( (uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && (z64_file.game_mode == 0) && ( (z64_event_state_1 & 0x20) == 0) )
 #define CAN_DRAW_HUD					( ( (uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && (z64_file.game_mode == 0) && ( (z64_event_state_1 & 0x20) == 0) )

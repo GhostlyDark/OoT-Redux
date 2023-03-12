@@ -7,6 +7,7 @@
 void handle_fps();
 
 /* DRAM addresses & data for 30 FPS */
+// Nayru's Love Timer: 0x8011B998
 
 #define bottle_action					(*(uint32_t*)			0x801C86B2)
 #define link_animation_parameter		(*(uint32_t*)			0x801DABF0)
@@ -25,6 +26,8 @@ void handle_fps();
 #define fishing							(*(uint8_t*)			0x801C8C41)
 #define frogs							(*(uint8_t*)			0x801C8835)
 #define change_scene					(*(uint8_t*)			0x801DB09C)
+#define lens_of_truth_start				(*(uint8_t*)			0x80072747)
+#define lens_of_truth_interval			(*(uint8_t*)			0x80072E0B) // 0x801D8BC1
 
 #define timer1_1						(*(uint16_t*)			0x800772FE)
 #define timer1_2						(*(uint16_t*)			0x80077366)

@@ -3,7 +3,8 @@
 extern uint8_t CFG_FPS_ENABLED;
 
 uint8_t  fps_switch					= 1;
-uint16_t deku_stick_timer_switch	= 0;
+uint8_t deku_stick_timer_switch		= 0;
+uint8_t nayrus_love_timer_switch	= 0;
 uint16_t last_time					= 0;
 uint16_t started_timer				= 0;
 
@@ -37,6 +38,13 @@ void handle_fps() {
 		else if (deku_stick_timer == 0)
 			deku_stick_timer_switch = 0;
 		
+		if (z64_file.nayrus_love_timer == 601 && !nayrus_love_timer_switch) {
+			z64_file.nayrus_love_timer -= 600;
+			nayrus_love_timer_switch = 1;
+		}
+		else if (z64_file.nayrus_love_timer == 0 || z64_file.nayrus_love_timer > 601)
+			nayrus_love_timer_switch = 0;
+		
 		if (link_animation == 0x2968 || link_animation == 0x2970 || link_animation == 0x2A80 || link_animation == 0x2A90)
 			link_animation_parameter = 0x3F4CCCCD;
 		
@@ -45,9 +53,10 @@ void handle_fps() {
 		
 		if (time_of_day_speed == 10)
 			time_of_day_speed = 7;
-		
 		if (hover_boots_length == 19)
-			hover_boots_length	= 30;
+			hover_boots_length = 30;
+		if (lens_of_truth_start == 80)
+			lens_of_truth_start	= lens_of_truth_interval = 120;
 		
 		// Timers
 		timer1_1 = timer1_2 = timer1_3 = timer1_4 = 0x1E;
@@ -59,8 +68,12 @@ void handle_fps() {
 			
 	}
 	else if (fps_limit == 3) {
+		if (time_of_day_speed == 7)
+			time_of_day_speed = 10;
 		if (hover_boots_length == 30)
 			hover_boots_length	= 19;
+		if (lens_of_truth_start == 120)
+			lens_of_truth_start	= lens_of_truth_interval = 80;
 		
 		// Timers
 		timer1_1 = timer1_2 = timer1_3 = timer1_4 = 0x14;

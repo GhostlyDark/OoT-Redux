@@ -6,6 +6,7 @@
 
 void handle_buttons();
 void handle_l_button();
+void handle_inverted_axis();
 void handle_layout();
 void handle_hud();
 void toggle_minimap();
@@ -18,5 +19,7 @@ void handle_infinite();
 void handle_rupee_dash();
 void handle_weaker_swords();
 void handle_abilities();
+void handle_abilities_tunic_colors();
+void handle_power_crouch_stab_fix();
 
 #endif

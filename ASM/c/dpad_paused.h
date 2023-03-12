@@ -13,6 +13,7 @@ void set_dpad_action(pad_t pad_pressed, dpad_action_t action, limit_item_t restr
 void handle_unequipping(pad_t pad_pressed);
 void handle_downgrading();
 void swap_item(z64_slot_t slot, z64_item_t original, z64_item_t swap);
+void unequip_gear(uint8_t play);
 void unequip_sword(uint8_t play);
 void unequip_shield();
 void unequip_tunic();
