@@ -78,6 +78,36 @@ typedef enum {
 	COLOR_SHADOW		= 0xC0,
 } tunic_color_t;
 
+typedef enum {
+	OPTIONS_SIZE		= 23,
+	OPTIONS_LENGTH		= 17,
+	OPTIONS_ROWS		= 13,
+	
+	OPTION_30_FPS		= 0,
+	OPTION_RUPEE_DRAIN,
+	OPTION_HIDE_HUD,
+	OPTION_HUD_LAYOUT,
+	OPTION_DPAD,
+	OPTION_SHOW_DPAD,
+	OPTION_INVERSE_AIM,
+	OPTION_NO_IDLE_CAMERA,
+	OPTION_EXTRA_ABILITIES,
+	OPTION_UNEQUIP_GEAR,
+	OPTION_UNEQUIP_ITEM,
+	OPTION_ITEM_ON_B,
+	OPTION_WEAKER_SWORDS,
+	OPTION_DOWNGRADE_ITEM,
+	OPTION_CROUCH_STAB_FIX,
+	OPTION_KEEP_MASK,
+	OPTION_TRISWIPE,
+	OPTION_INVENTORY_EDITOR,
+	OPTION_LEVITATION,
+	OPTION_INFINITE_HP,
+	OPTION_INFINITE_MP,
+	OPTION_INFINITE_RUPEES,
+	OPTION_INFINITE_AMMO,
+} option;
+
 typedef struct {
 	char		item[0x002C];
 } z64_usability_t;
@@ -91,7 +121,7 @@ typedef struct {
 	uint16_t	stick_upgrade[4];	// 0,  20,  30,  40
 	uint16_t	nut_upgrade[4];		// 0,  10,  20,  30
 	
-} z64_capacity;
+} z64_capacity_t;
 
 /* Functions */
 #define z64_playsfx						((playsfx_t)			0x800C806C)
@@ -99,30 +129,30 @@ typedef struct {
 
 /* DRAM addresses & data */
 #define z64_usability					(*(z64_usability_t*)	0x8039F114)
-#define z64_capacity					(*(z64_capacity*)		0x800F8CCC)
+#define z64_capacity					(*(z64_capacity_t*)		0x800F8CCC)
 #define z64_change_scene				(*(uint32_t*)			0x801DB09C)
 #define z64_has_minimap					(*(uint16_t*)			0x8018884C)	// 0x8011B9B3, 8017643C, 8018884C
 #define z64_dungeon_scene				(*(uint16_t*)			0x801D8BEA)
 #define z64_scene						(*(uint16_t*)			0x801C8544)
-#define z64_b_button_label_x			(*(uint16_t*)			0x801C7C3A)
-#define z64_b_button_label_y			(*(uint16_t*)			0x801C7C3E)
 #define z64_camera_view					(*(uint8_t*)			0x801DB0CD)
 #define z64_mask_equipped				(*(uint8_t*)			0x801DAB7F)
 #define z64_throwing_nut				(*(uint8_t*)			0x80124696)
 #define z64_triswipe					(*(uint8_t*)			0x8011B9ED)
 #define z64_y_axis_input				(*(int8_t*)				0x801C84C9)
+#define z64_button_input				(*(int16_t*)			0x801C84C0) // 801C84B4, 801C84BA, 801C84C6
 #define z64_link_animation_parameter	(*(uint16_t*)			0x801DABF0)
 #define z64_link_a_action				(*(uint16_t*)			0x801DAA90)
+#define z64_idle_camera_counter			(*(uint8_t*)			0x801C86CF)
 
-/*
-#define test1							(*(int8_t*)				0x8011D733)
-#define test2							(*(int8_t*)				0x8011D739)
-#define test3							(*(int8_t*)				0x8011D745)
-#define test4							(*(int8_t*)				0x8011D793)
-#define test5							(*(int8_t*)				0x801C84B7)
-#define test6							(*(int8_t*)				0x801C84BD)
-#define test8							(*(int8_t*)				0x801DAA8F)
-*/
+/* DRAM addresses & data for HUD */
+#define z64_b_button_label_x			(*(uint16_t*)			0x801C7C3A)
+#define z64_b_button_label_y			(*(uint16_t*)			0x801C7C3E)
+#define z64_c_left_x_set_item			(*(uint16_t*)			0x8039EAF8)
+#define z64_c_left_y_set_item			(*(uint16_t*)			0x8039EB00)
+#define z64_c_down_x_set_item			(*(uint16_t*)			0x8039EAFA)
+#define z64_c_down_y_set_item			(*(uint16_t*)			0x8039EB02)
+#define z64_c_right_x_set_item			(*(uint16_t*)			0x8039EAFC)
+#define z64_c_right_y_set_item			(*(uint16_t*)			0x8039EB04)
 
 /* DRAM addresses & data for Lens of Truth on D-Pad */
 #define z64_dpad_lens_1					(*(uint16_t*)			0x80072D40)
@@ -131,7 +161,6 @@ typedef struct {
 
 /* DRAM addresses & data for FPS */
 #define fps_limit						(*(uint8_t*)			0x801C6FA1)
-#define is_demo							(*(uint8_t*)			0x801DB09D)
 #define control_link					(*(uint16_t*)			0x801DAADE)
 
 /* DRAM addresses & data for Medallion Abilities */
@@ -148,14 +177,14 @@ typedef struct {
 #define z64_outer_red_trail_b			(*(uint8_t*)			0x802738B6)
 
 /* Availability */
-#define IS_INTRO						(is_demo == 0x80 || is_demo == 0xFB)
 #define HAS_MAGIC						(z64_file.magic_acquired && z64_file.magic_capacity_set)
-#define CAN_CONTROL_LINK				(control_link == 0x3208 && z64_game.pause_ctxt.state == 0 && CAN_USE_DPAD)
+#define CAN_CONTROL_LINK				(z64_game.pause_ctxt.state == 0 && (uint32_t)z64_ctxt.state_dtor == z64_state_ovl_tab[3].vram_dtor && z64_file.game_mode == 0 && (z64_event_state_1 & 0x20) == 0)
 #define IS_PAUSE_SCREEN_CURSOR			(z64_game.pause_ctxt.state == 6 && z64_game.pause_ctxt.unk_02_[1] == 0 && z64_game.pause_ctxt.cursor_pos != 0xA && z64_game.pause_ctxt.cursor_pos != 0xB)
+#define TYCOON_WALLET					(z64_file.event_chk_inf[13] & (1 << 13) )
 
 /* D-Pad & Controls Availability */
 #define BLOCK_DPAD						(0x00000001 | 0x00000002 | 0x00000080 | 0x00000400 | 0x10000000 | 0x20000000)
-#define CAN_USE_DPAD					( ( (z64_link.state_flags_1 & BLOCK_DPAD) == 0) && ( (uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && (z64_file.game_mode == 0) && ( (z64_event_state_1 & 0x20) == 0) )
+#define CAN_USE_DPAD					( (z64_link.state_flags_1 & BLOCK_DPAD) == 0 && (uint32_t)z64_ctxt.state_dtor == z64_state_ovl_tab[3].vram_dtor && z64_file.game_mode == 0 && (z64_event_state_1 & 0x20) == 0)
 #define CAN_DRAW_HUD					( ( (uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && (z64_file.game_mode == 0) && ( (z64_event_state_1 & 0x20) == 0) )
 
 /* D-Pad Usability for Items */
@@ -196,10 +225,40 @@ typedef struct {
 #define DPAD_CHILD_SET2_LEFT			(DPAD_CHILD_LEFT & 0xF)
 
 /* Extra saving for Redux */
-#define EXTRA_SRAM						(z64_file.unk_08_[0])
-#define DPAD_INIT_SETUP					(EXTRA_SRAM & (1 << 0) )
-#define DOWNGRADE_GIANTS_KNIFE			(EXTRA_SRAM & (1 << 1) )
-#define DOWNGRADE_OCARINA				(EXTRA_SRAM & (1 << 2) )
-#define DOWNGRADE_HOOKSHOT				(EXTRA_SRAM & (1 << 3) )
+#define EXTRA_SRAM_1					(*(uint8_t*)			0x8011B4FE)
+#define DPAD_INIT_SETUP					(EXTRA_SRAM_1 & (1 << 0) )
+#define DOWNGRADE_GIANTS_KNIFE			(EXTRA_SRAM_1 & (1 << 1) )
+#define DOWNGRADE_OCARINA				(EXTRA_SRAM_1 & (1 << 2) )
+#define DOWNGRADE_HOOKSHOT				(EXTRA_SRAM_1 & (1 << 3) )
+#define SAVE_30_FPS						(EXTRA_SRAM_1 & (1 << 4) )
+#define SAVE_INVERSE_AIM				(EXTRA_SRAM_1 & (1 << 5) )
+#define SAVE_NO_IDLE_CAMERA				(EXTRA_SRAM_1 & (1 << 6) )
+#define SAVE_EXTRA_ABILITIES			(EXTRA_SRAM_1 & (1 << 7) )
+
+#define EXTRA_SRAM_2					(*(uint8_t*)			0x8011B4FF)
+#define SAVE_UNEQUIP_GEAR				(EXTRA_SRAM_2 & (1 << 0) )
+#define SAVE_UNEQUIP_ITEM				(EXTRA_SRAM_2 & (1 << 1) )
+#define SAVE_ITEM_ON_B					(EXTRA_SRAM_2 & (1 << 2) )
+#define SAVE_WEAKER_SWORDS				(EXTRA_SRAM_2 & (1 << 3) )
+#define SAVE_DOWNGRADE_ITEM				(EXTRA_SRAM_2 & (1 << 4) )
+#define SAVE_CROUCH_STAB_FIX			(EXTRA_SRAM_2 & (1 << 5) )
+#define SAVE_KEEP_MASK					(EXTRA_SRAM_2 & (1 << 6) )
+#define SAVE_TRISWIPE					(EXTRA_SRAM_2 & (1 << 7) )
+
+#define EXTRA_SRAM_3					(*(uint8_t*)			0x8011B500)
+#define SAVE_RUPEE_DRAIN				( (EXTRA_SRAM_3 & 0xF)  >> 0)
+#define SAVE_HIDE_HUD					( (EXTRA_SRAM_3 & 0x70) >> 4)
+
+#define EXTRA_SRAM_4					(*(uint8_t*)			0x8011B501)
+#define SAVE_DPAD						( (EXTRA_SRAM_4 & 0x3)  >> 0)
+#define SAVE_SHOW_DPAD					( (EXTRA_SRAM_4 & 0xC)  >> 2)
+#define SAVE_HUD_LAYOUT					( (EXTRA_SRAM_4 & 0x70) >> 4)
+
+#define EXTRA_SRAM_5					(*(uint8_t*)			0x8011B4F2)
+#define SAVE_LEVITATION					(EXTRA_SRAM_5 & (1 << 0) )
+#define SAVE_INFINITE_HP				(EXTRA_SRAM_5 & (1 << 1) )
+#define SAVE_INFINITE_MP				(EXTRA_SRAM_5 & (1 << 2) )
+#define SAVE_INFINITE_RUPEES			(EXTRA_SRAM_5 & (1 << 3) )
+#define SAVE_INFINITE_AMMO				(EXTRA_SRAM_5 & (1 << 4) )
 
 #endif

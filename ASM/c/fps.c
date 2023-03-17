@@ -1,7 +1,5 @@
 #include "fps.h"
 
-extern uint8_t CFG_FPS_ENABLED;
-
 uint8_t  fps_switch					= 1;
 uint8_t deku_stick_timer_switch		= 0;
 uint8_t nayrus_love_timer_switch	= 0;
@@ -9,8 +7,10 @@ uint16_t last_time					= 0;
 uint16_t started_timer				= 0;
 
 void handle_fps() {
-	if (!CFG_FPS_ENABLED || z64_game.pause_ctxt.state != 0)
+	if (!SAVE_30_FPS || z64_game.pause_ctxt.state != 0 || z64_file.game_mode != 0) {
+		reset_fps_values();
 		return;
+	}
 	
 	if ( (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.z) || (z64_game.common.input[0].raw.pad.z && z64_game.common.input[0].pad_pressed.l) ) {
 		fps_switch ^= 1;
@@ -19,13 +19,11 @@ void handle_fps() {
 		else z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 	}
 	
-	if (is_demo == 0xFB)
-		fps_limit = 1;
-	else if (!fps_switch)
+	if (!fps_switch)
 		fps_limit = 3;
-	else if (playing_ocarina || change_scene == 0x20)
+	else if (playing_ocarina || change_scene == 0x20 || talking_to_npc)
 		fps_limit = 2;
-	else if (is_demo == 0x80 || control_link == 0 || control_link == 0x4200 || (control_link == 0xFF00 && !talking_to_npc) || hookshot_active == 0x100B || link_animation == 0x2708 || bottle_action == 0x00010005 || frogs > 1)
+	else if (z64_file.game_mode == 1 || !CAN_CONTROL_LINK || hookshot_active == 0x100B || link_animation == 0x2708 || bottle_action == 0x00010005 || frogs > 1)
 		fps_limit = 3;
 	else if (fps_switch)
 		fps_limit = 2;
@@ -59,23 +57,29 @@ void handle_fps() {
 			lens_of_truth_start	= lens_of_truth_interval = 120;
 		
 		// Timers
-		timer1_1 = timer1_2 = timer1_3 = timer1_4 = 0x1E;
-		timer2_1 = timer2_2 = timer2_3 = timer2_4 = timer2_5 = timer2_6 = 0x1E;
-		timer2_7 = 0x3C;
-		timer3_1 = timer3_2 = timer3_3 = 0x1E;
-		timer4_2 = timer4_3 = timer4_4 = timer4_5 = 0x1E;
-		timer4_1 = timer4_6 = timer4_7 = 0x3C;
-			
+		if (timer1_1 == 0x14) {
+			timer1_1 = timer1_2 = timer1_3 = timer1_4 = 0x1E;
+			timer2_1 = timer2_2 = timer2_3 = timer2_4 = timer2_5 = timer2_6 = 0x1E;
+			timer2_7 = 0x3C;
+			timer3_1 = timer3_2 = timer3_3 = 0x1E;
+			timer4_2 = timer4_3 = timer4_4 = timer4_5 = 0x1E;
+			timer4_1 = timer4_6 = timer4_7 = 0x3C;
+		}
 	}
-	else if (fps_limit == 3) {
-		if (time_of_day_speed == 7)
-			time_of_day_speed = 10;
-		if (hover_boots_length == 30)
-			hover_boots_length	= 19;
-		if (lens_of_truth_start == 120)
-			lens_of_truth_start	= lens_of_truth_interval = 80;
+	else if (fps_limit == 3)
+		reset_fps_values();
+}
+
+void reset_fps_values() {
+	if (time_of_day_speed == 7)
+		time_of_day_speed = 10;
+	if (hover_boots_length == 30)
+		hover_boots_length	= 19;
+	if (lens_of_truth_start == 120)
+		lens_of_truth_start	= lens_of_truth_interval = 80;
 		
-		// Timers
+	// Timers
+	if (timer1_1 == 0x1E) {
 		timer1_1 = timer1_2 = timer1_3 = timer1_4 = 0x14;
 		timer2_1 = timer2_2 = timer2_3 = timer2_4 = timer2_5 = timer2_6 = 0x14;
 		timer2_7 = 0x28;

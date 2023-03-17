@@ -6,7 +6,6 @@
 
 void handle_dpad_paused();
 void handle_dpad_slots(pad_t pad_pressed);
-void check_default_dpad_actions();
 void check_lens();
 void unlock_lens(uint8_t button);
 void set_dpad_action(pad_t pad_pressed, dpad_action_t action, limit_item_t restriction);

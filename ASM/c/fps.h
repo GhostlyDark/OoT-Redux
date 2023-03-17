@@ -5,9 +5,7 @@
 #include "z64_extended.h"
 
 void handle_fps();
-
-/* DRAM addresses & data for 30 FPS */
-// Nayru's Love Timer: 0x8011B998
+void reset_fps_values();
 
 #define bottle_action					(*(uint32_t*)			0x801C86B2)
 #define link_animation_parameter		(*(uint32_t*)			0x801DABF0)

@@ -1,30 +1,23 @@
 #include "dpad_paused.h"
 
-extern uint8_t CFG_DPAD_ENABLED;
-extern uint8_t CFG_UNEQUIP_GEAR_ENABLED;
-extern uint8_t CFG_UNEQUIP_ITEM_ENABLED;
-extern uint8_t CFG_SWAP_ITEM_ENABLED;
-extern uint8_t CFG_ABILITIES_ENABLED;
+extern uint8_t dpad_alt;
 
-uint8_t knife_counter		= 0xFF;
-uint8_t checked_lens		= 0;
-
-extern uint8_t DPAD_ALT;
+uint8_t knife_counter	= 0xFF;
+uint8_t checked_lens	= 0;
 
 void handle_dpad_paused() {
 	check_lens();
-	check_default_dpad_actions();
 	
 	if (IS_PAUSE_SCREEN_CURSOR) {
 		pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
-		if (CAN_USE_DPAD && CFG_DPAD_ENABLED > 0)
+		if (CAN_USE_DPAD && SAVE_DPAD > 0)
 			handle_dpad_slots(pad_pressed);
 		handle_unequipping(pad_pressed);
 	}
 }
 
 void handle_dpad_slots(pad_t pad_pressed) {
-	if (CFG_DPAD_ENABLED == 0)
+	if (SAVE_DPAD == 0)
 		return;
 	
 	if (z64_game.pause_ctxt.screen_idx == 3) {
@@ -75,23 +68,8 @@ void handle_dpad_slots(pad_t pad_pressed) {
 	}
 }
 
-void check_default_dpad_actions() {
-	if (DPAD_INIT_SETUP)
-		return;
-	EXTRA_SRAM |= 1;
-	
-	DPAD_ADULT_UP		= DPAD_ARROWS		* 16 + DPAD_SWORD;
-	DPAD_ADULT_RIGHT	= DPAD_HOVER_BOOTS  * 16 + DPAD_BOOTS;
-	DPAD_ADULT_DOWN		= DPAD_OCARINA		* 16 + DPAD_SHIELD;
-	DPAD_ADULT_LEFT		= DPAD_IRON_BOOTS	* 16 + DPAD_TUNIC;
-	DPAD_CHILD_UP		= DPAD_LENS			* 16 + DPAD_SWORD;
-	DPAD_CHILD_RIGHT	= DPAD_CHILD_TRADE	* 16 + DPAD_BOOTS;
-	DPAD_CHILD_DOWN		= DPAD_OCARINA		* 16 + DPAD_SHIELD;
-	DPAD_CHILD_LEFT		= DPAD_NULL			* 16 + DPAD_TUNIC;
-}
-
 void check_lens() {
-	if (checked_lens || !CAN_USE_DPAD || CFG_DPAD_ENABLED == 0)
+	if (checked_lens || !CAN_USE_DPAD || SAVE_DPAD == 0)
 		return;
 	checked_lens = 1;
 	
@@ -99,25 +77,25 @@ void check_lens() {
 	z64_dpad_lens_2 = 0x504F;
 	z64_dpad_lens_3 = 0x5458;
 	
-	if (!z64_file.link_age && !DPAD_ALT) {
+	if (!z64_file.link_age && !dpad_alt) {
 		unlock_lens(DPAD_ADULT_SET1_UP);
 		unlock_lens(DPAD_ADULT_SET1_RIGHT);
 		unlock_lens(DPAD_ADULT_SET1_DOWN);
 		unlock_lens(DPAD_ADULT_SET1_LEFT);
 	}
-	else if (!z64_file.link_age && DPAD_ALT) {
+	else if (!z64_file.link_age && dpad_alt) {
 		unlock_lens(DPAD_ADULT_SET2_UP);
 		unlock_lens(DPAD_ADULT_SET2_RIGHT);
 		unlock_lens(DPAD_ADULT_SET2_DOWN);
 		unlock_lens(DPAD_ADULT_SET2_LEFT);
 	}
-	else if (z64_file.link_age && !DPAD_ALT) {
+	else if (z64_file.link_age && !dpad_alt) {
 		unlock_lens(DPAD_CHILD_SET1_UP);
 		unlock_lens(DPAD_CHILD_SET1_RIGHT);
 		unlock_lens(DPAD_CHILD_SET1_DOWN);
 		unlock_lens(DPAD_CHILD_SET1_LEFT);
 	}
-	else if (z64_file.link_age && DPAD_ALT) {
+	else if (z64_file.link_age && dpad_alt) {
 		unlock_lens(DPAD_CHILD_SET2_UP);
 		unlock_lens(DPAD_CHILD_SET2_RIGHT);
 		unlock_lens(DPAD_CHILD_SET2_DOWN);
@@ -139,28 +117,28 @@ void set_dpad_action(pad_t pad_pressed, dpad_action_t action, limit_item_t limit
 	uint16_t sfx = 0x4808;
 	
 	if (pad_pressed.du) {
-		if (!z64_file.link_age && !DPAD_ALT) {
+		if (!z64_file.link_age && !dpad_alt) {
 			if (DPAD_ADULT_SET1_UP == action) {
 				DPAD_ADULT_UP = DPAD_NULL * 16 + DPAD_ADULT_SET2_UP;
 				sfx = 0x480A;
 			}
 			else DPAD_ADULT_UP = action * 16 + DPAD_ADULT_SET2_UP;
 		}
-		else if (!z64_file.link_age && DPAD_ALT) {
+		else if (!z64_file.link_age && dpad_alt) {
 			if (DPAD_ADULT_SET2_UP == action) {
 				DPAD_ADULT_UP = DPAD_ADULT_SET1_UP * 16 + DPAD_NULL;
 				sfx = 0x480A;
 			}
 			else DPAD_ADULT_UP = DPAD_ADULT_SET1_UP * 16 + action;
 		}
-		else if (z64_file.link_age  && !DPAD_ALT) {
+		else if (z64_file.link_age  && !dpad_alt) {
 			if (DPAD_CHILD_SET1_UP == action) {
 				DPAD_CHILD_UP = DPAD_NULL * 16 + DPAD_CHILD_SET2_UP;
 				sfx = 0x480A;
 			}
 			else DPAD_CHILD_UP = action * 16 + DPAD_CHILD_SET2_UP;
 		}
-		else if (z64_file.link_age  && DPAD_ALT) {
+		else if (z64_file.link_age  && dpad_alt) {
 			if (DPAD_CHILD_SET2_UP == action) {
 				DPAD_CHILD_UP = DPAD_CHILD_SET1_UP * 16 + DPAD_NULL;
 				sfx = 0x480A;
@@ -169,28 +147,28 @@ void set_dpad_action(pad_t pad_pressed, dpad_action_t action, limit_item_t limit
 		}
 	}
 	else if (pad_pressed.dr) {
-		if (!z64_file.link_age && !DPAD_ALT) {
+		if (!z64_file.link_age && !dpad_alt) {
 			if (DPAD_ADULT_SET1_RIGHT == action) {
 				DPAD_ADULT_RIGHT = DPAD_NULL * 16 + DPAD_ADULT_SET2_RIGHT;
 				sfx = 0x480A;
 			}
 			else DPAD_ADULT_RIGHT = action * 16 + DPAD_ADULT_SET2_RIGHT;
 		}
-		else if (!z64_file.link_age && DPAD_ALT) {
+		else if (!z64_file.link_age && dpad_alt) {
 			if (DPAD_ADULT_SET2_RIGHT == action) {
 				DPAD_ADULT_RIGHT = DPAD_ADULT_SET1_RIGHT * 16 + DPAD_NULL;
 				sfx = 0x480A;
 			}
 			else DPAD_ADULT_RIGHT = DPAD_ADULT_SET1_RIGHT * 16 + action;
 		}
-		else if (z64_file.link_age  && !DPAD_ALT) {
+		else if (z64_file.link_age  && !dpad_alt) {
 			if (DPAD_CHILD_SET1_RIGHT == action) {
 				DPAD_CHILD_RIGHT = DPAD_NULL * 16 + DPAD_CHILD_SET2_RIGHT;
 				sfx = 0x480A;
 			}
 			else DPAD_CHILD_RIGHT = action * 16 + DPAD_CHILD_SET2_RIGHT;
 		}
-		else if (z64_file.link_age  && DPAD_ALT) {
+		else if (z64_file.link_age  && dpad_alt) {
 			if (DPAD_CHILD_SET2_RIGHT == action) {
 				DPAD_CHILD_RIGHT = DPAD_CHILD_SET1_RIGHT * 16 + DPAD_NULL;
 				sfx = 0x480A;
@@ -199,28 +177,28 @@ void set_dpad_action(pad_t pad_pressed, dpad_action_t action, limit_item_t limit
 		}
 	}
 	else if (pad_pressed.dd) {
-		if (!z64_file.link_age && !DPAD_ALT) {
+		if (!z64_file.link_age && !dpad_alt) {
 			if (DPAD_ADULT_SET1_DOWN == action) {
 				DPAD_ADULT_DOWN = DPAD_NULL * 16 + DPAD_ADULT_SET2_DOWN;
 				sfx = 0x480A;
 			}
 			else DPAD_ADULT_DOWN = action * 16 + DPAD_ADULT_SET2_DOWN;
 		}
-		else if (!z64_file.link_age && DPAD_ALT) {
+		else if (!z64_file.link_age && dpad_alt) {
 			if (DPAD_ADULT_SET2_DOWN == action) {
 				DPAD_ADULT_DOWN = DPAD_ADULT_SET1_DOWN * 16 + DPAD_NULL;
 				sfx = 0x480A;
 			}
 			else DPAD_ADULT_DOWN = DPAD_ADULT_SET1_DOWN * 16 + action;
 		}
-		else if (z64_file.link_age  && !DPAD_ALT) {
+		else if (z64_file.link_age  && !dpad_alt) {
 			if (DPAD_CHILD_SET1_DOWN == action) {
 				DPAD_CHILD_DOWN = DPAD_NULL * 16 + DPAD_CHILD_SET2_DOWN;
 				sfx = 0x480A;
 			}
 			else DPAD_CHILD_DOWN = action * 16 + DPAD_CHILD_SET2_DOWN;
 		}
-		else if (z64_file.link_age  && DPAD_ALT) {
+		else if (z64_file.link_age  && dpad_alt) {
 			if (DPAD_CHILD_SET2_DOWN == action) {
 				DPAD_CHILD_DOWN = DPAD_CHILD_SET1_DOWN * 16 + DPAD_NULL;
 				sfx = 0x480A;
@@ -229,28 +207,28 @@ void set_dpad_action(pad_t pad_pressed, dpad_action_t action, limit_item_t limit
 		}
 	}
 	else if (pad_pressed.dl) {
-		if (!z64_file.link_age && !DPAD_ALT) {
+		if (!z64_file.link_age && !dpad_alt) {
 			if (DPAD_ADULT_SET1_LEFT == action) {
 				DPAD_ADULT_LEFT = DPAD_NULL * 16 + DPAD_ADULT_SET2_LEFT;
 				sfx = 0x480A;
 			}
 			else DPAD_ADULT_LEFT = action * 16 + DPAD_ADULT_SET2_LEFT;
 		}
-		else if (!z64_file.link_age && DPAD_ALT) {
+		else if (!z64_file.link_age && dpad_alt) {
 			if (DPAD_ADULT_SET2_LEFT == action) {
 				DPAD_ADULT_LEFT = DPAD_ADULT_SET1_LEFT * 16 + DPAD_NULL;
 				sfx = 0x480A;
 			}
 			else DPAD_ADULT_LEFT = DPAD_ADULT_SET1_LEFT * 16 + action;
 		}
-		else if (z64_file.link_age  && !DPAD_ALT) {
+		else if (z64_file.link_age  && !dpad_alt) {
 			if (DPAD_CHILD_SET1_LEFT == action) {
 				DPAD_CHILD_LEFT = DPAD_NULL * 16 + DPAD_CHILD_SET2_LEFT;
 				sfx = 0x480A;
 			}
 			else DPAD_CHILD_LEFT = action * 16 + DPAD_CHILD_SET2_LEFT;
 		}
-		else if (z64_file.link_age  && DPAD_ALT) {
+		else if (z64_file.link_age  && dpad_alt) {
 			if (DPAD_CHILD_SET2_LEFT == action) {
 				DPAD_CHILD_LEFT = DPAD_CHILD_SET1_LEFT * 16 + DPAD_NULL;
 				sfx = 0x480A;
@@ -267,37 +245,52 @@ void set_dpad_action(pad_t pad_pressed, dpad_action_t action, limit_item_t limit
 }
 
 void handle_unequipping(pad_t pad_pressed) {
-	
-	
 	if (z64_game.pause_ctxt.screen_idx == 3 && pad_pressed.a) {
-		if (CFG_UNEQUIP_GEAR_ENABLED) { // Unequip gear
+		if (SAVE_UNEQUIP_GEAR) { // Unequip gear
 			if ( (z64_game.pause_ctxt.equip_cursor == 1  && z64_file.equip_sword  == 1) || (z64_game.pause_ctxt.equip_cursor == 2  && z64_file.equip_sword  == 2) || (z64_game.pause_ctxt.equip_cursor == 3  && z64_file.equip_sword  == 3) )
 				unequip_sword(1);
 			if ( (z64_game.pause_ctxt.equip_cursor == 5  && z64_file.equip_shield == 1) || (z64_game.pause_ctxt.equip_cursor == 6  && z64_file.equip_shield == 2) || (z64_game.pause_ctxt.equip_cursor == 7  && z64_file.equip_shield == 3) )
 				unequip_shield();
 		}
-		if (CFG_ABILITIES_ENABLED || CFG_UNEQUIP_GEAR_ENABLED)
+		if (SAVE_EXTRA_ABILITIES || SAVE_UNEQUIP_GEAR)
 			if ( (z64_game.pause_ctxt.equip_cursor == 9  && z64_file.equip_tunic  == 1) || (z64_game.pause_ctxt.equip_cursor == 10 && z64_file.equip_tunic  == 2) || (z64_game.pause_ctxt.equip_cursor == 11 && z64_file.equip_tunic  == 3) )
 				unequip_tunic();
 	}
 	
-	if (z64_game.pause_ctxt.screen_idx == 0 && CFG_UNEQUIP_ITEM_ENABLED && pad_pressed.cu) { // Unset item from C button
+	if (z64_game.pause_ctxt.screen_idx == 0 && SAVE_UNEQUIP_ITEM && (pad_pressed.cl || pad_pressed.cd || pad_pressed.cr)) { // Unset item from C button
 		for (uint8_t item=0; item<24; item++) {
+			uint8_t compare_item = item;
+			if (item == 0x4)
+				compare_item = 0x38;
+			else if (item == 0xC)
+				compare_item = 0x39;
+			else if (item == 0x12)
+				compare_item = 0x3A;
+			
 			if (z64_game.pause_ctxt.item_cursor == item) {
 				for (uint8_t button=1; button<=3; button++) {
-					if (z64_file.button_items[button] == z64_file.items[item]) {
-						z64_file.button_items[button]					= 0xFF;
-						z64_file.c_button_slots[button - 1]				= 0xFF;
-						if (!z64_file.link_age) {
-							z64_file.adult_button_items[button]			= 0xFF;
-							z64_file.adult_c_button_slots[button - 1]	= 0xFF;
+					if (z64_file.button_items[button] == compare_item && z64_file.items[item] == item) {
+						if ( (button == 1 && pad_pressed.cl) || (button == 2 && pad_pressed.cd) ||  (button == 3 && pad_pressed.cr) ) {
+							if (button == 1 && pad_pressed.cl)
+								z64_game.common.input[0].raw.pad.cl = z64_game.common.input[0].pad_pressed.cl = 0;
+							else if (button == 2 && pad_pressed.cd)
+								z64_game.common.input[0].raw.pad.cd = z64_game.common.input[0].pad_pressed.cd = 0;
+							else if (button == 3 && pad_pressed.cr)
+								z64_game.common.input[0].raw.pad.cr = z64_game.common.input[0].pad_pressed.cr = 0;
+							
+							z64_file.button_items[button]					= 0xFF;
+							z64_file.c_button_slots[button - 1]				= 0xFF;
+							if (!z64_file.link_age) {
+								z64_file.adult_button_items[button]			= 0xFF;
+								z64_file.adult_c_button_slots[button - 1]	= 0xFF;
+							}
+							else {
+								z64_file.child_button_items[button]			= 0xFF;
+								z64_file.child_c_button_slots[button - 1]	= 0xFF;
+							}
+							z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+							break;
 						}
-						else {
-							z64_file.child_button_items[button]			= 0xFF;
-							z64_file.child_c_button_slots[button - 1]	= 0xFF;
-						}
-						z64_playsfx(0x480A, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-						break;
 					}
 				}
 			}
@@ -306,12 +299,12 @@ void handle_unequipping(pad_t pad_pressed) {
 }
 
 void handle_downgrading() {
-	if (!CFG_SWAP_ITEM_ENABLED || z64_game.pause_ctxt.unk_02_[1] != 0)
+	if (!SAVE_DOWNGRADE_ITEM || z64_game.pause_ctxt.state != 6 || z64_game.pause_ctxt.unk_02_[1] != 0 || !z64_game.common.input[0].pad_pressed.cu)
 		return;
 	
 	if (z64_game.pause_ctxt.screen_idx == 3) { // Swap knife
 		if (z64_game.pause_ctxt.equip_cursor == 3 && (DOWNGRADE_GIANTS_KNIFE || z64_file.bgs_flag) ) {
-			EXTRA_SRAM			|= 2;
+			EXTRA_SRAM_1		|= 2;
 			z64_file.bgs_flag	^= 1;
 			if (!z64_file.bgs_flag)
 				if (knife_counter != 0xFF)
@@ -326,7 +319,7 @@ void handle_downgrading() {
 			
 	if (z64_game.pause_ctxt.screen_idx == 0) { // Downgrade / Upgrade items
 		if (z64_game.pause_ctxt.item_cursor == 7 && (DOWNGRADE_OCARINA || z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME) ) {
-			EXTRA_SRAM |= 4;
+			EXTRA_SRAM_1 |= 4;
 			if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME)
 				swap_item(Z64_SLOT_OCARINA, Z64_ITEM_OCARINA_OF_TIME, Z64_ITEM_FAIRY_OCARINA);
 			else if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA)
@@ -334,7 +327,7 @@ void handle_downgrading() {
 		}
 		
 		if (z64_game.pause_ctxt.item_cursor == 9 && (DOWNGRADE_HOOKSHOT || z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_LONGSHOT) ) {
-			EXTRA_SRAM |= 8;
+			EXTRA_SRAM_1 |= 8;
 			if (z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_LONGSHOT)
 				swap_item(Z64_SLOT_HOOKSHOT, Z64_ITEM_LONGSHOT, Z64_ITEM_HOOKSHOT);
 			else if (z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_HOOKSHOT)

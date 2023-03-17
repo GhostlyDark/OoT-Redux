@@ -4,16 +4,13 @@
 #include "z64.h"
 #include "z64_extended.h"
 
-void handle_buttons();
 void handle_l_button();
-void handle_inverted_axis();
 void handle_layout();
+void reset_layout();
 void handle_hud();
-void toggle_minimap();
-void hide_hud();
-void set_b_button(pad_t pad_pressed);
+void set_b_button();
 void inventory_editor();
-void handle_downgrading();
+void settings_menu();
 void swap_item(z64_slot_t slot, z64_item_t original, z64_item_t swap);
 void handle_infinite();
 void handle_rupee_dash();

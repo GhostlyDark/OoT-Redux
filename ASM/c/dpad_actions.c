@@ -1,7 +1,6 @@
 #include "gfx.h"
 #include "dpad_actions.h"
 
-extern uint8_t CFG_UNEQUIP_GEAR_ENABLED;
 extern uint8_t CFG_ALLOW_KOKIRI_SWORD;
 extern uint8_t CFG_ALLOW_MASTER_SWORD;
 extern uint8_t CFG_ALLOW_GIANTS_KNIFE;
@@ -337,7 +336,7 @@ void toggle_sword() {
 	sword++;
 	if (sword > 3) {
 		sword = 0;
-		if (!CFG_UNEQUIP_GEAR_ENABLED)
+		if (!SAVE_UNEQUIP_GEAR)
 			sword++;
 	}
 	
@@ -346,7 +345,7 @@ void toggle_sword() {
 	if (sword == 2 && (!z64_file.master_sword || ( z64_file.link_age && !CFG_ALLOW_MASTER_SWORD) ) )
 		sword++;
 	if (sword == 3 && (!z64_file.giants_knife || ( z64_file.link_age && !CFG_ALLOW_GIANTS_KNIFE) ) ) {
-		if (CFG_UNEQUIP_GEAR_ENABLED)
+		if (SAVE_UNEQUIP_GEAR)
 			sword = 0;
 		else if (z64_file.kokiri_sword && ( z64_file.link_age || CFG_ALLOW_KOKIRI_SWORD) )
 			sword = 1;
@@ -367,7 +366,7 @@ void toggle_shield() {
 	shield++;
 	if (shield > 3) {
 		shield = 0;
-		if (!CFG_UNEQUIP_GEAR_ENABLED)
+		if (!SAVE_UNEQUIP_GEAR)
 			shield++;
 	}
 	
@@ -376,7 +375,7 @@ void toggle_shield() {
 	if (shield == 2 && !z64_file.hylian_shield)
 		shield++;
 	if (shield == 3 && (!z64_file.mirror_shield || (z64_file.link_age && !CFG_ALLOW_MIRROR_SHIELD) ) ) {
-		if (CFG_UNEQUIP_GEAR_ENABLED)
+		if (SAVE_UNEQUIP_GEAR)
 			shield = 0;
 		else if (z64_file.deku_shield && (z64_file.link_age || CFG_ALLOW_DEKU_SHIELD) )
 			shield = 1;
