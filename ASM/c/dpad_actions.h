@@ -4,8 +4,6 @@
 #include "z64.h"
 #include "z64_extended.h"
 
-#endif
-
 void change_sword(uint8_t sword);
 void change_shield(uint8_t shield);
 void change_tunic(uint8_t tunic);
@@ -41,3 +39,5 @@ void draw_child_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, 
 void draw_adult_trade_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 void draw_ocarina_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y);
 void draw_item_icon(z64_disp_buf_t *db, uint16_t alpha, uint16_t icon_x, uint16_t icon_y, z64_slot_t slot, z64_item_t item, uint8_t usability);
+
+#endif

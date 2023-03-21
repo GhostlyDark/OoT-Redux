@@ -5,29 +5,27 @@
 #include "z64_extended.h"
 
 void handle_fps();
-
-/* DRAM addresses & data for 30 FPS */
+void reset_fps_values();
 
 #define bottle_action					(*(uint32_t*)			0x801C86B2)
 #define link_animation_parameter		(*(uint32_t*)			0x801DABF0)
 #define jump_gravity					(*(uint16_t*)			0x801DAA9C)
 #define link_animation					(*(uint16_t*)			0x801DABDE)
-#define control_link					(*(uint16_t*)			0x801DAADE)
 #define deku_stick_timer				(*(uint16_t*)			0x801DB280)
 #define hover_boots_length				(*(uint16_t*)			0x8039E612)
 #define time_of_day_speed				(*(uint16_t*)			0x800F1650)
 #define time_remaining					(*(uint16_t*)			0x8011B9A0)
 #define boomerang_active				(*(uint16_t*)			0x800E8B8E)
 #define hookshot_active					(*(uint16_t*)			0x801DAA50)
-#define fps_limit						(*(uint8_t*)			0x801C6FA1)
 #define timer_type						(*(uint8_t*)			0x8011B99F)
 #define seconds_left					(*(uint8_t*)			0x8011BF31)
-#define is_demo							(*(uint8_t*)			0x801DB09D)
 #define playing_ocarina					(*(uint8_t*)			0x80102208)
 #define talking_to_npc					(*(uint8_t*)			0x801DAA36)
 #define fishing							(*(uint8_t*)			0x801C8C41)
 #define frogs							(*(uint8_t*)			0x801C8835)
 #define change_scene					(*(uint8_t*)			0x801DB09C)
+#define lens_of_truth_start				(*(uint8_t*)			0x80072747)
+#define lens_of_truth_interval			(*(uint8_t*)			0x80072E0B) // 0x801D8BC1
 
 #define timer1_1						(*(uint16_t*)			0x800772FE)
 #define timer1_2						(*(uint16_t*)			0x80077366)
