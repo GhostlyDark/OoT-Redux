@@ -79,12 +79,13 @@ typedef enum {
 } tunic_color_t;
 
 typedef enum {
-	OPTIONS_SIZE		= 23,
+	OPTIONS_SIZE		= 24,
 	OPTIONS_LENGTH		= 17,
 	OPTIONS_ROWS		= 13,
 	
 	OPTION_30_FPS		= 0,
 	OPTION_RUPEE_DRAIN,
+	OPTION_FOG,
 	OPTION_HIDE_HUD,
 	OPTION_HUD_LAYOUT,
 	OPTION_DPAD,
@@ -248,17 +249,18 @@ typedef struct {
 #define EXTRA_SRAM_3					(*(uint8_t*)			0x8011B500)
 #define SAVE_RUPEE_DRAIN				( (EXTRA_SRAM_3 & 0xF)  >> 0)
 #define SAVE_HIDE_HUD					( (EXTRA_SRAM_3 & 0x70) >> 4)
+#define SAVE_INFINITE_HP				(EXTRA_SRAM_3 & (1 << 7) )
 
 #define EXTRA_SRAM_4					(*(uint8_t*)			0x8011B501)
 #define SAVE_DPAD						( (EXTRA_SRAM_4 & 0x3)  >> 0)
 #define SAVE_SHOW_DPAD					( (EXTRA_SRAM_4 & 0xC)  >> 2)
 #define SAVE_HUD_LAYOUT					( (EXTRA_SRAM_4 & 0x70) >> 4)
+#define SAVE_INFINITE_MP				(EXTRA_SRAM_4 & (1 << 7) )
 
 #define EXTRA_SRAM_5					(*(uint8_t*)			0x8011B4F2)
-#define SAVE_LEVITATION					(EXTRA_SRAM_5 & (1 << 0) )
-#define SAVE_INFINITE_HP				(EXTRA_SRAM_5 & (1 << 1) )
-#define SAVE_INFINITE_MP				(EXTRA_SRAM_5 & (1 << 2) )
-#define SAVE_INFINITE_RUPEES			(EXTRA_SRAM_5 & (1 << 3) )
-#define SAVE_INFINITE_AMMO				(EXTRA_SRAM_5 & (1 << 4) )
+#define SAVE_FOG						( (EXTRA_SRAM_5 & 0xF) >> 0)
+#define SAVE_LEVITATION					(EXTRA_SRAM_5 & (1 << 4) )
+#define SAVE_INFINITE_RUPEES			(EXTRA_SRAM_5 & (1 << 5) )
+#define SAVE_INFINITE_AMMO				(EXTRA_SRAM_5 & (1 << 6) )
 
 #endif

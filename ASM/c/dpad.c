@@ -14,13 +14,16 @@ uint16_t dpad_x				= 0;
 uint16_t dpad_y				= 0;
 uint16_t last_mask			= 0;
 
-char options[OPTIONS_SIZE][OPTIONS_LENGTH] = { "30 FPS", "Rupee Drain", "Hide HUD", "Layout", "D-Pad", "Show D-Pad", "Inverse Aim", "No Idle Camera", "Extra Abilities", "Unequip Gear", "Unequip Item", "Item on B",  "Weaker Swords", "Downgrade Item", "Crouch Stab Fix", "Keep Mask", "Tri-Swipe", "Inventory Editor", "Levitation", "Max HP", "Max MP", "Max Rupees", "Max Ammo" };
+char options[OPTIONS_SIZE][OPTIONS_LENGTH] = { "30 FPS", "Rupee Drain", "Fog", "Hide HUD", "Layout", "D-Pad", "Show D-Pad", "Inverse Aim", "No Idle Camera", "Extra Abilities", "Unequip Gear", "Unequip Item", "Item on B",  "Weaker Swords", "Downgrade Item", "Crouch Stab Fix", "Keep Mask", "Tri-Swipe", "Inventory Editor", "Levitation", "Max HP", "Max MP", "Max Rupees", "Max Ammo" };
 uint8_t options_cursor		               = 0;
-uint8_t options_max[OPTIONS_SIZE]          = { 0, 10, 4, 5, 2, 2 };
+uint8_t options_max[OPTIONS_SIZE]          = { 0, 15, 15, 4, 5, 2, 2 };
 
 extern uint8_t CHECKED_LENS;
 
 void handle_dpad() {
+	if (z64_file.game_mode != 0)
+		return;
+	
 	handle_options_menu();
 	handle_layout();
 	handle_hud();
@@ -33,7 +36,7 @@ void handle_dpad() {
 	handle_abilities_tunic_colors();
 	handle_downgrading();
 	
-	if (CAN_CONTROL_LINK && z64_file.game_mode == 0) {
+	if (CAN_CONTROL_LINK) {
 		handle_rupee_dash();
 		handle_power_crouch_stab_fix();
 		handle_weaker_swords();
@@ -55,9 +58,10 @@ void handle_dpad() {
 			z64_file.wallet = 3;
 		
 		if (!DPAD_INIT_SETUP) {
-			EXTRA_SRAM_1 |= 1;
-			EXTRA_SRAM_2 |= 0x40;
-			EXTRA_SRAM_4 |= 6;
+			EXTRA_SRAM_1 |= 1 << 0; // Init
+			EXTRA_SRAM_2 |= 1 << 6; // Keep Mask
+			EXTRA_SRAM_4 |= 2 << 0; // D-Pad
+			EXTRA_SRAM_4 |= 1 << 2; // Show D-Pad
 	
 			DPAD_ADULT_UP		= DPAD_ARROWS		* 16 + DPAD_SWORD;
 			DPAD_ADULT_RIGHT	= DPAD_HOVER_BOOTS  * 16 + DPAD_BOOTS;
@@ -75,6 +79,16 @@ void handle_dpad() {
 			last_mask = z64_mask_equipped;
 		if (z64_change_scene == 0x20000000 && last_mask > 0)
 			z64_mask_equipped = last_mask;
+	}
+	
+	if (SAVE_FOG > 0) {
+		if (SAVE_FOG < 15)
+			z64_game.fog_distance = 0.65f * SAVE_FOG;
+		else z64_game.fog_distance = 15.0f;
+		if (z64_camera_view == 1 && z64_game.fog_distance < 5.0f)
+			z64_game.fog_distance = 5.0f;
+		if (z64_camera_view == 2 && z64_game.fog_distance < 10.0f)
+			z64_game.fog_distance = 10.0f;
 	}
 	
 	if (SAVE_TRISWIPE && z64_triswipe == 255)
@@ -195,59 +209,72 @@ void handle_options_menu() {
 		z64_playsfx(0x483B, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 		
 		switch (options_cursor) {
-			case OPTION_30_FPS:				EXTRA_SRAM_1 ^= 0x10; break;
-			case OPTION_INVERSE_AIM:		EXTRA_SRAM_1 ^= 0x20; break;
-			case OPTION_NO_IDLE_CAMERA:		EXTRA_SRAM_1 ^= 0x40; break;
-			case OPTION_EXTRA_ABILITIES:	EXTRA_SRAM_1 ^= 0x80; break;
-			case OPTION_UNEQUIP_GEAR:		EXTRA_SRAM_2 ^= 0x01; break;
-			case OPTION_UNEQUIP_ITEM:		EXTRA_SRAM_2 ^= 0x02; break;
-			case OPTION_ITEM_ON_B:			EXTRA_SRAM_2 ^= 0x04; break;
-			case OPTION_WEAKER_SWORDS:		EXTRA_SRAM_2 ^= 0x08; break;
-			case OPTION_DOWNGRADE_ITEM:		EXTRA_SRAM_2 ^= 0x10; break;
-			case OPTION_CROUCH_STAB_FIX:	EXTRA_SRAM_2 ^= 0x20; break;
-			case OPTION_KEEP_MASK:			EXTRA_SRAM_2 ^= 0x40; break;
-			case OPTION_TRISWIPE:			EXTRA_SRAM_2 ^= 0x80; break;
-			case OPTION_LEVITATION:			EXTRA_SRAM_5 ^= 0x01; break;
-			case OPTION_INFINITE_HP:		EXTRA_SRAM_5 ^= 0x02; break;
-			case OPTION_INFINITE_MP:		EXTRA_SRAM_5 ^= 0x04; break;
-			case OPTION_INFINITE_RUPEES:	EXTRA_SRAM_5 ^= 0x08; break;
-			case OPTION_INFINITE_AMMO:		EXTRA_SRAM_5 ^= 0x10; break;
+			case OPTION_INVERSE_AIM:		EXTRA_SRAM_1 ^= 1 << 5; break;
+			case OPTION_NO_IDLE_CAMERA:		EXTRA_SRAM_1 ^= 1 << 6; break;
+			case OPTION_EXTRA_ABILITIES:	EXTRA_SRAM_1 ^= 1 << 7; break;
+			case OPTION_UNEQUIP_GEAR:		EXTRA_SRAM_2 ^= 1 << 0; break;
+			case OPTION_UNEQUIP_ITEM:		EXTRA_SRAM_2 ^= 1 << 1; break;
+			case OPTION_ITEM_ON_B:			EXTRA_SRAM_2 ^= 1 << 2; break;
+			case OPTION_WEAKER_SWORDS:		EXTRA_SRAM_2 ^= 1 << 3; break;
+			case OPTION_DOWNGRADE_ITEM:		EXTRA_SRAM_2 ^= 1 << 4; break;
+			case OPTION_CROUCH_STAB_FIX:	EXTRA_SRAM_2 ^= 1 << 5; break;
+			case OPTION_KEEP_MASK:			EXTRA_SRAM_2 ^= 1 << 6; break;
+			case OPTION_TRISWIPE:			EXTRA_SRAM_2 ^= 1 << 7; break;
+			case OPTION_INFINITE_HP:		EXTRA_SRAM_3 ^= 1 << 7; break;
+			case OPTION_INFINITE_MP:		EXTRA_SRAM_4 ^= 1 << 7; break;
+			case OPTION_LEVITATION:			EXTRA_SRAM_5 ^= 1 << 4; break;
+			case OPTION_INFINITE_RUPEES:	EXTRA_SRAM_5 ^= 1 << 5; break;
+			case OPTION_INFINITE_AMMO:		EXTRA_SRAM_5 ^= 1 << 6; break;
+			
+			case OPTION_30_FPS:
+				EXTRA_SRAM_1 ^= 1 << 4;
+				if (!SAVE_30_FPS)
+					reset_fps_values();
+				break;
+				
+			case OPTION_INVENTORY_EDITOR:
+				z64_game.pause_ctxt.unk_02_[1] = 2;
+				break;
 			
 			case OPTION_RUPEE_DRAIN:
-				if (SAVE_RUPEE_DRAIN < 10)
-					EXTRA_SRAM_3++;
-				else EXTRA_SRAM_3 -= 10;
+				if (SAVE_RUPEE_DRAIN < options_max[options_cursor])
+					EXTRA_SRAM_3 += 1 << 0;
+				else EXTRA_SRAM_3 -= options_max[options_cursor] << 0;
 				break;
 			
 			case OPTION_HIDE_HUD:
-				if (SAVE_HIDE_HUD < 4)
-					EXTRA_SRAM_3 += 0x10;
-				else EXTRA_SRAM_3 -= 0x40;
+				if (SAVE_HIDE_HUD < options_max[options_cursor])
+					EXTRA_SRAM_3 += 1 << 4;
+				else EXTRA_SRAM_3 -= options_max[options_cursor] << 4;
 				break;
 			
 			case OPTION_DPAD:
-				if (SAVE_DPAD < 2)
-					EXTRA_SRAM_4++;
-				else EXTRA_SRAM_4 -= 2;
+				if (SAVE_DPAD < options_max[options_cursor])
+					EXTRA_SRAM_4 += 1 << 0;
+				else EXTRA_SRAM_4 -= options_max[options_cursor] << 0;
 				break;
 			
 			case OPTION_SHOW_DPAD:
-				if (SAVE_SHOW_DPAD < 2)
-					EXTRA_SRAM_4 += 4;
-				else EXTRA_SRAM_4 -= 8;
+				if (SAVE_SHOW_DPAD < options_max[options_cursor])
+					EXTRA_SRAM_4 += 1 << 2;
+				else EXTRA_SRAM_4 -= options_max[options_cursor] << 2;
 				break;
 				
 			case OPTION_HUD_LAYOUT:
-				if (SAVE_HUD_LAYOUT < 5)
-					EXTRA_SRAM_4 += 0x10;
-				else EXTRA_SRAM_4 -= 0x50;
+				if (SAVE_HUD_LAYOUT < options_max[options_cursor])
+					EXTRA_SRAM_4 += 1 << 4;
+				else EXTRA_SRAM_4 -= options_max[options_cursor] << 4;
+				reset_layout();
+				break;
+				
+			case OPTION_FOG:
+				if (SAVE_FOG < options_max[options_cursor])
+					EXTRA_SRAM_5 += 1 << 0;
+				else EXTRA_SRAM_5 -= options_max[options_cursor] << 0;
+				if (SAVE_FOG == 0)
+					z64_game.fog_distance = 10.0f;
 				break;
 		}
-		
-		if (options_cursor == OPTION_HUD_LAYOUT)
-			reset_layout();
-		else if (options_cursor == OPTION_INVENTORY_EDITOR)
-			z64_game.pause_ctxt.unk_02_[1] = 2;
 	}
 		
 	
@@ -306,6 +333,12 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 			uint8_t setting;
 			switch (i) {
 				case OPTION_30_FPS:				setting = SAVE_30_FPS;			break;
+				case OPTION_RUPEE_DRAIN:		setting = SAVE_RUPEE_DRAIN;		break;
+				case OPTION_FOG:				setting = SAVE_FOG;				break;
+				case OPTION_HIDE_HUD:			setting = SAVE_HIDE_HUD;		break;
+				case OPTION_HUD_LAYOUT:			setting = SAVE_HUD_LAYOUT;		break;
+				case OPTION_DPAD:				setting = SAVE_DPAD;			break;
+				case OPTION_SHOW_DPAD:			setting = SAVE_SHOW_DPAD;		break;
 				case OPTION_INVERSE_AIM:		setting = SAVE_INVERSE_AIM;		break;
 				case OPTION_NO_IDLE_CAMERA:		setting = SAVE_NO_IDLE_CAMERA;	break;
 				case OPTION_EXTRA_ABILITIES:	setting = SAVE_EXTRA_ABILITIES; break;
@@ -322,11 +355,7 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 				case OPTION_INFINITE_MP:		setting = SAVE_INFINITE_MP;		break;
 				case OPTION_INFINITE_RUPEES:	setting = SAVE_INFINITE_RUPEES;	break;
 				case OPTION_INFINITE_AMMO:		setting = SAVE_INFINITE_AMMO;	break;
-				case OPTION_RUPEE_DRAIN:		setting = SAVE_RUPEE_DRAIN;		break;
-				case OPTION_HIDE_HUD:			setting = SAVE_HIDE_HUD;		break;
-				case OPTION_HUD_LAYOUT:			setting = SAVE_HUD_LAYOUT;		break;
-				case OPTION_DPAD:				setting = SAVE_DPAD;			break;
-				case OPTION_SHOW_DPAD:			setting = SAVE_SHOW_DPAD;		break;
+				default:						setting = 0;					break;
 			}
 			
 			if (i < OPTIONS_ROWS) {
@@ -357,6 +386,11 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 						case 8:  text_print("8",  left + addLeft, top); break;
 						case 9:  text_print("9",  left + addLeft, top); break;
 						case 10: text_print("10", left + addLeft, top); break;
+						case 11: text_print("11", left + addLeft, top); break;
+						case 12: text_print("12", left + addLeft, top); break;
+						case 13: text_print("13", left + addLeft, top); break;
+						case 14: text_print("14", left + addLeft, top); break;
+						case 15: text_print("15", left + addLeft, top); break;
 					}	
 				}
 				draw = 1;

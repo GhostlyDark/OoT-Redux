@@ -107,7 +107,7 @@ void handle_abilities() {
 	
 	if (z64_file.forest_medallion && z64_file.equip_tunic == 1 && HAS_MAGIC) {
 		if ( (z64_file.magic < 0x30 && !z64_file.magic_capacity) || (z64_file.magic < 0x60 && z64_file.magic_capacity) ) {
-			if (z64_damage_frames == 14 && restore_health == 0)
+			if (z64_damage_frames == 12 && restore_health == 0)
 				restore_health = 1;
 			else if (z64_damage_frames == 0)
 				restore_health = 0;
@@ -126,7 +126,7 @@ void handle_abilities() {
 	}
 		
 	if (z64_file.fire_medallion && z64_file.equip_tunic == 2 && HAS_MAGIC && z64_file.magic > 0) {
-		if (z64_damage_frames == 14 && restore_health == 0)
+		if (z64_damage_frames == 12 && restore_health == 0)
 			restore_health = 1;
 		else if (z64_damage_frames == 0)
 			restore_health = 0;
@@ -257,226 +257,141 @@ void handle_l_button() {
 }
 
 void handle_layout() {
-	if (z64_game.pause_ctxt.state == 6) {
-		if (SAVE_HUD_LAYOUT <= 1) { // Vanilla & Majora's Mask
-			if (!CFG_WS) {
-				z64_c_left_x_set_item	= 0x294;
-				z64_c_down_x_set_item	= 0x384;
-				z64_c_right_x_set_item	= 0x474;
-			}
-			else {
-				z64_c_left_x_set_item	= 0x49C;
-				z64_c_down_x_set_item	= 0x59C;
-				z64_c_right_x_set_item	= 0x67C;
-			}
-			z64_c_left_y_set_item	= 0x44C;
-			z64_c_down_y_set_item	= 0x398;
-			z64_c_right_y_set_item	= 0x44C;
-		}
-		else if (SAVE_HUD_LAYOUT == 2) { // Nintendo
-			if (!CFG_WS) {
-				z64_c_left_x_set_item	= 0x343;
-				z64_c_down_x_set_item	= 0x4FB;
-				z64_c_right_x_set_item	= 0x1D1;
-			}
-			else {
-				z64_c_left_x_set_item	= 0x54B;
-				z64_c_down_x_set_item	= 0x703;
-				z64_c_right_x_set_item	= 0x3D9;
-			}
-			z64_c_left_y_set_item	= 0x44C;
-			z64_c_down_y_set_item	= 0x492;
-			z64_c_right_y_set_item	= 0x352;
-		}
-		else if (SAVE_HUD_LAYOUT == 3) { // Modern
-			if (!CFG_WS) {
-				z64_c_left_x_set_item	= 0x217;
-				z64_c_down_x_set_item	= 0x4FB;
-				z64_c_right_x_set_item	= 0x2FD;
-			}
-			else {
-				z64_c_left_x_set_item	= 0x41F;
-				z64_c_down_x_set_item	= 0x703;
-				z64_c_right_x_set_item	= 0x505;
-			}
-			z64_c_left_y_set_item	= 0x352;
-			z64_c_down_y_set_item	= 0x492;
-			z64_c_right_y_set_item	= 0x44C;
-		}
-		else if (SAVE_HUD_LAYOUT == 4) { // GameCube (Original)
-			if (!CFG_WS) {	
-				z64_c_left_x_set_item	= 0x3C0;
-				z64_c_down_x_set_item	= 0x4FB;
-				z64_c_right_x_set_item	= 0x4FE;
-			}
-			else {
-				z64_c_left_x_set_item	= 0x5C8;
-				z64_c_down_x_set_item	= 0x703;
-				z64_c_right_x_set_item	= 0x706;
-			}
-			z64_c_left_y_set_item	= 0x4C9;
-			z64_c_down_y_set_item	= 0x492;
-			z64_c_right_y_set_item	= 0x314;
-		}
-		else if (SAVE_HUD_LAYOUT == 5) { // GameCube (Modern)
-			if (!CFG_WS) {	
-				z64_c_left_x_set_item	= 0x544;
-				z64_c_down_x_set_item	= 0x4FB;
-				z64_c_right_x_set_item	= 0x37A;
-			}
-			else {
-				z64_c_left_x_set_item	= 0x74C;
-				z64_c_down_x_set_item	= 0x703;
-				z64_c_right_x_set_item	= 0x582;
-			}
-			z64_c_left_y_set_item	= 0x314;
-			z64_c_down_y_set_item	= 0x492;
-			z64_c_right_y_set_item	= 0x4C9;
-		}
-	}
-	
-	if (SAVE_HUD_LAYOUT == 0 || !CAN_DRAW_HUD || z64_gameinfo.a_button_y != 0x09)
+	if (SAVE_HUD_LAYOUT == 0)
 		return;
 	
-	uint16_t a_x = 0, a_y = 0, b_x = 0, b_y = 0, c_left_x = 0, c_left_y = 0, c_down_x = 0, c_down_y = 0, c_right_x = 0, c_right_y = 0, c_up_x = 0, c_up_y = 0;
-	
-	if (SAVE_HUD_LAYOUT == 1) { // Majora's Mask
-		a_x			= 4;	// 186	->	190
-		a_y			= 14;	// 9	->	23
-		b_x			= 7;	// 160	->	167
-	}
-	else if (SAVE_HUD_LAYOUT == 2) { // Nintendo
-		a_x			= 70;	// 186	->	256
-		a_y			= 23;	// 9	->	32
-		b_x			= 80;	// 160	->	240
-		b_y			= 45;	// 11	->	56
-		c_left_x	= 14;	// 227	->	241
-		c_left_y	= 0;	// 18	->	18
-		c_down_x	= 30;	// 249	->	279
-		c_down_y	= -20;	// 34	->	14
-		c_right_x	= -54;	// 271	->	217
-		c_right_y	= 20;	// 18	->	38
-		c_up_x		= 10;	// 254	->	264
-		c_up_y		= -10;	// 16	->	6
-	}
-	else if (SAVE_HUD_LAYOUT == 3) { // Modern
-		a_x			= 46;	// 186	->	234
-		a_y			= 45;	// 9	->	54
-		b_x			= 104;	// 160	->	264
-		b_y			= 23;	// 11	->	33
-		c_left_x	= -10;	// 227	->	217
-		c_left_y	= 20;	// 18	->	38
-		c_down_x	= 30;	// 249	->	279		
-		c_down_y	= -20;	// 34	->	14		
-		c_right_x	= -30;	// 271	->	241
-		c_right_y	= 0;	// 18	->	18
-		c_up_x		= 10;	// 254	->	264		
-		c_up_y		= -10;	// 16	->	6		
-	}
-	else if (SAVE_HUD_LAYOUT == 4) { // GameCube (Original)
-		a_x			= 55;	// 186	->	241
-		a_y			= 20;	// 9	->	29
-		b_x			= 65;	// 160	->	225
-		b_y			= 40;	// 11	->	51
-		c_left_x	= 24;	// 227	->	251
-		c_left_y	= -10;	// 18	->	8
-		c_down_x	= 30;	// 249	->	279
-		c_down_y	= -20;	// 34	->	14
-		c_right_x	= 11;	// 271	->	282
-		c_right_y	= 25;	// 18	->	43
-		c_up_x		= -20;	// 254	->	234
-	}
-	else if (SAVE_HUD_LAYOUT == 5) { // GameCube (Modern)
-		a_x			= 55;	// 186	->	241
-		a_y			= 20;	// 9	->	29
-		b_x			= 65;	// 160	->	225
-		b_y			= 40;	// 11	->	51
-		c_left_x	= 55;	// 227	->	282
-		c_left_y	= 25;	// 18	->	43
-		c_down_x	= 30;	// 249	->	279
-		c_down_y	= -20;	// 34	->	14
-		c_right_x	= -20;	// 271	->	251
-		c_right_y	= -10;	// 18	->	8
-		c_up_x		= -20;	// 254	->	234
+	if (z64_game.pause_ctxt.state == 6) {
+		if (SAVE_HUD_LAYOUT == 2) { // Nintendo
+			if (!CFG_WS)   { z64_c_left_x_set_item = 0x343; z64_c_down_x_set_item = 0x4FB; z64_c_right_x_set_item = 0x1D1; }
+			else           { z64_c_left_x_set_item = 0x54B; z64_c_down_x_set_item = 0x703; z64_c_right_x_set_item = 0x3D9; }
+							 z64_c_left_y_set_item = 0x44C; z64_c_down_y_set_item = 0x492; z64_c_right_y_set_item = 0x352;
+		}
+		else if (SAVE_HUD_LAYOUT == 3) { // Modern
+			if (!CFG_WS)   { z64_c_left_x_set_item = 0x217; z64_c_down_x_set_item = 0x4FB; z64_c_right_x_set_item = 0x2FD; }
+			else           { z64_c_left_x_set_item = 0x41F; z64_c_down_x_set_item = 0x703; z64_c_right_x_set_item = 0x505; }
+							 z64_c_left_y_set_item = 0x352; z64_c_down_y_set_item = 0x492; z64_c_right_y_set_item = 0x44C;
+		}
+		else if (SAVE_HUD_LAYOUT == 4) { // GameCube (Original)
+			if (!CFG_WS)   { z64_c_left_x_set_item = 0x3C0; z64_c_down_x_set_item = 0x4FB; z64_c_right_x_set_item = 0x4FE; }
+			else           { z64_c_left_x_set_item = 0x5C8; z64_c_down_x_set_item = 0x703; z64_c_right_x_set_item = 0x706; }
+							 z64_c_left_y_set_item = 0x4C9; z64_c_down_y_set_item = 0x492; z64_c_right_y_set_item = 0x314;
+		}
+		else if (SAVE_HUD_LAYOUT == 5) { // GameCube (Modern)
+			if (!CFG_WS)   { z64_c_left_x_set_item = 0x544; z64_c_down_x_set_item = 0x4FB; z64_c_right_x_set_item = 0x37A; }
+			else           { z64_c_left_x_set_item = 0x74C; z64_c_down_x_set_item = 0x703 ;z64_c_right_x_set_item = 0x582; }
+							 z64_c_left_y_set_item = 0x314; z64_c_down_y_set_item = 0x492; z64_c_right_y_set_item = 0x4C9;
+		}
 	}
 	
-	z64_gameinfo.a_button_x			+= a_x;
-	z64_gameinfo.a_button_y			+= a_y;
-	z64_gameinfo.a_button_icon_x	+= a_x;
-	z64_gameinfo.a_button_icon_y	+= a_y;
-	z64_gameinfo.item_button_x[0]	+= b_x;
-	z64_gameinfo.item_button_y[0]	+= b_y;
-	z64_gameinfo.item_icon_x[0]		+= b_x;
-	z64_gameinfo.item_icon_y[0]		+= b_y;
-	z64_gameinfo.item_ammo_x[0]		+= b_x;
-	z64_gameinfo.item_ammo_y[0]		+= b_y;
-	z64_b_button_label_x			+= b_x;
-	z64_b_button_label_y			+= b_y;
-	z64_gameinfo.item_button_x[1]	+= c_left_x;
-	z64_gameinfo.item_button_y[1]	+= c_left_y;
-	z64_gameinfo.item_icon_x[1]		+= c_left_x;
-	z64_gameinfo.item_icon_y[1]		+= c_left_y;
-	z64_gameinfo.item_ammo_x[1]		+= c_left_x;
-	z64_gameinfo.item_ammo_y[1]		+= c_left_y;
-	z64_gameinfo.item_button_x[2]	+= c_down_x;
-	z64_gameinfo.item_button_y[2]	+= c_down_y;
-	z64_gameinfo.item_icon_x[2]		+= c_down_x;
-	z64_gameinfo.item_icon_y[2]		+= c_down_y;
-	z64_gameinfo.item_ammo_x[2]		+= c_down_x;
-	z64_gameinfo.item_ammo_y[2]		+= c_down_y;
-	z64_gameinfo.item_button_x[3]	+= c_right_x;
-	z64_gameinfo.item_button_y[3]	+= c_right_y;
-	z64_gameinfo.item_icon_x[3]		+= c_right_x;
-	z64_gameinfo.item_icon_y[3]		+= c_right_y;
-	z64_gameinfo.item_ammo_x[3]		+= c_right_x;
-	z64_gameinfo.item_ammo_y[3]		+= c_right_y;
-	z64_gameinfo.c_up_button_x		+= c_up_x;
-	z64_gameinfo.c_up_button_y		+= c_up_y;
-	z64_gameinfo.c_up_icon_x		+= c_up_x;
-	z64_gameinfo.c_up_icon_y		+= c_up_y;
+	if (CAN_DRAW_HUD && z64_gameinfo.a_button_y == 0x09) {
+		uint16_t a_x = 0, a_y = 0, b_x = 0, b_y = 0, c_left_x = 0, c_left_y = 0, c_down_x = 0, c_down_y = 0, c_right_x = 0, c_right_y = 0, c_up_x = 0, c_up_y = 0;
+		
+		if (SAVE_HUD_LAYOUT == 1) { // Majora's Mask
+			a_x			= 4;	// 186	->	190
+			a_y			= 14;	// 9	->	23
+			b_x			= 7;	// 160	->	167
+		}
+		else if (SAVE_HUD_LAYOUT == 2) { // Nintendo
+			a_x			= 70;	// 186	->	256
+			a_y			= 23;	// 9	->	32
+			b_x			= 80;	// 160	->	240
+			b_y			= 45;	// 11	->	56
+			c_left_x	= 14;	// 227	->	241
+			c_left_y	= 0;	// 18	->	18
+			c_down_x	= 30;	// 249	->	279
+			c_down_y	= -20;	// 34	->	14
+			c_right_x	= -54;	// 271	->	217
+			c_right_y	= 20;	// 18	->	38
+			c_up_x		= 10;	// 254	->	264
+			c_up_y		= -10;	// 16	->	6
+		}
+		else if (SAVE_HUD_LAYOUT == 3) { // Modern
+			a_x			= 46;	// 186	->	234
+			a_y			= 45;	// 9	->	54
+			b_x			= 104;	// 160	->	264
+			b_y			= 23;	// 11	->	33
+			c_left_x	= -10;	// 227	->	217
+			c_left_y	= 20;	// 18	->	38
+			c_down_x	= 30;	// 249	->	279		
+			c_down_y	= -20;	// 34	->	14		
+			c_right_x	= -30;	// 271	->	241
+			c_right_y	= 0;	// 18	->	18
+			c_up_x		= 10;	// 254	->	264		
+			c_up_y		= -10;	// 16	->	6		
+		}
+		else if (SAVE_HUD_LAYOUT == 4) { // GameCube (Original)
+			a_x			= 55;	// 186	->	241
+			a_y			= 20;	// 9	->	29
+			b_x			= 65;	// 160	->	225
+			b_y			= 40;	// 11	->	51
+			c_left_x	= 24;	// 227	->	251
+			c_left_y	= -10;	// 18	->	8
+			c_down_x	= 30;	// 249	->	279
+			c_down_y	= -20;	// 34	->	14
+			c_right_x	= 11;	// 271	->	282
+			c_right_y	= 25;	// 18	->	43
+			c_up_x		= -20;	// 254	->	234
+		}
+		else if (SAVE_HUD_LAYOUT == 5) { // GameCube (Modern)
+			a_x			= 55;	// 186	->	241
+			a_y			= 20;	// 9	->	29
+			b_x			= 65;	// 160	->	225
+			b_y			= 40;	// 11	->	51
+			c_left_x	= 55;	// 227	->	282
+			c_left_y	= 25;	// 18	->	43
+			c_down_x	= 30;	// 249	->	279
+			c_down_y	= -20;	// 34	->	14
+			c_right_x	= -20;	// 271	->	251
+			c_right_y	= -10;	// 18	->	8
+			c_up_x		= -20;	// 254	->	234
+		}
+	
+		z64_gameinfo.a_button_x       += a_x;       z64_gameinfo.a_button_y       += a_y;       z64_gameinfo.a_button_icon_x += a_x;       z64_gameinfo.a_button_icon_y += a_y;
+		z64_gameinfo.item_button_x[0] += b_x;       z64_gameinfo.item_button_y[0] += b_y;       z64_gameinfo.item_icon_x[0]  += b_x;       z64_gameinfo.item_icon_y[0]  += b_y;       z64_gameinfo.item_ammo_x[0] += b_x;       z64_gameinfo.item_ammo_y[0] += b_y; z64_b_button_label_x += b_x; z64_b_button_label_y += b_y;
+		z64_gameinfo.item_button_x[1] += c_left_x;  z64_gameinfo.item_button_y[1] += c_left_y;  z64_gameinfo.item_icon_x[1]  += c_left_x;  z64_gameinfo.item_icon_y[1]  += c_left_y;  z64_gameinfo.item_ammo_x[1] += c_left_x;  z64_gameinfo.item_ammo_y[1] += c_left_y;
+		z64_gameinfo.item_button_x[2] += c_down_x;  z64_gameinfo.item_button_y[2] += c_down_y;  z64_gameinfo.item_icon_x[2]  += c_down_x;  z64_gameinfo.item_icon_y[2]  += c_down_y;  z64_gameinfo.item_ammo_x[2] += c_down_x;  z64_gameinfo.item_ammo_y[2] += c_down_y;
+		z64_gameinfo.item_button_x[3] += c_right_x; z64_gameinfo.item_button_y[3] += c_right_y; z64_gameinfo.item_icon_x[3]  += c_right_x; z64_gameinfo.item_icon_y[3]  += c_right_y; z64_gameinfo.item_ammo_x[3] += c_right_x; z64_gameinfo.item_ammo_y[3] += c_right_y;
+		z64_gameinfo.c_up_button_x    += c_up_x;    z64_gameinfo.c_up_button_y    += c_up_y;    z64_gameinfo.c_up_icon_x     += c_up_x;    z64_gameinfo.c_up_icon_y     += c_up_y;
+	}
 }
 
 void reset_layout() {
-	z64_gameinfo.a_button_y			= z64_gameinfo.a_button_icon_y = 0x9;
-	z64_gameinfo.item_button_y[0]	= z64_gameinfo.item_icon_y[0]  = 0x11;
-	z64_gameinfo.item_ammo_y[0]		= 0x23;
+	z64_gameinfo.a_button_y			= z64_gameinfo.a_button_icon_y   = 0x9;
+	z64_gameinfo.item_button_y[0]	= z64_gameinfo.item_icon_y[0]    = 0x11;
+	z64_gameinfo.item_ammo_y[0]		= z64_gameinfo.item_ammo_y[1]    = z64_gameinfo.item_ammo_y[3] = 0x23;
 	z64_b_button_label_y			= 0x16;
-	z64_gameinfo.item_button_y[1]	= z64_gameinfo.item_icon_y[1] = 0x12;
-	z64_gameinfo.item_ammo_y[1]		= 0x23;
-	z64_gameinfo.item_button_y[2]	= z64_gameinfo.item_icon_y[2] = 0x22;
+	z64_gameinfo.item_button_y[1]	= z64_gameinfo.item_icon_y[1]    = 0x12; z64_gameinfo.item_button_y[2] = z64_gameinfo.item_icon_y[2] = 0x22;
 	z64_gameinfo.item_ammo_y[2]		= 0x33;
-	z64_gameinfo.item_button_y[3]	= z64_gameinfo.item_icon_y[3] = 0x12;
-	z64_gameinfo.item_ammo_y[3]		= 0x23;
-	z64_gameinfo.c_up_button_y		= 0x10;
-	z64_gameinfo.c_up_icon_y		= 0x14;
+	z64_gameinfo.item_button_y[3]	= z64_gameinfo.item_icon_y[3]    = 0x12;
+	z64_gameinfo.c_up_button_y		= 0x10; z64_gameinfo.c_up_icon_y = 0x14;
 	
 	if (!CFG_WS) {
-		z64_gameinfo.a_button_x			= z64_gameinfo.a_button_icon_x = 0xBA;
-		z64_gameinfo.item_button_x[0]	= z64_gameinfo.item_icon_x[0]  = 0xA2;
-		z64_gameinfo.item_ammo_x[0]		= 0xA2;
+		z64_gameinfo.a_button_x			= z64_gameinfo.a_button_icon_x   = 0xBA;
+		z64_gameinfo.item_button_x[0]	= z64_gameinfo.item_icon_x[0]    = 0xA2;
+		z64_gameinfo.item_ammo_x[0]		= 0xA4;
 		z64_b_button_label_x			= 0x94;
 		z64_gameinfo.item_ammo_x[1]		= 0xE4;
-		z64_gameinfo.item_button_x[1]	= z64_gameinfo.item_icon_x[1] = 0xE3;
-		z64_gameinfo.item_button_x[2]	= z64_gameinfo.item_icon_x[2] = 0xF9;
+		z64_gameinfo.item_button_x[1]	= z64_gameinfo.item_icon_x[1]    = 0xE3; z64_gameinfo.item_button_x[2] = z64_gameinfo.item_icon_x[2] = 0xF9;
 		z64_gameinfo.item_ammo_x[2]		= 0xFA;
-		z64_gameinfo.item_button_x[3]	= z64_gameinfo.item_icon_x[3] = 0x10F;
-		z64_gameinfo.item_ammo_x[3]		= 0x110;
-		z64_gameinfo.c_up_button_x		= 0xFE;
-		z64_gameinfo.c_up_icon_x		= 0xF7;
+		z64_gameinfo.item_button_x[3]	= z64_gameinfo.item_icon_x[3]    = 0x10F; z64_gameinfo.item_ammo_x[3]  = 0x110;
+		z64_gameinfo.c_up_button_x		= 0xFE; z64_gameinfo.c_up_icon_x = 0xF7;
 	}
 	else {
-		z64_gameinfo.a_button_x			= z64_gameinfo.a_button_icon_x = 0x122;
-		z64_gameinfo.item_button_x[0]	= z64_gameinfo.item_icon_x[0]  = 0x108;
+		z64_gameinfo.a_button_x			= z64_gameinfo.a_button_icon_x    = 0x122;
+		z64_gameinfo.item_button_x[0]	= z64_gameinfo.item_icon_x[0]     = 0x108;
 		z64_gameinfo.item_ammo_x[0]		= 0x10A;
 		z64_b_button_label_x			= 0xFC;
 		z64_gameinfo.item_ammo_x[1]		= 0x14C;
-		z64_gameinfo.item_button_x[1]	= z64_gameinfo.item_icon_x[1] = 0x14B;
-		z64_gameinfo.item_button_x[2]	= z64_gameinfo.item_icon_x[2] = 0x161;
+		z64_gameinfo.item_button_x[1]	= z64_gameinfo.item_icon_x[1]     = 0x14B; z64_gameinfo.item_button_x[2] = z64_gameinfo.item_icon_x[2] = 0x161;
 		z64_gameinfo.item_ammo_x[2]		= 0x161;
-		z64_gameinfo.item_button_x[3]	= z64_gameinfo.item_icon_x[3] = 0x177;
-		z64_gameinfo.item_ammo_x[3]		= 0x178;
-		z64_gameinfo.c_up_button_x		= 0x166;
-		z64_gameinfo.c_up_icon_x		= 0x15F;
+		z64_gameinfo.item_button_x[3]	= z64_gameinfo.item_icon_x[3]     = 0x177; z64_gameinfo.item_ammo_x[3]   = 0x178;
+		z64_gameinfo.c_up_button_x		= 0x166; z64_gameinfo.c_up_icon_x = 0x15F;
+	}
+	
+	if (z64_game.pause_ctxt.state == 6 && SAVE_HUD_LAYOUT <= 1) {
+		if (!CFG_WS)   { z64_c_left_x_set_item = 0x294; z64_c_down_x_set_item = 0x384; z64_c_right_x_set_item = 0x474; }
+		else           { z64_c_left_x_set_item = 0x49C; z64_c_down_x_set_item = 0x59C; z64_c_right_x_set_item = 0x67C; }
+						 z64_c_left_y_set_item = 0x44C; z64_c_down_y_set_item = 0x398; z64_c_right_y_set_item = 0x44C;
 	}
 }
 

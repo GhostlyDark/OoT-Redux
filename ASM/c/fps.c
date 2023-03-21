@@ -1,16 +1,15 @@
 #include "fps.h"
 
 uint8_t  fps_switch					= 1;
-uint8_t deku_stick_timer_switch		= 0;
-uint8_t nayrus_love_timer_switch	= 0;
+uint8_t  deku_stick_timer_switch	= 0;
+uint8_t  nayrus_love_timer_switch	= 0;
+uint8_t  damage_frames_timer_switch	= 0;
 uint16_t last_time					= 0;
 uint16_t started_timer				= 0;
 
 void handle_fps() {
-	if (!SAVE_30_FPS || z64_game.pause_ctxt.state != 0 || z64_file.game_mode != 0) {
-		reset_fps_values();
+	if (!SAVE_30_FPS || z64_game.pause_ctxt.state != 0 || z64_file.game_mode != 0)
 		return;
-	}
 	
 	if ( (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.z) || (z64_game.common.input[0].raw.pad.z && z64_game.common.input[0].pad_pressed.l) ) {
 		fps_switch ^= 1;
@@ -33,15 +32,22 @@ void handle_fps() {
 			deku_stick_timer += 100;
 			deku_stick_timer_switch = 1;
 		}
-		else if (deku_stick_timer == 0)
+		else if (deku_stick_timer == 0 && deku_stick_timer_switch)
 			deku_stick_timer_switch = 0;
 		
 		if (z64_file.nayrus_love_timer == 601 && !nayrus_love_timer_switch) {
 			z64_file.nayrus_love_timer -= 600;
 			nayrus_love_timer_switch = 1;
 		}
-		else if (z64_file.nayrus_love_timer == 0 || z64_file.nayrus_love_timer > 601)
+		else if ( (z64_file.nayrus_love_timer == 0 || z64_file.nayrus_love_timer > 601) && nayrus_love_timer_switch)
 			nayrus_love_timer_switch = 0;
+		
+		if (z64_damage_frames == 1 && !damage_frames_timer_switch) {
+			z64_damage_frames += 10;
+			damage_frames_timer_switch = 1;
+		}
+		else if (z64_damage_frames == 0 && damage_frames_timer_switch)
+			damage_frames_timer_switch = 0;
 		
 		if (link_animation == 0x2968 || link_animation == 0x2970 || link_animation == 0x2A80 || link_animation == 0x2A90)
 			link_animation_parameter = 0x3F4CCCCD;
