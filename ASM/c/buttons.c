@@ -1,6 +1,7 @@
 #include "buttons.h"
 
 extern uint8_t CFG_WS;
+extern uint8_t CFG_OPTIONS_MENU;
 
 uint8_t hud_hide			= 0;
 uint8_t hud_hearts_hide		= 1;
@@ -450,7 +451,7 @@ void set_b_button(pad_t pad_pressed) {
 }
 
 void settings_menu() {
-	if (z64_game.pause_ctxt.state != 6)
+	if (z64_game.pause_ctxt.state != 6 || CFG_OPTIONS_MENU == 0)
 		return;
 	
 	if (z64_game.pause_ctxt.unk_02_[1] == 0) {

@@ -8,15 +8,17 @@
 
 extern uint8_t CFG_WS;
 extern uint8_t CFG_TYCOON_WALLET;
+extern uint8_t CFG_OPTIONS_MENU;
 
-uint8_t  dpad_alt			= 0;
-uint16_t dpad_x				= 0;
-uint16_t dpad_y				= 0;
-uint16_t last_mask			= 0;
+uint8_t  dpad_alt	= 0;
+uint16_t dpad_x		= 0;
+uint16_t dpad_y		= 0;
+uint16_t last_mask	= 0;
 
-char options[OPTIONS_SIZE][OPTIONS_LENGTH] = { "30 FPS", "Rupee Drain", "Fog", "Hide HUD", "Layout", "D-Pad", "Show D-Pad", "Inverse Aim", "No Idle Camera", "Extra Abilities", "Unequip Gear", "Unequip Item", "Item on B",  "Weaker Swords", "Downgrade Item", "Crouch Stab Fix", "Keep Mask", "Tri-Swipe", "Inventory Editor", "Levitation", "Max HP", "Max MP", "Max Rupees", "Max Ammo" };
-uint8_t options_cursor		               = 0;
-uint8_t options_max[OPTIONS_SIZE]          = { 0, 15, 15, 4, 5, 2, 2 };
+char options[OPTIONS_SIZE_ALL][OPTIONS_LENGTH]	= { "30 FPS",  "D-Pad", "Show D-Pad", "Hide HUD", "Layout", "Inverse Aim", "No Idle Camera", "Keep Mask", "Tri-Swipe", "Unequip Item", "Unequip Gear", "Item on B", "Downgrade Item", "Crouch Stab Fix", "Weaker Swords", "Extra Abilities", "Rupee Drain", "Fog", "Inventory Editor", "Levitation", "Max HP", "Max MP", "Max Rupees", "Max Ammo" };
+uint8_t options_max[OPTIONS_SIZE_ALL]			= { 0,         2,       2,            4,          5,        0,             0,                0,           0,           0,              0,              0,           0,                0,                 0,               0,                 15,            15,    0,                  0,            0,        0,        0,            0          };
+uint8_t options_cursor							= 0;
+
 
 extern uint8_t CHECKED_LENS;
 
@@ -24,35 +26,70 @@ void handle_dpad() {
 	if (z64_file.game_mode != 0)
 		return;
 	
-	handle_options_menu();
-	handle_layout();
-	handle_hud();
-	set_b_button();
-	handle_dpad_ingame();
-	handle_dpad_paused();
-	handle_fps();
 	handle_l_button();
-	handle_infinite();
-	handle_abilities_tunic_colors();
-	handle_downgrading();
+	
+	if (CFG_OPTIONS_MENU >= 1) {
+		handle_dpad_ingame();
+		handle_dpad_paused();
+		handle_options_menu();
+		handle_layout();
+		handle_hud();
+		handle_fps();
+		
+		if (SAVE_KEEP_MASK) {
+			if (z64_change_scene == 0x20000001)
+				last_mask = z64_mask_equipped;
+			if (z64_change_scene == 0x20000000 && last_mask > 0)
+				z64_mask_equipped = last_mask;
+		}
+		
+		if (SAVE_TRISWIPE)
+			if (z64_triswipe == 255)
+				z64_triswipe = 1;
+	}
+
+	if (CFG_OPTIONS_MENU >= 2)  {
+		set_b_button();
+		handle_abilities_tunic_colors();
+		handle_downgrading();
+	}
+	
+	if (CFG_OPTIONS_MENU >= 3) {
+		handle_infinite();		
+		
+		if (SAVE_FOG > 0) {
+			if (SAVE_FOG < 15)
+				z64_game.fog_distance = 0.65f * SAVE_FOG;
+			else z64_game.fog_distance = 15.0f;
+			if (z64_camera_view == 1 && z64_game.fog_distance < 5.0f)
+				z64_game.fog_distance = 5.0f;
+			if (z64_camera_view == 2 && z64_game.fog_distance < 10.0f)
+				z64_game.fog_distance = 10.0f;
+		}
+	}
 	
 	if (CAN_CONTROL_LINK) {
-		handle_rupee_dash();
-		handle_power_crouch_stab_fix();
-		handle_weaker_swords();
-		handle_abilities();
+		if (CFG_OPTIONS_MENU >= 1) {
+			if (SAVE_INVERSE_AIM)
+				if (z64_camera_view == 1 || z64_camera_view == 2)
+					z64_y_axis_input *= -1;
 		
-		if (SAVE_INVERSE_AIM)
-			if (z64_camera_view == 1 || z64_camera_view == 2)
-				z64_y_axis_input *= -1;
+			if (SAVE_NO_IDLE_CAMERA)
+				if (z64_idle_camera_counter < 10)
+					z64_idle_camera_counter = 10;
+		}
 		
-		if (SAVE_NO_IDLE_CAMERA)
-			if (z64_idle_camera_counter < 10)
-				z64_idle_camera_counter = 10;
-			
-		if (SAVE_LEVITATION)
-			if (z64_game.common.input[0].raw.pad.l)
-				z64_link_a_action = 0x40CB;
+		if (CFG_OPTIONS_MENU >= 2) {
+			handle_rupee_dash();
+			handle_power_crouch_stab_fix();
+			handle_weaker_swords();
+			handle_abilities();
+		}
+		
+		if (CFG_OPTIONS_MENU >= 3)
+			if (SAVE_LEVITATION)
+				if (z64_game.common.input[0].raw.pad.l)
+					z64_link_a_action = 0x40CB;
 		
 		if (CFG_TYCOON_WALLET && z64_file.gs_tokens >= 40 && z64_file.wallet == 2 && TYCOON_WALLET)
 			z64_file.wallet = 3;
@@ -73,26 +110,6 @@ void handle_dpad() {
 			DPAD_CHILD_LEFT		= DPAD_NULL			* 16 + DPAD_TUNIC;
 		}
 	}
-	
-	if (SAVE_KEEP_MASK) {
-		if (z64_change_scene == 0x20000001)
-			last_mask = z64_mask_equipped;
-		if (z64_change_scene == 0x20000000 && last_mask > 0)
-			z64_mask_equipped = last_mask;
-	}
-	
-	if (SAVE_FOG > 0) {
-		if (SAVE_FOG < 15)
-			z64_game.fog_distance = 0.65f * SAVE_FOG;
-		else z64_game.fog_distance = 15.0f;
-		if (z64_camera_view == 1 && z64_game.fog_distance < 5.0f)
-			z64_game.fog_distance = 5.0f;
-		if (z64_camera_view == 2 && z64_game.fog_distance < 10.0f)
-			z64_game.fog_distance = 10.0f;
-	}
-	
-	if (SAVE_TRISWIPE && z64_triswipe == 255)
-		z64_triswipe = 1;
 	
 	if (z64_game.pause_ctxt.state == 6 && z64_game.common.input[0].pad_pressed.s && z64_game.pause_ctxt.unk_02_[1])
 		z64_game.pause_ctxt.unk_02_[1] = 0;
@@ -189,11 +206,20 @@ void handle_options_menu() {
 	
 	pad_t pad_pressed = z64_game.common.input[0].pad_pressed;
 	
+	uint8_t size;
+	if (CFG_OPTIONS_MENU == 0)
+		size = 0;
+	else if (CFG_OPTIONS_MENU == 1)
+		size = OPTIONS_SIZE_CORE;
+	else if (CFG_OPTIONS_MENU == 2)
+		size = OPTIONS_SIZE_MAIN;
+	else size = OPTIONS_SIZE_ALL;
+	
 	if (pad_pressed.du && options_cursor > 0) {
 		options_cursor--;
 		z64_playsfx(0x4839, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 	}
-	else if (pad_pressed.dd && options_cursor < OPTIONS_SIZE - 1) {
+	else if (pad_pressed.dd && options_cursor < size - 1) {
 		options_cursor++;
 		z64_playsfx(0x4839, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 	}
@@ -276,10 +302,9 @@ void handle_options_menu() {
 				break;
 		}
 	}
-		
 	
-	if (options_cursor >= OPTIONS_SIZE)
-		options_cursor =  OPTIONS_SIZE - 1;
+	if (options_cursor >= size)
+		options_cursor =  size - 1;
 }
 
 uint8_t draw_settings_menu(z64_disp_buf_t *db) {
@@ -327,9 +352,18 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 	
 	gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
 	
+	uint8_t size;
+	if (CFG_OPTIONS_MENU == 0)
+		size = 0;
+	else if (CFG_OPTIONS_MENU == 1)
+		size = OPTIONS_SIZE_CORE;
+	else if (CFG_OPTIONS_MENU == 2)
+		size = OPTIONS_SIZE_MAIN;
+	else size = OPTIONS_SIZE_ALL;
+	
 	for (uint8_t on=0; on<=1; on++) {
 		uint8_t draw = 0;
-		for (uint8_t i=0; i<OPTIONS_SIZE; i++) {
+		for (uint8_t i=0; i<size; i++) {
 			uint8_t setting;
 			switch (i) {
 				case OPTION_30_FPS:				setting = SAVE_30_FPS;			break;
