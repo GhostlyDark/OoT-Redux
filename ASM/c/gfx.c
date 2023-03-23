@@ -55,6 +55,11 @@ sprite_t font_sprite = {
     G_IM_FMT_IA, G_IM_SIZ_8b, 1
 };
 
+sprite_t font_en_sprite = {
+    NULL, 16, 16, 140,
+    G_IM_FMT_I, G_IM_SIZ_4b, 1
+};
+
 sprite_t dpad_sprite = {
     NULL, 32, 32, 1,
     G_IM_FMT_IA, G_IM_SIZ_16b, 2
@@ -88,6 +93,37 @@ sprite_t heart_sprite = {
     NULL, 16, 16, 10,
     G_IM_FMT_IA, G_IM_SIZ_8b, 1
 };
+
+sprite_t button_sprite = {
+    NULL, 32, 32, 5,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
+
+sprite_t counter_digit_sprite = {
+    NULL, 8, 16, 10,
+    G_IM_FMT_I, G_IM_SIZ_8b, 1
+};
+
+sprite_t ammo_digit_sprite = {
+    NULL, 8, 8, 10,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
+
+sprite_t subscreen_sprite = {
+    NULL, 80, 32, 67,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
+
+sprite_t subscreen_en_sprite = {
+    NULL, 80, 32, 9,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
+
+sprite_t title_sprite = {
+    NULL, 128, 16, 10,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
+
 
 int sprite_bytes_per_tile(sprite_t *sprite) {
     return sprite->tile_w * sprite->tile_h * sprite->bytes_per_texel;
@@ -154,23 +190,46 @@ void gfx_init() {
         NULL, z64_icon_item_dungeon_static_vaddr, z64_icon_item_dungeon_static_vsize
     };
     file_init(&icon_item_dungeon_static);
-
+	
+	file_t nes_font_static = {
+        NULL, z64_nes_font_static_vaddr, z64_nes_font_static_vsize
+    };
+    file_init(&nes_font_static);
+	
+	file_t subscreen_static = {
+        NULL, 0x008193C0, 0x29E00
+    };
+    file_init(&subscreen_static);
+	
+	file_t subscreen_nes_static = {
+        NULL, 0x0087A280, 0x5A00
+    };
+    file_init(&subscreen_nes_static);
+	
     stones_sprite.buf = title_static.buf + 0x2A300;
     medals_sprite.buf = title_static.buf + 0x2980;
     items_sprite.buf = icon_item_static.buf;
     quest_items_sprite.buf = icon_item_24_static.buf;
+	font_en_sprite.buf = nes_font_static.buf;
     dpad_sprite.buf = DPAD_TEXTURE;
     triforce_sprite.buf = TRIFORCE_ICON_TEXTURE;
-    song_note_sprite.buf = icon_item_static.buf + 0x00088040;
-    key_rupee_clock_sprite.buf = parameter_static.buf + 0x00001E00;
-    item_digit_sprite.buf = parameter_static.buf + 0x000035C0;
-    linkhead_skull_sprite.buf = icon_item_dungeon_static.buf + 0x00001980;
+    song_note_sprite.buf = icon_item_static.buf + 0x88040;
+    key_rupee_clock_sprite.buf = parameter_static.buf + 0x1E00;
+    item_digit_sprite.buf = parameter_static.buf + 0x35C0;
+    linkhead_skull_sprite.buf = icon_item_dungeon_static.buf + 0x1980;
     heart_sprite.buf = parameter_static.buf;
-
+	button_sprite.buf = parameter_static.buf + 0xA00;
+	counter_digit_sprite.buf = parameter_static.buf + 0x3040;
+	ammo_digit_sprite.buf = parameter_static.buf + 0x35C0;
+	subscreen_sprite.buf = subscreen_static.buf;
+	subscreen_en_sprite.buf = subscreen_nes_static.buf;
+	title_sprite.buf = title_static.buf + 0x2D700;
+	
     int font_bytes = sprite_bytes(&font_sprite);
     font_sprite.buf = heap_alloc(font_bytes);
     for (int i = 0; i < font_bytes / 2; i++) {
         font_sprite.buf[2*i] = (FONT_TEXTURE[i] >> 4) | 0xF0;
         font_sprite.buf[2*i + 1] = FONT_TEXTURE[i] | 0xF0;
     }
+	
 }
