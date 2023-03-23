@@ -15,12 +15,92 @@ uint16_t dpad_x					= 0;
 uint16_t dpad_y					= 0;
 uint16_t last_mask				= 0;
 uint8_t  options_menu			= 0;
-uint8_t  options_menu_frames	= 0;
 uint8_t  moved_x_axis_option	= 0;
 
 char options[OPTIONS_SIZE_ALL][OPTIONS_LENGTH]	= { "30 FPS",  "D-Pad Config", "D-Pad Layout", "Hide HUD", "HUD Layout", "Inverse Aim", "No Idle Camera", "Keep Mask", "Tri-Swipe", "Unequip Item", "Unequip Gear", "Item on B", "Downgrade Item", "Crouch Stab Fix", "Weaker Swords", "Extra Abilities", "Rupee Drain", "Fog", "Inventory Editor", "Levitation", "Infinite Health", "Infinite Magic", "Infinite Rupees", "Infinite Ammo" };
 uint8_t options_max[OPTIONS_SIZE_ALL]			= { 0,         2,              3,              4,          5,            0,             0,                0,           0,           0,              0,              0,           0,                0,                 0,               0,                 15,            15,    0,                  0,             0,                0,                0,                 0               };
 uint8_t options_cursor							= 0;
+
+char tooltips1[OPTIONS_SIZE_ALL][30] = {
+	"Allows 30 FPS, press L and",
+	"0. Disabled",
+	"0. Hidden",
+	"Choose from four options",
+	"Choose from five different",
+	"Inverse Aim",
+	"No Idle Camera",
+	"Keep Mask",
+	"Tri-Swipe",
+	"Unequip Item",
+	"Unequip Gear",
+	"Item on B",
+	"Downgrade Item",
+	"Crouch Stab Fix",
+	"Weaker Swords",
+	"Extra Abilities",
+	"Rupee Drain",
+	"Fog",
+	"Inventory Editor",
+	"Levitation",
+	"Infinite Health",
+	"Infinite Magic",
+	"Infinite Rupees",
+	"Infinite Ammo"
+};
+
+char tooltips2[OPTIONS_SIZE_ALL][30] = {
+	"Z to toggle between both",
+	"1. Enabled",
+	"1. Right",
+	"to have the HUD hidden",
+	"layouts for the HUD",
+	"Inverse Aim",
+	"No Idle Camera",
+	"Keep Mask",
+	"Tri-Swipe",
+	"Unequip Item",
+	"Unequip Gear",
+	"Item on B",
+	"Downgrade Item",
+	"Crouch Stab Fix",
+	"Weaker Swords",
+	"Extra Abilities",
+	"Rupee Drain",
+	"Fog",
+	"Inventory Editor",
+	"Levitation",
+	"Infinite Health",
+	"Infinite Magic",
+	"Infinite Rupees",
+	"Infinite Ammo"
+};
+
+char tooltips3[OPTIONS_SIZE_ALL][30] = {
+	"20 and 30 FPS",
+	"2. Dual Set",
+	"2. Left",
+	"",
+	"",
+	"Inverse Aim",
+	"No Idle Camera",
+	"Keep Mask",
+	"Tri-Swipe",
+	"Unequip Item",
+	"Unequip Gear",
+	"Item on B",
+	"Downgrade Item",
+	"Crouch Stab Fix",
+	"Weaker Swords",
+	"Extra Abilities",
+	"Rupee Drain",
+	"Fog",
+	"Inventory Editor",
+	"Levitation",
+	"Infinite Health",
+	"Infinite Magic",
+	"Infinite Rupees",
+	"Infinite Ammo"
+};
 
 extern uint8_t CHECKED_LENS;
 
@@ -28,7 +108,7 @@ void handle_dpad() {
 	if (z64_file.game_mode != 0)
 		return;
 	
-	handle_l_button();
+	z64_file.rupees = SAVE_30_FPS;
 	
 	if (CFG_OPTIONS_MENU >= 1) {
 		handle_dpad_ingame();
@@ -49,12 +129,14 @@ void handle_dpad() {
 			if (z64_triswipe == 255)
 				z64_triswipe = 1;
 	}
-
+	
 	if (CFG_OPTIONS_MENU >= 2)  {
 		set_b_button();
 		handle_abilities_tunic_colors();
 		handle_downgrading();
 	}
+	
+	handle_l_button();
 	
 	if (CFG_OPTIONS_MENU >= 3) {
 		handle_infinite();		
@@ -309,33 +391,54 @@ void handle_options_menu() {
 		}
 	}
 	else if (pad_pressed.b) {
+		z64_playsfx(0x483B, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+		
 		switch (options_cursor) {
+			case OPTION_INVERSE_AIM:		EXTRA_SRAM_1 ^= 1 << 5; break;
+			case OPTION_NO_IDLE_CAMERA:		EXTRA_SRAM_1 ^= 1 << 6; break;
+			case OPTION_EXTRA_ABILITIES:	EXTRA_SRAM_1 ^= 1 << 7; break;
+			case OPTION_UNEQUIP_GEAR:		EXTRA_SRAM_2 ^= 1;      break;
+			case OPTION_UNEQUIP_ITEM:		EXTRA_SRAM_2 ^= 1 << 1; break;
+			case OPTION_ITEM_ON_B:			EXTRA_SRAM_2 ^= 1 << 2; break;
+			case OPTION_WEAKER_SWORDS:		EXTRA_SRAM_2 ^= 1 << 3; break;
+			case OPTION_DOWNGRADE_ITEM:		EXTRA_SRAM_2 ^= 1 << 4; break;
+			case OPTION_CROUCH_STAB_FIX:	EXTRA_SRAM_2 ^= 1 << 5; break;
+			case OPTION_KEEP_MASK:			EXTRA_SRAM_2 ^= 1 << 6; break;
+			case OPTION_TRISWIPE:			EXTRA_SRAM_2 ^= 1 << 7; break;
+			case OPTION_INFINITE_HP:		EXTRA_SRAM_3 ^= 1 << 7; break;
+			case OPTION_INFINITE_MP:		EXTRA_SRAM_4 ^= 1 << 7; break;
+			case OPTION_LEVITATION:			EXTRA_SRAM_5 ^= 1 << 4; break;
+			case OPTION_INFINITE_RUPEES:	EXTRA_SRAM_5 ^= 1 << 5; break;
+			case OPTION_INFINITE_AMMO:		EXTRA_SRAM_5 ^= 1 << 6; break;
+			
+			case OPTION_30_FPS:
+				EXTRA_SRAM_1 ^= 1 << 4;
+				if (!SAVE_30_FPS)
+					reset_fps_values();
+				break;
+			
 			case OPTION_RUPEE_DRAIN:
 				if (SAVE_RUPEE_DRAIN > 0)
 					EXTRA_SRAM_3--;
 				else EXTRA_SRAM_3 += options_max[options_cursor];
-				z64_playsfx(0x483B, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 				break;
 			
 			case OPTION_HIDE_HUD:
 				if (SAVE_HIDE_HUD > 0)
 					EXTRA_SRAM_3 -= 1 << 4;
 				else EXTRA_SRAM_3 += options_max[options_cursor] << 4;
-				z64_playsfx(0x483B, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 				break;
 			
 			case OPTION_DPAD:
 				if (SAVE_DPAD > 0)
 					EXTRA_SRAM_4--;
 				else EXTRA_SRAM_4 += options_max[options_cursor];
-				z64_playsfx(0x483B, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 				break;
 			
 			case OPTION_SHOW_DPAD:
 				if (SAVE_SHOW_DPAD > 0)
 					EXTRA_SRAM_4 -= 1 << 2;
 				else EXTRA_SRAM_4 += options_max[options_cursor] << 2;
-				z64_playsfx(0x483B, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 				break;
 				
 			case OPTION_HUD_LAYOUT:
@@ -343,7 +446,6 @@ void handle_options_menu() {
 					EXTRA_SRAM_4 -= 1 << 4;
 				else EXTRA_SRAM_4 += options_max[options_cursor] << 4;
 				reset_layout();
-				z64_playsfx(0x483B, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 				break;
 				
 			case OPTION_FOG:
@@ -352,7 +454,6 @@ void handle_options_menu() {
 				else EXTRA_SRAM_5 += options_max[options_cursor];
 				if (SAVE_FOG == 0)
 					z64_game.fog_distance = 10.0f;
-				z64_playsfx(0x483B, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 				break;
 		}
 	}
@@ -370,23 +471,22 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 	gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
 	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
 	
-	uint8_t x		= 40;
-	uint8_t y		= 40;
-	uint8_t width	= 80;
-	uint8_t height	= 32;
-	
+	uint8_t x			= 40;
+	uint8_t y			= 40;
+	uint8_t width		= 80;
+	uint8_t height		= 32;
 	uint8_t left		= (320 / 2) - (144 / 2) + 10;
-	uint8_t top			= 115;
+	uint8_t top			= 75;
 	uint8_t setting		= 0;
-	int8_t recenter 	= 0;
-	char str_option[30]	= "";
+	int8_t  recenter	= 0;
 	
 	gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
 		
-	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0);
 	sprite_load(db, &font_en_sprite, 0, 1);
 	sprite_draw(db, &font_en_sprite, 0, 0, 0, 16, 16);
 	
+	gDPSetPrimColor(db->p++, 0, 0, 0xA0, 0xA0, 0xA0, 0xFF);
 	sprite_load(db, &subscreen_sprite, 4,  1);
 	sprite_draw(db, &subscreen_sprite, 0, x,               y, width, height);
 	sprite_load(db, &subscreen_sprite, 66, 1);
@@ -394,26 +494,17 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 	sprite_load(db, &subscreen_sprite, 5,  1);
 	sprite_draw(db, &subscreen_sprite, 0, x + (width * 2), y, width, height);
 	
-	sprite_load(db, &title_sprite, 9, 1);
-	sprite_draw(db, &title_sprite, 0, x + width + 16, y + 3, 128, 16);
-	
 	for (uint8_t i=0; i<3; i++)
 		for (uint8_t j=1; j<=4; j++) {
 			sprite_load(db, &subscreen_sprite, (i + 3) + (15 * j),  1);
 			sprite_draw(db, &subscreen_sprite, 0, x + (width * i), y + (height * j), width, height);
 		}
 	
-	options_menu_frames++;
-	uint8_t compare_frames = 40;
-	if (fps_limit == 2)
-		compare_frames *= 1.5;
-
-	if (options_menu_frames > compare_frames * 2)
-		options_menu_frames = 0;
-	if (options_menu_frames <= compare_frames)
-		 gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xBF, 0x00, 0xFF);
-	else gDPSetPrimColor(db->p++, 0, 0, 0x00, 0xFF, 0xFF, 0xFF);
+	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+	sprite_load(db, &title_sprite, 9, 1);
+	sprite_draw(db, &title_sprite, 0, x + width + 16, y + 3, 128, 16);
 	
+	gDPSetPrimColor(db->p++, 0, 0, 0xD0, 0xD0, 0xD0, 0xFF);
 	sprite_load(db, &button_sprite, 2, 1);
 	sprite_draw(db, &button_sprite, 0, left - 35,  top - 10, 32, 32);
 	sprite_load(db, &button_sprite, 4, 1);
@@ -448,7 +539,7 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 	}
 	
 	if (setting == 0)
-		 gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0x00, 0x00, 0xFF);
+		 gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
 	else gDPSetPrimColor(db->p++, 0, 0, 0x00, 0xFF, 0x00, 0xFF);
 	
 	if (setting < 10) {
@@ -463,7 +554,13 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 		sprite_draw(db, &ammo_digit_sprite, 0, left + 64, top + 20, 16, 16);
 	}
 	
-	text_print(options[options_cursor], left + recenter, top);
+	text_print(options[options_cursor],  left + recenter, top);
+	text_flush(db);
+	
+	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+	text_print(tooltips1[options_cursor], left - 45, top + 50);
+	text_print(tooltips2[options_cursor], left - 45, top + 70);
+	text_print(tooltips3[options_cursor], left - 45, top + 90);
 	text_flush(db);
 	
 	return 1;
