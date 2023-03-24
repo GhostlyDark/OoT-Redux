@@ -212,7 +212,7 @@ void handle_abilities() {
 }
 
 void handle_l_button() {
-	if (z64_game.pause_ctxt.state != 0 && z64_game.pause_ctxt.state != 6)
+	if (z64_game.pause_ctxt.state != 0)
 		return;
 	
 	pad_t pad_released = z64_game.common.input[0].pad_released;
@@ -227,15 +227,8 @@ void handle_l_button() {
 		pressed_x = 1;
 	if (z64_game.common.input[0].raw.y != 0 && SAVE_EXTRA_ABILITIES)
 		pressed_y = 1;
-	if (pad_released.l && !pressed_r && !pressed_z && !pressed_x && !pressed_y) {
+	if (pad_released.l && !pressed_r && !pressed_z && !pressed_x && !pressed_y)
 		toggle = 1;
-		settings_menu();
-		
-		if (z64_game.pause_ctxt.unk_02_[1] == 2) {
-			z64_game.pause_ctxt.unk_02_[1] = 3;
-			z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-		}
-	}
 	if (!z64_game.common.input[0].raw.pad.l)
 		pressed_r = pressed_z = pressed_x = pressed_y = 0;
 	
@@ -450,21 +443,10 @@ void set_b_button(pad_t pad_pressed) {
 	}
 }
 
-void settings_menu() {
-	if (z64_game.pause_ctxt.state != 6 || CFG_OPTIONS_MENU == 0)
+void handle_infinite() {
+	if (z64_game.pause_ctxt.unk_02_[1] != 0)
 		return;
 	
-	if (z64_game.pause_ctxt.unk_02_[1] == 0) {
-		z64_game.pause_ctxt.unk_02_[1] = 3;
-		z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-	}
-	else if (z64_game.pause_ctxt.unk_02_[1] == 3) {
-		z64_game.pause_ctxt.unk_02_[1] = 0;
-		z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-	}
-}
-
-void handle_infinite() {
 	if (SAVE_INFINITE_HP) {
 		if (z64_file.energy < z64_file.energy_capacity)
 			z64_file.energy = z64_file.energy_capacity;

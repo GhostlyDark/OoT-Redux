@@ -10,7 +10,6 @@ void reset_layout();
 void handle_hud();
 void set_b_button();
 void inventory_editor();
-void settings_menu();
 void swap_item(z64_slot_t slot, z64_item_t original, z64_item_t swap);
 void handle_infinite();
 void handle_rupee_dash();

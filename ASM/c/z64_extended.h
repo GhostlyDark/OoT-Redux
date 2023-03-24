@@ -149,6 +149,7 @@ typedef struct {
 #define z64_link_animation_parameter	(*(uint16_t*)			0x801DABF0)
 #define z64_link_a_action				(*(uint16_t*)			0x801DAA90)
 #define z64_idle_camera_counter			(*(uint8_t*)			0x801C86CF)
+#define z64_inventory_editor_index		(*(uint8_t*)			0x8039EA59)
 
 /* DRAM addresses & data for HUD */
 #define z64_b_button_label_x			(*(uint16_t*)			0x801C7C3A)
