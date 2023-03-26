@@ -21,7 +21,6 @@ extern sprite_t medals_sprite;
 extern sprite_t items_sprite;
 extern sprite_t quest_items_sprite;
 extern sprite_t font_sprite;
-extern sprite_t font_en_sprite;
 extern sprite_t dpad_sprite;
 extern sprite_t triforce_sprite;
 extern sprite_t song_note_sprite;
@@ -33,7 +32,6 @@ extern sprite_t button_sprite;
 extern sprite_t counter_digit_sprite;
 extern sprite_t ammo_digit_sprite;
 extern sprite_t subscreen_sprite;
-extern sprite_t subscreen_en_sprite;
 extern sprite_t title_sprite;
 
 void gfx_init();

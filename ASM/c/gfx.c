@@ -55,11 +55,6 @@ sprite_t font_sprite = {
     G_IM_FMT_IA, G_IM_SIZ_8b, 1
 };
 
-sprite_t font_en_sprite = {
-    NULL, 16, 16, 140,
-    G_IM_FMT_I, G_IM_SIZ_4b, 1
-};
-
 sprite_t dpad_sprite = {
     NULL, 32, 32, 1,
     G_IM_FMT_IA, G_IM_SIZ_16b, 2
@@ -191,39 +186,27 @@ void gfx_init() {
     };
     file_init(&icon_item_dungeon_static);
 	
-	file_t nes_font_static = {
-        NULL, z64_nes_font_static_vaddr, z64_nes_font_static_vsize
-    };
-    file_init(&nes_font_static);
-	
-	file_t subscreen_static = {
+    file_t subscreen_static = {
         NULL, 0x008193C0, 0x29E00
     };
     file_init(&subscreen_static);
-	
-	file_t subscreen_nes_static = {
-        NULL, 0x0087A280, 0x5A00
-    };
-    file_init(&subscreen_nes_static);
 	
     stones_sprite.buf = title_static.buf + 0x2A300;
     medals_sprite.buf = title_static.buf + 0x2980;
     items_sprite.buf = icon_item_static.buf;
     quest_items_sprite.buf = icon_item_24_static.buf;
-	font_en_sprite.buf = nes_font_static.buf;
     dpad_sprite.buf = DPAD_TEXTURE;
     triforce_sprite.buf = TRIFORCE_ICON_TEXTURE;
-    song_note_sprite.buf = icon_item_static.buf + 0x88040;
-    key_rupee_clock_sprite.buf = parameter_static.buf + 0x1E00;
-    item_digit_sprite.buf = parameter_static.buf + 0x35C0;
-    linkhead_skull_sprite.buf = icon_item_dungeon_static.buf + 0x1980;
+    song_note_sprite.buf = icon_item_static.buf + 0x00088040;
+    key_rupee_clock_sprite.buf = parameter_static.buf + 0x00001E00;
+    item_digit_sprite.buf = parameter_static.buf + 0x000035C0;
+    linkhead_skull_sprite.buf = icon_item_dungeon_static.buf + 0x00001980;
     heart_sprite.buf = parameter_static.buf;
-	button_sprite.buf = parameter_static.buf + 0xA00;
-	counter_digit_sprite.buf = parameter_static.buf + 0x3040;
-	ammo_digit_sprite.buf = parameter_static.buf + 0x35C0;
-	subscreen_sprite.buf = subscreen_static.buf;
-	subscreen_en_sprite.buf = subscreen_nes_static.buf;
-	title_sprite.buf = title_static.buf + 0x2D700;
+    button_sprite.buf = parameter_static.buf + 0xA00;
+    counter_digit_sprite.buf = parameter_static.buf + 0x3040;
+    ammo_digit_sprite.buf = parameter_static.buf + 0x35C0;
+    subscreen_sprite.buf = subscreen_static.buf;
+    title_sprite.buf = title_static.buf + 0x2D700;
 	
     int font_bytes = sprite_bytes(&font_sprite);
     font_sprite.buf = heap_alloc(font_bytes);

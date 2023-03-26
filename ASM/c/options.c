@@ -299,8 +299,8 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 	gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
 		
 	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0);
-	sprite_load(db, &font_en_sprite, 0, 1);
-	sprite_draw(db, &font_en_sprite, 0, 0, 0, 16, 16);
+	sprite_load(db, &stones_sprite, 0, 1);
+	sprite_draw(db, &stones_sprite, 0, 0, 0, 16, 16);
 	
 	gDPSetPrimColor(db->p++, 0, 0, 0xA0, 0xA0, 0xA0, 0xFF);
 	sprite_load(db, &subscreen_sprite, 4,  1);
@@ -606,5 +606,4 @@ void handle_inventory_editor() {
 	z64_game.common.input[0].raw.pad.b = z64_game.common.input[0].pad_pressed.b = 0;
 	z64_game.common.input[0].raw.pad.r = z64_game.common.input[0].pad_pressed.r = 0;
 	z64_game.common.input[0].raw.pad.z = z64_game.common.input[0].pad_pressed.z = 0;
-	
 }

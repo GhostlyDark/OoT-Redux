@@ -1,5 +1,4 @@
 #include "gfx.h"
-#include "text.h"
 #include "dpad.h"
 #include "dpad_paused.h"
 #include "dpad_actions.h"
