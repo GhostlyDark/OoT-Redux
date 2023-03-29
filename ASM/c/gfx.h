@@ -28,6 +28,11 @@ extern sprite_t key_rupee_clock_sprite;
 extern sprite_t item_digit_sprite;
 extern sprite_t linkhead_skull_sprite;
 extern sprite_t heart_sprite;
+extern sprite_t button_sprite;
+extern sprite_t counter_digit_sprite;
+extern sprite_t ammo_digit_sprite;
+extern sprite_t subscreen_sprite;
+extern sprite_t title_sprite;
 
 void gfx_init();
 

@@ -94,6 +94,8 @@ CFG_WS:
 .byte 0x00
 CFG_TYCOON_WALLET:
 .byte 0x00
+CFG_OPTIONS_MENU:
+.byte 0x03
 
 .area 0x20, 0
 CFG_CUSTOM_MESSAGE_1:
