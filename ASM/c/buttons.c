@@ -1,11 +1,12 @@
 #include "buttons.h"
 
 extern uint8_t CFG_WS;
+extern uint8_t CFG_OPTIONS_MENU;
 
-uint8_t hud_hide			= 0;
 uint8_t hud_hearts_hide		= 1;
 uint8_t hud_counter			= 0;
-uint8_t block				= 0;
+uint8_t block_r				= 0;
+uint8_t block_z				= 0;
 uint8_t pressed_r			= 0;
 uint8_t pressed_z			= 0;
 uint8_t pressed_x			= 0;
@@ -20,240 +21,65 @@ uint8_t magic_secs			= 0;
 uint8_t restore_health		= 0;
 uint16_t last_health		= 0;
 
-void handle_rupee_dash() {
-	if (SAVE_RUPEE_DRAIN == 0)
-		return;
-	
-	if (z64_file.energy > 1) {
-		rupee_dash_frames++;
-		uint8_t compare_frames = 20;
-		if (fps_limit == 2)
-			compare_frames *= 1.5;
-	
-		if (rupee_dash_frames >= compare_frames) {
-			rupee_dash_frames = 0;
-			rupee_dash_secs++;
-		}
-	
-		if (rupee_dash_secs >= SAVE_RUPEE_DRAIN) {
-			rupee_dash_secs = 0;
-		
-			if (z64_file.rupees > 0)
-				z64_file.rupees--;
-			else {
-				if (z64_file.energy > 7)
-					z64_file.energy -= 4;
-				else z64_file.energy = 1;
-				z64_LinkInvincibility(&z64_link, 0x14);
-				uint16_t sfx = 0x6805;
-				if (z64_file.link_age)
-					sfx = 0x6825;
-				z64_playsfx(sfx, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-			}
-		}
-	}
-	else rupee_dash_frames = rupee_dash_secs = 0;
-}
-
-void handle_power_crouch_stab_fix() {
-	if (!SAVE_CROUCH_STAB_FIX || z64_file.equip_sword == 0)
-		return;
-	
-	if (z64_file.equip_sword == 1)
-		z64_sword_damage_1 = z64_sword_damage_2 = 1;
-	else if (z64_file.equip_sword == 2)
-		z64_sword_damage_1 = z64_sword_damage_2 = 2;
-	else if (z64_file.equip_sword == 3 && !z64_file.broken_giants_knife)
-		z64_sword_damage_1 = z64_sword_damage_2 = 4;
-	else if (z64_file.equip_sword == 3 && z64_file.broken_giants_knife)
-		z64_sword_damage_1 = z64_sword_damage_2 = 1;
-}
-
-void handle_weaker_swords() {
-	if (SAVE_WEAKER_SWORDS)
-		if (z64_sword_damage_1 > 1 && z64_file.equip_sword > 0)
-			z64_sword_damage_2 = z64_sword_damage_1 - 1;
-}
-
-void handle_abilities_tunic_colors() {
-	if (!SAVE_EXTRA_ABILITIES || z64_file.game_mode != 0)
-		return;
-	
-	if (z64_file.forest_medallion && z64_file.equip_tunic == 1)
-		z64_tunic_color = COLOR_FOREST;
-	else if (z64_file.fire_medallion && z64_file.equip_tunic == 2)
-		z64_tunic_color = COLOR_FIRE;
-	else if (z64_file.water_medallion && z64_file.equip_tunic == 3)
-		z64_tunic_color = COLOR_WATER;
-	else if (z64_file.shadow_medallion && z64_file.equip_tunic == 0)
-		z64_tunic_color = COLOR_SHADOW;
-}
-
-void handle_abilities() {
-	if (!SAVE_EXTRA_ABILITIES)
-		return;
-	
-	if (restore_health == 0 && z64_damage_frames == 0)
-		last_health = z64_file.energy;
-	
-	uint8_t compare_frames = 20;
-	if (fps_limit == 2)
-		compare_frames *= 1.5;
-	
-	if (z64_file.light_medallion && (z64_file.equip_boots == 1 || (z64_file.spirit_medallion && z64_file.equip_boots == 3) ) && z64_game.common.input[0].raw.pad.l) {
-		if (z64_link_animation_parameter == 0x3FA0)
-			z64_link_a_action = 0x40FF;
-	}
-	
-	if (z64_file.forest_medallion && z64_file.equip_tunic == 1 && HAS_MAGIC) {
-		if ( (z64_file.magic < 0x30 && !z64_file.magic_capacity) || (z64_file.magic < 0x60 && z64_file.magic_capacity) ) {
-			if (z64_damage_frames == 12 && restore_health == 0)
-				restore_health = 1;
-			else if (z64_damage_frames == 0)
-				restore_health = 0;
-			
-			if (restore_health == 1) {
-				restore_health = 2;
-				z64_file.magic += 4;
-				z64_playsfx(0x480B, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-				
-				if (z64_file.magic > 0x60 && z64_file.magic_capacity)
-					z64_file.magic = 0x60;
-				else if (z64_file.magic > 0x30)
-					z64_file.magic = 0x30;
-			}
-		}
-	}
-		
-	if (z64_file.fire_medallion && z64_file.equip_tunic == 2 && HAS_MAGIC && z64_file.magic > 0) {
-		if (z64_damage_frames == 12 && restore_health == 0)
-			restore_health = 1;
-		else if (z64_damage_frames == 0)
-			restore_health = 0;
-		
-		if (restore_health == 1) {
-			restore_health = 2;
-			z64_file.energy += (last_health - z64_file.energy) / 2;
-			z64_playsfx(0x481E, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-				
-			if (z64_file.magic >= 4)
-				z64_file.magic -= 4;
-			else z64_file.magic = 0;
-			
-			if (z64_file.energy > z64_file.energy_capacity)
-				z64_file.energy = z64_file.energy_capacity;
-		}
-	}
-		
-	if (z64_file.water_medallion && z64_file.equip_tunic == 3 && z64_sword_damage_1 > 0 && z64_file.equip_sword > 0) {
-		if (SAVE_WEAKER_SWORDS)
-			z64_sword_damage_2 = z64_sword_damage_1;
-		else z64_sword_damage_2 = z64_sword_damage_1 + 1;
-	}
-		
-	if (z64_file.shadow_medallion && z64_file.equip_tunic == 0) {
-		if (z64_file.energy < z64_file.energy_capacity && z64_file.magic > 0 && HAS_MAGIC) {
-			restore_frames++;
-		
-			if (restore_frames >= compare_frames) {
-				restore_frames = 0;
-				restore_secs++;
-			}
-		
-			if (restore_secs >= 3) {
-				restore_secs = 0;
-				z64_file.energy += 4;
-				if (z64_file.magic >= 4)
-					z64_file.magic -= 4;
-				else z64_file.magic = 0;
-				z64_playsfx(0x480B, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-			}
-		}
-		else restore_frames = restore_secs = 0;
-	}
-		
-	if (z64_file.spirit_medallion ) {
-		z64_inner_red_trail_r = z64_outer_red_trail_r = 0xFF;
-		z64_inner_red_trail_g = z64_outer_red_trail_g = 0xD7;
-		z64_inner_red_trail_b = z64_outer_red_trail_b = 0x00;
-	}
-	
-	if (z64_file.kokiris_emerald && (z64_file.equip_boots == 1 || (z64_file.spirit_medallion && z64_file.equip_boots == 3) ) && z64_game.common.input[0].raw.pad.l && HAS_MAGIC && z64_file.magic > 0) {
-		uint16_t extra_speed = 0x50;
-		uint16_t magic_cost  = 2;
-		if (z64_file.gorons_ruby)
-			extra_speed = 0xA0;
-		if (z64_file.zoras_sapphire)
-			magic_cost = 1;
-		
-		uint16_t speed = 0x40B0;
-		if (!z64_file.link_age)
-			speed = 0x40C0;
-		if (z64_move_speed >= speed - 0x1A) {
-			magic_frames++;
-				
-			if (magic_frames >= compare_frames/2) {
-				magic_frames = 0;
-				magic_secs++;
-			}
-				
-			if (magic_secs >= 1) {
-				magic_secs = 0;
-				if (z64_file.magic >= magic_cost)
-					z64_file.magic -= magic_cost;
-				else z64_file.magic = 0;
-			}
-				
-			z64_move_speed = speed + extra_speed;
-		}
-	}
-	else magic_frames = magic_secs = 0;
-}
-
 void handle_l_button() {
-	if (z64_game.pause_ctxt.state != 0 && z64_game.pause_ctxt.state != 6)
+	if (z64_game.pause_ctxt.state != 0)
 		return;
-	
-	pad_t pad_released = z64_game.common.input[0].pad_released;
+	if (!SAVE_30_FPS && SAVE_DPAD != 2 && !SAVE_EXTRA_ABILITIES)
+		return;
 	
 	uint8_t toggle = 0;
 	
-	if (z64_game.common.input[0].raw.pad.r && SAVE_DPAD == 2)
-		pressed_r = 1;
-	if (z64_game.common.input[0].raw.pad.z && SAVE_30_FPS)
-		pressed_z = 1;
-	if (z64_game.common.input[0].raw.x != 0 && SAVE_EXTRA_ABILITIES)
-		pressed_x = 1;
-	if (z64_game.common.input[0].raw.y != 0 && SAVE_EXTRA_ABILITIES)
-		pressed_y = 1;
-	if (pad_released.l && !pressed_r && !pressed_z && !pressed_x && !pressed_y) {
-		toggle = 1;
-		settings_menu();
-		
-		if (z64_game.pause_ctxt.unk_02_[1] == 2) {
-			z64_game.pause_ctxt.unk_02_[1] = 3;
-			z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-		}
+	if (SAVE_DPAD == 2) {
+		if (z64_game.common.input[0].raw.pad.r)
+			pressed_r = 1;
 	}
+	else pressed_r = 0;
+	if (SAVE_30_FPS) {
+		if (z64_game.common.input[0].raw.pad.z)
+			pressed_z = 1;
+	}
+	else pressed_z = 0;
+	if (SAVE_EXTRA_ABILITIES) {
+		if (z64_game.common.input[0].raw.x != 0)
+			pressed_x = 1;
+		if (z64_game.common.input[0].raw.y != 0)
+			pressed_y = 1;
+	}
+	else pressed_x = pressed_y = 0;
+	
+	if (z64_game.common.input[0].pad_released.l)
+		if (!pressed_r && !pressed_z && !pressed_x && !pressed_y)
+			toggle_minimap();
 	if (!z64_game.common.input[0].raw.pad.l)
 		pressed_r = pressed_z = pressed_x = pressed_y = 0;
 	
-	if (z64_game.common.input[0].pad_pressed.l && !z64_game.common.input[0].raw.pad.r)
-		block = 1;
-	else if (z64_game.common.input[0].pad_pressed.l && !z64_game.common.input[0].raw.pad.z)
-		block = 1;
-	if (!z64_game.common.input[0].raw.pad.l)
-		block = 0;
-	
-	if (block) {
-		z64_game.common.input[0].raw.pad.r = z64_game.common.input[0].pad_pressed.r = 0;
-		z64_game.common.input[0].raw.pad.z = z64_game.common.input[0].pad_pressed.z = 0;
+	if (z64_game.common.input[0].pad_pressed.l) {
+		if (SAVE_DPAD == 2)
+			if (!z64_game.common.input[0].raw.pad.r)
+				block_r = 1;
+		if (SAVE_30_FPS)
+			if (!z64_game.common.input[0].raw.pad.z)
+				block_z = 1;
 	}
+	if (!z64_game.common.input[0].raw.pad.l)
+		block_r = block_z = 0;
+	
+	if (block_r)
+		z64_game.common.input[0].raw.pad.r = z64_game.common.input[0].pad_pressed.r = 0;
+	if (block_z)
+		z64_game.common.input[0].raw.pad.z = z64_game.common.input[0].pad_pressed.z = 0;
 	
 	z64_game.common.input[0].pad_pressed.l = 0;	
-	
-	if (toggle && z64_game.pause_ctxt.state == 0 && !hud_hide)
-		z64_button_input |= 0x20;
+}
+
+void toggle_minimap() {
+	if ( (z64_game.scene_index >= 0x00 && z64_game.scene_index <= 0x09 ) || (z64_game.scene_index >= 0x51 && z64_game.scene_index <= 0x64) ) {
+		z64_gameinfo.minimap_disabled ^= 1;
+		uint16_t sfx = 0x4814;
+		if (z64_gameinfo.minimap_disabled)
+			sfx = 0x4813;
+		z64_playsfx(sfx, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	}
 }
 
 void handle_layout() {
@@ -449,21 +275,200 @@ void set_b_button(pad_t pad_pressed) {
 	}
 }
 
-void settings_menu() {
-	if (z64_game.pause_ctxt.state != 6)
+void handle_rupee_dash() {
+	if (SAVE_RUPEE_DRAIN == 0)
 		return;
 	
-	if (z64_game.pause_ctxt.unk_02_[1] == 0) {
-		z64_game.pause_ctxt.unk_02_[1] = 3;
-		z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	if (z64_file.energy > 1) {
+		rupee_dash_frames++;
+		uint8_t compare_frames = 20;
+		if (fps_limit == 2)
+			compare_frames *= 1.5;
+	
+		if (rupee_dash_frames >= compare_frames) {
+			rupee_dash_frames = 0;
+			rupee_dash_secs++;
+		}
+	
+		if (rupee_dash_secs >= SAVE_RUPEE_DRAIN) {
+			rupee_dash_secs = 0;
+		
+			if (z64_file.rupees > 0)
+				z64_file.rupees--;
+			else {
+				if (z64_file.energy > 7)
+					z64_file.energy -= 4;
+				else z64_file.energy = 1;
+				z64_LinkInvincibility(&z64_link, 0x14);
+				uint16_t sfx = 0x6805;
+				if (z64_file.link_age)
+					sfx = 0x6825;
+				z64_playsfx(sfx, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+			}
+		}
 	}
-	else if (z64_game.pause_ctxt.unk_02_[1] == 3) {
-		z64_game.pause_ctxt.unk_02_[1] = 0;
-		z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	else rupee_dash_frames = rupee_dash_secs = 0;
+}
+
+void handle_power_crouch_stab_fix() {
+	if (!SAVE_CROUCH_STAB_FIX || z64_file.equip_sword == 0)
+		return;
+	
+	if (z64_file.equip_sword == 1)
+		z64_sword_damage_1 = z64_sword_damage_2 = 1;
+	else if (z64_file.equip_sword == 2)
+		z64_sword_damage_1 = z64_sword_damage_2 = 2;
+	else if (z64_file.equip_sword == 3 && !z64_file.broken_giants_knife)
+		z64_sword_damage_1 = z64_sword_damage_2 = 4;
+	else if (z64_file.equip_sword == 3 && z64_file.broken_giants_knife)
+		z64_sword_damage_1 = z64_sword_damage_2 = 1;
+}
+
+void handle_weaker_swords() {
+	if (SAVE_WEAKER_SWORDS)
+		if (z64_sword_damage_1 > 1 && z64_file.equip_sword > 0)
+			z64_sword_damage_2 = z64_sword_damage_1 - 1;
+}
+
+void handle_abilities_tunic_colors() {
+	if (!SAVE_EXTRA_ABILITIES || z64_file.game_mode != 0)
+		return;
+	
+	if (z64_file.forest_medallion && z64_file.equip_tunic == 1)
+		z64_tunic_color = COLOR_FOREST;
+	else if (z64_file.fire_medallion && z64_file.equip_tunic == 2)
+		z64_tunic_color = COLOR_FIRE;
+	else if (z64_file.water_medallion && z64_file.equip_tunic == 3)
+		z64_tunic_color = COLOR_WATER;
+	else if (z64_file.shadow_medallion && z64_file.equip_tunic == 0)
+		z64_tunic_color = COLOR_SHADOW;
+}
+
+void handle_abilities() {
+	if (!SAVE_EXTRA_ABILITIES)
+		return;
+	
+	if (restore_health == 0 && z64_damage_frames == 0)
+		last_health = z64_file.energy;
+	
+	uint8_t compare_frames = 20;
+	if (fps_limit == 2)
+		compare_frames *= 1.5;
+	
+	if (z64_file.light_medallion && (z64_file.equip_boots == 1 || (z64_file.spirit_medallion && z64_file.equip_boots == 3) ) && z64_game.common.input[0].raw.pad.l) {
+		if (z64_link_animation_parameter == 0x3FA0)
+			z64_link_a_action = 0x40FF;
 	}
+	
+	if (z64_file.forest_medallion && z64_file.equip_tunic == 1 && HAS_MAGIC) {
+		if ( (z64_file.magic < 0x30 && !z64_file.magic_capacity) || (z64_file.magic < 0x60 && z64_file.magic_capacity) ) {
+			if (z64_damage_frames == 12 && restore_health == 0)
+				restore_health = 1;
+			else if (z64_damage_frames == 0)
+				restore_health = 0;
+			
+			if (restore_health == 1) {
+				restore_health = 2;
+				z64_file.magic += 4;
+				z64_playsfx(0x480B, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+				
+				if (z64_file.magic > 0x60 && z64_file.magic_capacity)
+					z64_file.magic = 0x60;
+				else if (z64_file.magic > 0x30)
+					z64_file.magic = 0x30;
+			}
+		}
+	}
+		
+	if (z64_file.fire_medallion && z64_file.equip_tunic == 2 && HAS_MAGIC && z64_file.magic > 0) {
+		if (z64_damage_frames == 12 && restore_health == 0)
+			restore_health = 1;
+		else if (z64_damage_frames == 0)
+			restore_health = 0;
+		
+		if (restore_health == 1) {
+			restore_health = 2;
+			z64_file.energy += (last_health - z64_file.energy) / 2;
+			z64_playsfx(0x481E, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+				
+			if (z64_file.magic >= 4)
+				z64_file.magic -= 4;
+			else z64_file.magic = 0;
+			
+			if (z64_file.energy > z64_file.energy_capacity)
+				z64_file.energy = z64_file.energy_capacity;
+		}
+	}
+		
+	if (z64_file.water_medallion && z64_file.equip_tunic == 3 && z64_sword_damage_1 > 0 && z64_file.equip_sword > 0) {
+		if (SAVE_WEAKER_SWORDS)
+			z64_sword_damage_2 = z64_sword_damage_1;
+		else z64_sword_damage_2 = z64_sword_damage_1 + 1;
+	}
+		
+	if (z64_file.shadow_medallion && z64_file.equip_tunic == 0) {
+		if (z64_file.energy < z64_file.energy_capacity && z64_file.magic > 0 && HAS_MAGIC) {
+			restore_frames++;
+		
+			if (restore_frames >= compare_frames) {
+				restore_frames = 0;
+				restore_secs++;
+			}
+		
+			if (restore_secs >= 3) {
+				restore_secs = 0;
+				z64_file.energy += 4;
+				if (z64_file.magic >= 4)
+					z64_file.magic -= 4;
+				else z64_file.magic = 0;
+				z64_playsfx(0x480B, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+			}
+		}
+		else restore_frames = restore_secs = 0;
+	}
+		
+	if (z64_file.spirit_medallion ) {
+		z64_inner_red_trail_r = z64_outer_red_trail_r = 0xFF;
+		z64_inner_red_trail_g = z64_outer_red_trail_g = 0xD7;
+		z64_inner_red_trail_b = z64_outer_red_trail_b = 0x00;
+	}
+	
+	if (z64_file.kokiris_emerald && (z64_file.equip_boots == 1 || (z64_file.spirit_medallion && z64_file.equip_boots == 3) ) && z64_game.common.input[0].raw.pad.l && HAS_MAGIC && z64_file.magic > 0) {
+		uint16_t extra_speed = 0x50;
+		uint16_t magic_cost  = 2;
+		if (z64_file.gorons_ruby)
+			extra_speed = 0xA0;
+		if (z64_file.zoras_sapphire)
+			magic_cost = 1;
+		
+		uint16_t speed = 0x40B0;
+		if (!z64_file.link_age)
+			speed = 0x40C0;
+		if (z64_move_speed >= speed - 0x1A) {
+			magic_frames++;
+				
+			if (magic_frames >= compare_frames/2) {
+				magic_frames = 0;
+				magic_secs++;
+			}
+				
+			if (magic_secs >= 1) {
+				magic_secs = 0;
+				if (z64_file.magic >= magic_cost)
+					z64_file.magic -= magic_cost;
+				else z64_file.magic = 0;
+			}
+				
+			z64_move_speed = speed + extra_speed;
+		}
+	}
+	else magic_frames = magic_secs = 0;
 }
 
 void handle_infinite() {
+	if (z64_game.pause_ctxt.unk_02_[1] != 0)
+		return;
+	
 	if (SAVE_INFINITE_HP) {
 		if (z64_file.energy < z64_file.energy_capacity)
 			z64_file.energy = z64_file.energy_capacity;
