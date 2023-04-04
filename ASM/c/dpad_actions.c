@@ -12,6 +12,7 @@ extern uint8_t CFG_ALLOW_BOOTS;
 extern uint8_t  dpad_alt;
 extern uint16_t dpad_x;
 extern uint16_t dpad_y;
+extern uint16_t play_sfx;
 
 static uint8_t DPAD_ACTIVE[4] = {0, 0, 0, 0};
 
@@ -56,18 +57,17 @@ void change_boots(uint8_t boots) {
 	change_equipment();
 }
 
-void change_arrow(uint8_t button, z64_item_t item, uint16_t sfx) {
+void change_arrow(uint8_t button, z64_item_t item) {
 	z64_file.button_items[button]	= item;
 	if (!z64_file.link_age)
 		z64_file.adult_button_items[button]	= item;
 	else z64_file.child_button_items[button]	= item;
 	z64_UpdateItemButton(&z64_game, button);
-	z64_playsfx(sfx, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
 }
 
 void change_equipment() {
 	z64_UpdateEquipment(&z64_game, &z64_link);
-	z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	play_sfx = 0x835;
 }
 
 void run_dpad_actions(pad_t pad_pressed) {
@@ -334,6 +334,7 @@ void toggle_sword() {
 	
 	uint8_t sword = z64_file.equip_sword;
 	sword++;
+	
 	if (sword > 3) {
 		sword = 0;
 		if (!SAVE_UNEQUIP_GEAR)
@@ -364,6 +365,7 @@ void toggle_shield() {
 	
 	uint8_t shield = z64_file.equip_shield;
 	shield++;
+	
 	if (shield > 3) {
 		shield = 0;
 		if (!SAVE_UNEQUIP_GEAR)
@@ -389,20 +391,33 @@ void toggle_shield() {
 }
 
 void toggle_tunic() {
-	if (z64_file.link_age && !CFG_ALLOW_TUNIC)
+	if (!z64_file.kokiri_tunic && !z64_file.goron_tunic && !z64_file.zora_tunic)
 		return;
-	if (!z64_file.kokiri_tunic || (!z64_file.goron_tunic && !z64_file.zora_tunic) )
-			return;
 	
-	uint8_t tunic = z64_file.equip_tunic;
+	uint8_t not_allowed = z64_file.link_age && !CFG_ALLOW_TUNIC;
+	uint8_t can_unequip = SAVE_UNEQUIP_GEAR || SAVE_EXTRA_ABILITIES;
+	uint8_t tunic       = z64_file.equip_tunic;
 	tunic++;
-	if (tunic > 3)
-		tunic = 1;
 	
-	if (tunic == 2 && !z64_file.goron_tunic)
+	if (tunic > 3) {
+		tunic = 0;
+		if (!can_unequip)
+			tunic++;
+	}
+	
+	if (tunic == 1 && !z64_file.kokiri_tunic)
 		tunic++;
-	if (tunic == 3 && !z64_file.zora_tunic)
-		tunic = 1;
+	if (tunic == 2 && (!z64_file.goron_tunic || not_allowed) )
+		tunic++;
+	if (tunic == 3 && (!z64_file.zora_tunic  || not_allowed) ) {
+		if (can_unequip)
+			tunic = 0;
+		else if (z64_file.kokiri_tunic)
+			tunic = 1;
+		else if (z64_file.goron_tunic && (!z64_file.link_age || !CFG_ALLOW_TUNIC) )
+			tunic = 2;
+		else tunic = 0;
+	}
 	
 	if (tunic != z64_file.equip_tunic)
 		change_tunic(tunic);
@@ -467,9 +482,14 @@ void toggle_arrow() {
 	else arrow = Z64_ITEM_BOW;
 	
 	if (arrow != z64_file.button_items[slot]) {
-		if (arrow == 0x03)
-			change_arrow(slot, arrow, 0x4808);
-		else change_arrow(slot, arrow, (0x4806 + arrow) );
+		if (arrow == 0x03) {
+			change_arrow(slot, arrow);
+			play_sfx = 0x4808;
+		}
+		else {
+			change_arrow(slot, arrow);
+			play_sfx = 0x4806 + arrow;
+		}
 	}
 }
 
@@ -480,8 +500,7 @@ void swap_iron_boots() {
 	if (z64_file.equip_boots == 2)
 		z64_file.equip_boots = 1;
 	else z64_file.equip_boots = 2;
-	z64_UpdateEquipment(&z64_game, &z64_link);
-	z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	change_equipment();
 }
 
 void swap_hover_boots() {
@@ -491,8 +510,7 @@ void swap_hover_boots() {
 	if (z64_file.equip_boots == 3)
 		z64_file.equip_boots = 1;
 	else z64_file.equip_boots = 3;
-	z64_UpdateEquipment(&z64_game, &z64_link);
-	z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+	change_equipment();
 }
 
 void use_item(z64_slot_t slot, uint8_t usability) {

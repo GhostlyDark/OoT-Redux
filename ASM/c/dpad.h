@@ -7,6 +7,9 @@
 #include <string.h>
 #include <stdio.h>
 
+/* Functions */
+#define z64_playsfx						((playsfx_t)			0x800C806C)
+
 void handle_dpad();
 void handle_dpad_ingame();
 void draw_dpad();
