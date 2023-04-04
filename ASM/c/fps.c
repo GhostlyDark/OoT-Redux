@@ -7,6 +7,8 @@ uint8_t  damage_frames_timer_switch	= 0;
 uint16_t last_time					= 0;
 uint16_t started_timer				= 0;
 
+extern uint16_t play_sfx;
+
 void handle_fps() {
 	if (!SAVE_30_FPS || z64_game.pause_ctxt.state != 0 || z64_file.game_mode != 0)
 		return;
@@ -14,8 +16,8 @@ void handle_fps() {
 	if ( (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.z) || (z64_game.common.input[0].raw.pad.z && z64_game.common.input[0].pad_pressed.l) ) {
 		fps_switch ^= 1;
 		if (fps_switch)
-			z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-		else z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+			play_sfx = 0x4814;
+		else play_sfx = 0x4813;
 	}
 	
 	if (!fps_switch)

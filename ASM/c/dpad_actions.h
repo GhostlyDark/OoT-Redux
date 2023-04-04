@@ -8,7 +8,7 @@ void change_sword(uint8_t sword);
 void change_shield(uint8_t shield);
 void change_tunic(uint8_t tunic);
 void change_boots(uint8_t boots);
-void change_arrow(uint8_t button, z64_item_t item, uint16_t sfx);
+void change_arrow(uint8_t button, z64_item_t item);
 void change_equipment();
 
 void run_dpad_actions(pad_t pad_pressed);

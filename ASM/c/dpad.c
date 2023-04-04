@@ -10,16 +10,27 @@ extern uint8_t CFG_WS;
 extern uint8_t CFG_TYCOON_WALLET;
 extern uint8_t CFG_OPTIONS_MENU;
 
-uint8_t  dpad_alt	= 0;
-uint16_t dpad_x		= 0;
-uint16_t dpad_y		= 0;
-uint16_t last_mask	= 0;
+uint8_t  dpad_alt		 = 0;
+uint16_t dpad_x			 = 0;
+uint16_t dpad_y			 = 0;
+uint8_t last_mask		 = 0;
+int8_t  last_mask_age 	 = -1;
+uint16_t original_damage = 0;
+uint16_t play_sfx        = 0;
+uint8_t compare_frames;
 
 extern uint8_t CHECKED_LENS;
 
 void handle_dpad() {
 	if (z64_file.game_mode != 0)
 		return;
+	
+	compare_frames = 60 / fps_limit;
+	
+	if (play_sfx != 0) {
+		z64_playsfx(play_sfx, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+		play_sfx = 0;
+	}
 	
 	if (CFG_OPTIONS_MENU >= 1) {
 		toggle_options_menu();
@@ -30,11 +41,21 @@ void handle_dpad() {
 		handle_hud();
 		handle_fps();
 		
+		if (SAVE_DOWNGRADE_ITEM)
+			if (!z64_file.bgs_flag && z64_file.equip_sword == 3)
+				SWORD_HEALTH = z64_file.bgs_hits_left;
+		
 		if (SAVE_KEEP_MASK) {
+			if (last_mask_age != -1 && last_mask_age != z64_file.link_age) {
+				last_mask     = 0;
+				last_mask_age = -1;
+			}
 			if (z64_change_scene == 0x20000001)
 				last_mask = z64_mask_equipped;
-			if (z64_change_scene == 0x20000000 && last_mask > 0)
+			if (z64_change_scene == 0x20000000 && last_mask > 0) {
 				z64_mask_equipped = last_mask;
+				last_mask_age     = z64_file.link_age;
+			}
 		}
 		
 		if (SAVE_TRISWIPE)
@@ -81,6 +102,12 @@ void handle_dpad() {
 			handle_power_crouch_stab_fix();
 			handle_weaker_swords();
 			handle_abilities();
+			
+			if (original_damage == 0)
+				original_damage = z64_damage_taken_modifier_3;
+			else if (SAVE_DAMAGE_TAKEN == 0)
+				z64_damage_taken_modifier_3 = original_damage;
+			else z64_damage_taken_modifier_3 = 0x2C43 - 0x40 * SAVE_DAMAGE_TAKEN;
 		}
 		
 		if (CFG_OPTIONS_MENU >= 3)
@@ -119,8 +146,8 @@ void handle_dpad_ingame() {
 			dpad_alt ^= 1;
 			CHECKED_LENS = 0;
 			if (dpad_alt)
-				z64_playsfx(0x4813, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
-			else z64_playsfx(0x4814, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
+				play_sfx = 0x4813;
+			else 0x4814;
 		}
 	}
 	
@@ -139,7 +166,7 @@ void draw_dpad() {
 }
 
 void draw_dpad_icons(z64_disp_buf_t *db) {
-	if (SAVE_DPAD == 0 || SAVE_SHOW_DPAD == 0 || (z64_game.pause_ctxt.state > 0x7 && z64_game.pause_ctxt.state < 0x12) )
+	if (!CAN_DRAW_HUD || SAVE_DPAD == 0 || (SAVE_SHOW_DPAD == 0 && z64_game.pause_ctxt.state != 6) || (z64_game.pause_ctxt.state > 0x7 && z64_game.pause_ctxt.state < 0x12) )
 		return;
 	
 	uint8_t *dpad_active = check_dpad_actions();
@@ -147,19 +174,8 @@ void draw_dpad_icons(z64_disp_buf_t *db) {
 		if (!dpad_active[0] && !dpad_active[1] && !dpad_active[2] && !dpad_active[3])
 			return;
 	
-	if (SAVE_SHOW_DPAD == 1) {
-		dpad_x = 21;
-		dpad_y = 44;
-		if (z64_file.magic_acquired && z64_file.energy_capacity > 0xA0)
-			dpad_y += 23;
-		else if (z64_file.energy_capacity > 0xA0)
-			dpad_y += 10;
-		else if (z64_file.magic_acquired)
-			dpad_y += 14;
-		if (z64_file.timer_1_state > 0 || z64_file.timer_2_state > 0)
-			dpad_y += 18;
-	}
-	else if (SAVE_SHOW_DPAD == 2) {
+	
+	if (SAVE_SHOW_DPAD == 2) {
 		dpad_x = 271;
 		dpad_y = 64;
 		if (SAVE_HUD_LAYOUT == 2 || SAVE_HUD_LAYOUT == 3) {
@@ -177,6 +193,18 @@ void draw_dpad_icons(z64_disp_buf_t *db) {
 		if (z64_dungeon_scene != 0xFF)
 			if (z64_file.dungeon_keys[z64_dungeon_scene] > 0)
 				dpad_y = 158;
+	}
+	else {
+		dpad_x = 21;
+		dpad_y = 44;
+		if (z64_file.magic_acquired && z64_file.energy_capacity > 0xA0)
+			dpad_y += 23;
+		else if (z64_file.energy_capacity > 0xA0)
+			dpad_y += 10;
+		else if (z64_file.magic_acquired)
+			dpad_y += 14;
+		if (z64_file.timer_1_state > 0 || z64_file.timer_2_state > 0)
+			dpad_y += 18;
 	}
 	
 	gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
