@@ -72,6 +72,7 @@ typedef enum {
 	COLOR_KOKIRI		= 0x0,
 	COLOR_GORON			= 0x1,
 	COLOR_ZORA			= 0x2,
+	COLOR_NONE			= 0x3,
 	COLOR_FOREST		= 0x10,
 	COLOR_FIRE			= 0x4,
 	COLOR_WATER			= 0x5,
@@ -80,10 +81,8 @@ typedef enum {
 
 typedef enum {
 	OPTIONS_SIZE_CORE	= 9,
-	OPTIONS_SIZE_MAIN	= 17,
-	OPTIONS_SIZE_ALL	= 24,
-	OPTIONS_LENGTH		= 17,
-	OPTIONS_ROWS		= 13,
+	OPTIONS_SIZE_MAIN	= 18,
+	OPTIONS_SIZE_ALL	= 25,
 	
 	OPTION_30_FPS		= 0,
 	OPTION_DPAD,
@@ -95,6 +94,7 @@ typedef enum {
 	OPTION_KEEP_MASK,
 	OPTION_TRISWIPE,
 	
+	OPTION_DAMAGE_TAKEN,
 	OPTION_UNEQUIP_ITEM,
 	OPTION_UNEQUIP_GEAR,
 	OPTION_ITEM_ON_B,
@@ -129,7 +129,6 @@ typedef struct {
 } z64_capacity_t;
 
 /* Functions */
-#define z64_playsfx						((playsfx_t)			0x800C806C)
 #define z64_usebutton					((usebutton_t)			0x8038C9A0)
 
 /* DRAM addresses & data */
@@ -150,6 +149,9 @@ typedef struct {
 #define z64_link_a_action				(*(uint16_t*)			0x801DAA90)
 #define z64_idle_camera_counter			(*(uint8_t*)			0x801C86CF)
 #define z64_inventory_editor_index		(*(uint8_t*)			0x8039EA59)
+#define z64_damage_taken_modifier_1		(*(uint32_t*)			0x8038E5D0)
+#define z64_damage_taken_modifier_2		(*(uint32_t*)			0x8038E5D8)
+#define z64_damage_taken_modifier_3		(*(uint16_t*)			0x8038E5EA)
 
 /* DRAM addresses & data for HUD */
 #define z64_b_button_label_x			(*(uint16_t*)			0x801C7C3A)
@@ -173,6 +175,7 @@ typedef struct {
 /* DRAM addresses & data for Medallion Abilities */
 #define z64_tunic_color					(*(uint8_t*)			0x801DAB6C)
 #define z64_move_speed					(*(uint16_t*)			0x801DB258)
+#define z64_max_move_speed				(*(uint16_t*)			0x801DB2A0)
 #define z64_damage_frames				(*(uint8_t*)			0x801DB498)
 #define z64_sword_damage_1				(*(uint8_t*)			0x801DAF1E)
 #define z64_sword_damage_2				(*(uint8_t*)			0x801DAF9E)
@@ -231,8 +234,8 @@ typedef struct {
 #define DPAD_CHILD_SET1_LEFT			( (DPAD_CHILD_LEFT >> 4) & 0xF)
 #define DPAD_CHILD_SET2_LEFT			(DPAD_CHILD_LEFT & 0xF)
 
-/* Extra saving for Redux */
-#define EXTRA_SRAM_1					(*(uint8_t*)			0x8011B4FE)
+/* Extra saving for Redux (8011B4C8) */
+#define EXTRA_SRAM_1					(*(uint8_t*)			0x8011B4FE) // 0x37
 #define DPAD_INIT_SETUP					  (EXTRA_SRAM_1 & 1)
 #define DOWNGRADE_GIANTS_KNIFE			( (EXTRA_SRAM_1 & 2)    >> 1)
 #define DOWNGRADE_OCARINA				( (EXTRA_SRAM_1 & 4)    >> 2)
@@ -242,7 +245,7 @@ typedef struct {
 #define SAVE_NO_IDLE_CAMERA				( (EXTRA_SRAM_1 & 0x40) >> 6)
 #define SAVE_EXTRA_ABILITIES			( (EXTRA_SRAM_1 & 0x80) >> 7)
 
-#define EXTRA_SRAM_2					(*(uint8_t*)			0x8011B4FF)
+#define EXTRA_SRAM_2					(*(uint8_t*)			0x8011B4FF) // 0x38
 #define SAVE_UNEQUIP_GEAR				  (EXTRA_SRAM_2 & 1)
 #define SAVE_UNEQUIP_ITEM				( (EXTRA_SRAM_2 & 2)    >> 1)
 #define SAVE_ITEM_ON_B					( (EXTRA_SRAM_2 & 4)    >> 2)
@@ -252,21 +255,27 @@ typedef struct {
 #define SAVE_KEEP_MASK					( (EXTRA_SRAM_2 & 0x40) >> 6)
 #define SAVE_TRISWIPE					( (EXTRA_SRAM_2 & 0x80) >> 7)
 
-#define EXTRA_SRAM_3					(*(uint8_t*)			0x8011B500)
+#define EXTRA_SRAM_3					(*(uint8_t*)			0x8011B500) // 0x39
 #define SAVE_RUPEE_DRAIN				  (EXTRA_SRAM_3 & 15)
 #define SAVE_HIDE_HUD					( (EXTRA_SRAM_3 & 0x70) >> 4)
 #define SAVE_INFINITE_HP				( (EXTRA_SRAM_3 & 0x80) >> 7)
 
-#define EXTRA_SRAM_4					(*(uint8_t*)			0x8011B501)
+#define EXTRA_SRAM_4					(*(uint8_t*)			0x8011B501) // 0x3A
 #define SAVE_DPAD						  (EXTRA_SRAM_4 & 0x3)
 #define SAVE_SHOW_DPAD					( (EXTRA_SRAM_4 & 0xC)  >> 2)
 #define SAVE_HUD_LAYOUT					( (EXTRA_SRAM_4 & 0x70) >> 4)
 #define SAVE_INFINITE_MP				( (EXTRA_SRAM_4 & 0x80) >> 7)
 
-#define EXTRA_SRAM_5					(*(uint8_t*)			0x8011B4F2)
+#define EXTRA_SRAM_5					(*(uint8_t*)			0x8011B4F2) // 0x2B
 #define SAVE_FOG						  (EXTRA_SRAM_5 & 15)
 #define SAVE_LEVITATION					( (EXTRA_SRAM_5 & 0x10) >> 4)
 #define SAVE_INFINITE_RUPEES			( (EXTRA_SRAM_5 & 0x20) >> 5)
 #define SAVE_INFINITE_AMMO				( (EXTRA_SRAM_5 & 0x40) >> 6)
+
+#define EXTRA_SRAM_6					(*(uint8_t*)			0x8011B4F9) // 0x31
+#define SAVE_DAMAGE_TAKEN				  (EXTRA_SRAM_6 & 7)
+
+#define MAX_SWORD_HEALTH				(*(uint8_t*)			0x8038E1A3)
+#define SWORD_HEALTH					(*(uint8_t*)			0x8011B4F8) // 0x30
 
 #endif

@@ -109,9 +109,9 @@ sprite_t subscreen_sprite = {
     G_IM_FMT_IA, G_IM_SIZ_8b, 1
 };
 
-sprite_t subscreen_en_sprite = {
-    NULL, 80, 32, 9,
-    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+sprite_t item_name_sprite = {
+    NULL, 128, 16, 9,
+    G_IM_FMT_IA, G_IM_SIZ_4b, 1
 };
 
 sprite_t title_sprite = {
@@ -191,6 +191,11 @@ void gfx_init() {
     };
     file_init(&subscreen_static);
 	
+	file_t item_name_static = {
+        NULL, 0x00880000, 0x03D800
+    };
+    file_init(&item_name_static);
+	
     stones_sprite.buf = title_static.buf + 0x2A300;
     medals_sprite.buf = title_static.buf + 0x2980;
     items_sprite.buf = icon_item_static.buf;
@@ -206,6 +211,7 @@ void gfx_init() {
     counter_digit_sprite.buf = parameter_static.buf + 0x3040;
     ammo_digit_sprite.buf = parameter_static.buf + 0x35C0;
     subscreen_sprite.buf = subscreen_static.buf;
+	item_name_sprite.buf = item_name_static.buf + 0x38400;
     title_sprite.buf = title_static.buf + 0x2D700;
 	
     int font_bytes = sprite_bytes(&font_sprite);
