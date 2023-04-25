@@ -172,45 +172,49 @@ void handle_unequipping(pad_t pad_pressed) {
 				unequip_tunic();
 	}
 	
-	if (z64_game.pause_ctxt.screen_idx == 0 && SAVE_UNEQUIP_ITEM && (pad_pressed.cl || pad_pressed.cd || pad_pressed.cr)) { // Unset item from C button
-		for (uint8_t item=0; item<24; item++) {
-			uint8_t compare_item = item;
-			if (item == 0x4)
-				compare_item = 0x38;
-			else if (item == 0xC)
-				compare_item = 0x39;
-			else if (item == 0x12)
-				compare_item = 0x3A;
-			
-			if (z64_game.pause_ctxt.item_cursor == item) {
-				for (uint8_t button=1; button<=3; button++) {
-					if (z64_file.button_items[button] == compare_item && z64_file.items[item] == item) {
-						if ( (button == 1 && pad_pressed.cl) || (button == 2 && pad_pressed.cd) ||  (button == 3 && pad_pressed.cr) ) {
-							if (button == 1 && pad_pressed.cl)
-								z64_game.common.input[0].raw.pad.cl = z64_game.common.input[0].pad_pressed.cl = 0;
-							else if (button == 2 && pad_pressed.cd)
-								z64_game.common.input[0].raw.pad.cd = z64_game.common.input[0].pad_pressed.cd = 0;
-							else if (button == 3 && pad_pressed.cr)
-								z64_game.common.input[0].raw.pad.cr = z64_game.common.input[0].pad_pressed.cr = 0;
+	if (z64_game.pause_ctxt.screen_idx == 0 && SAVE_UNEQUIP_ITEM && (pad_pressed.cl || pad_pressed.cd || pad_pressed.cr)) // Unset item from C button
+		for (uint8_t cursor=0; cursor<24; cursor++)
+			if (z64_game.pause_ctxt.item_cursor == cursor)
+				for (uint8_t button=1; button<=3; button++)
+					if ( (button == 1 && pad_pressed.cl) || (button == 2 && pad_pressed.cd) || (button == 3 && pad_pressed.cr) )
+						for (uint8_t item=0; item<=0x3A; item++) {
+							uint8_t compare_cursor = cursor;
+							uint8_t compare_item   = item;
+							if (cursor == 0x4) {
+								compare_cursor = 0x3;
+								compare_item   = 0x38;
+							}
+							else if (cursor == 0xA) {
+								compare_cursor = 0x3;
+								compare_item   = 0x39;
+							}
+							else if (cursor == 0x10) {
+								compare_cursor = 0x3;
+								compare_item   = 0x3A;
+							}
 							
-							z64_file.button_items[button]					= 0xFF;
-							z64_file.c_button_slots[button - 1]				= 0xFF;
-							if (!z64_file.link_age) {
-								z64_file.adult_button_items[button]			= 0xFF;
-								z64_file.adult_c_button_slots[button - 1]	= 0xFF;
+							if (z64_file.button_items[button] == compare_item && z64_file.c_button_slots[button - 1] == compare_cursor) {
+								if (button == 1 && pad_pressed.cl)
+									z64_game.common.input[0].raw.pad.cl = z64_game.common.input[0].pad_pressed.cl = 0;
+								else if (button == 2 && pad_pressed.cd)
+									z64_game.common.input[0].raw.pad.cd = z64_game.common.input[0].pad_pressed.cd = 0;
+								else if (button == 3 && pad_pressed.cr)
+									z64_game.common.input[0].raw.pad.cr = z64_game.common.input[0].pad_pressed.cr = 0;
+								
+								z64_file.button_items[button]					= 0xFF;
+								z64_file.c_button_slots[button - 1]				= 0xFF;
+								if (!z64_file.link_age) {
+									z64_file.adult_button_items[button]			= 0xFF;
+									z64_file.adult_c_button_slots[button - 1]	= 0xFF;
+								}
+								else {
+									z64_file.child_button_items[button]			= 0xFF;
+									z64_file.child_c_button_slots[button - 1]	= 0xFF;
+								}
+								play_sfx = 0x480A;
+								break;
 							}
-							else {
-								z64_file.child_button_items[button]			= 0xFF;
-								z64_file.child_c_button_slots[button - 1]	= 0xFF;
-							}
-							play_sfx = 0x480A;
-							break;
 						}
-					}
-				}
-			}
-		}
-	}
 }
 
 void handle_downgrading() {
