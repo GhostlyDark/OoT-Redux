@@ -337,7 +337,7 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 			setting = SAVE_FOG;		
 			text_print("Adjust the level of fog",     tooltipLeft, top + 50);
 			text_print("applied, with higher",        tooltipLeft, top + 70);
-			text_print("values increasing the fog",   tooltipLeft, top + 90);
+			text_print("values decreasing the fog",   tooltipLeft, top + 90);
 			break;
 		
 		case OPTION_INVENTORY_EDITOR:

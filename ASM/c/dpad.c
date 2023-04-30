@@ -10,11 +10,11 @@ extern uint8_t CFG_WS;
 extern uint8_t CFG_TYCOON_WALLET;
 extern uint8_t CFG_OPTIONS_MENU;
 
-uint8_t  dpad_alt		 = 0;
-uint16_t dpad_x			 = 0;
-uint16_t dpad_y			 = 0;
-uint8_t last_mask		 = 0;
-int8_t  last_mask_age 	 = -1;
+uint8_t  dpad_alt        = 0;
+uint16_t dpad_x          = 0;
+uint16_t dpad_y          = 0;
+uint8_t last_mask        = 0;
+int8_t  last_mask_age    = -1;
 uint16_t original_damage = 0;
 uint16_t play_sfx        = 0;
 uint8_t compare_frames;
