@@ -7,7 +7,7 @@ import argparse
 import json
 import re
 from subprocess import check_call as call
-from rom_diff import create_diff
+#from rom_diff import create_diff
 from ntype import BigStream
 from crc import calculate_crc
 
@@ -128,4 +128,4 @@ with open('roms/patched.z64', 'r+b') as stream:
     stream.write(bytearray(crc))
 
 # Diff ROMs
-create_diff('roms/base.z64', 'roms/patched.z64', '../data/generated/rom_patch.txt')
+#create_diff('roms/base.z64', 'roms/patched.z64', '../data/generated/rom_patch.txt')
