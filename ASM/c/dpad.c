@@ -46,6 +46,8 @@ void handle_dpad() {
 				SWORD_HEALTH = z64_file.bgs_hits_left;
 		
 		if (SAVE_KEEP_MASK) {
+			if (z64_file.items[Z64_SLOT_CHILD_TRADE] != last_mask + 0x23)
+				last_mask = 0;
 			if (last_mask_age != -1 && last_mask_age != z64_file.link_age) {
 				last_mask     = 0;
 				last_mask_age = -1;
@@ -98,7 +100,7 @@ void handle_dpad() {
 		}
 		
 		if (CFG_OPTIONS_MENU >= 2) {
-			handle_rupee_dash();
+			handle_rupee_drain();
 			handle_power_crouch_stab_fix();
 			handle_weaker_swords();
 			handle_abilities();
