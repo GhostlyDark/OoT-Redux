@@ -1,3 +1,4 @@
+build/
 /inject
 /roms/*
 /c/*.o
