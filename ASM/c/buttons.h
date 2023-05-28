@@ -10,7 +10,7 @@ void handle_layout();
 void reset_layout();
 void handle_hud();
 void set_b_button();
-void handle_rupee_dash();
+void handle_rupee_drain();
 void handle_weaker_swords();
 void handle_abilities();
 void handle_abilities_tunic_colors();

@@ -15,8 +15,8 @@ uint8_t pressed_z			= 0;
 uint8_t pressed_x			= 0;
 uint8_t pressed_y			= 0;
 
-uint8_t rupee_dash_frames	= 0;
-uint8_t rupee_dash_secs		= 0;
+uint8_t rupee_drain_frames	= 0;
+uint8_t rupee_drain_secs	= 0;
 uint8_t restore_frames		= 0;
 uint8_t restore_secs		= 0;
 uint8_t magic_frames		= 0;
@@ -273,20 +273,20 @@ void set_b_button(pad_t pad_pressed) {
 	}
 }
 
-void handle_rupee_dash() {
+void handle_rupee_drain() {
 	if (SAVE_RUPEE_DRAIN == 0)
 		return;
 	
 	if (z64_file.energy > 1) {
-		rupee_dash_frames++;
+		rupee_drain_frames++;
 	
-		if (rupee_dash_frames >= compare_frames) {
-			rupee_dash_frames = 0;
-			rupee_dash_secs++;
+		if (rupee_drain_frames >= compare_frames) {
+			rupee_drain_frames = 0;
+			rupee_drain_secs++;
 		}
 	
-		if (rupee_dash_secs >= SAVE_RUPEE_DRAIN) {
-			rupee_dash_secs = 0;
+		if (rupee_drain_secs >= SAVE_RUPEE_DRAIN) {
+			rupee_drain_secs = 0;
 		
 			if (z64_file.rupees > 0)
 				z64_file.rupees--;
@@ -301,7 +301,7 @@ void handle_rupee_dash() {
 			}
 		}
 	}
-	else rupee_dash_frames = rupee_dash_secs = 0;
+	else rupee_drain_frames = rupee_drain_secs = 0;
 }
 
 void handle_power_crouch_stab_fix() {
