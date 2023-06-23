@@ -6,6 +6,9 @@
 
 void handle_l_button();
 void toggle_minimap();
+uint16_t get_scale_value(uint8_t scale);
+void set_scale_values(uint8_t option, uint8_t button, int8_t icon_size, int8_t c_size);
+void handle_button_scaling();
 void handle_layout();
 void reset_layout();
 void handle_hud();

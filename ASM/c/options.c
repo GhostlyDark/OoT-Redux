@@ -17,9 +17,9 @@ uint8_t holding_stick     = 0;
 
 char medallion_item[9][17]                 = { "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Shadow Medallion", "Spirit Medallion", "Kokiri's Emerald", "Goron's Ruby", "Zora's Sapphire" };
 char medallion_ability[9][16]              = { "Long Jump",       "Magician Tunic",   "Guardian Tunic", "Hero Tunic",      "Shadow Tunic",     "Hover Dash Jump",  "Dash",             "Faster Dash",  "Cheaper Dash"    };
-char options[OPTIONS_SIZE_ALL][17]         = { "30 FPS", "D-Pad Config", "D-Pad Layout", "Hide HUD", "HUD Layout", "Inverse Aim", "No Idle Camera", "Keep Mask", "Tri-Swipe", "Damage Taken", "Unequip Item", "Unequip Gear", "Item on B", "Downgrade Item", "Crouch Stab Fix", "Weaker Swords", "Extra Abilities", "Rupee Drain", "Fog", "Inventory Editor", "Levitation", "Infinite Health", "Infinite Magic", "Infinite Rupees", "Infinite Ammo" };
-uint8_t options_max[OPTIONS_SIZE_ALL]      = { 0,        2,              3,              4,          5,            0,             0,                0,           0,           7,              0,              0,              0,           0,                0,                 0,               0,                 15,            15,    0,                  0,             0,                0,                0,                 0               };
-int8_t  options_recenter[OPTIONS_SIZE_ALL] = { 40,       15,             15,             30,         22,           17,            5,                25,          25,          15,             15,             15,             27,          5,                0,                 10,              0,                 20,            50,    -5,                 20,            0,                5,                0,                 10              };
+char options[OPTIONS_SIZE_ALL][17]         = { "30 FPS", "D-Pad Config", "D-Pad Layout", "Hide HUD", "HUD Layout", "A Button Scale", "B Button Scale", "C-Left Scale", "C-Down Scale", "C-Right Scale", "Inverse Aim", "No Idle Camera", "Keep Mask", "Tri-Swipe", "Damage Taken", "Unequip Item", "Unequip Gear", "Item on B", "Downgrade Item", "Crouch Stab Fix", "Weaker Swords", "Extra Abilities", "Rupee Drain", "Fog", "Inventory Editor", "Levitation", "Infinite Health", "Infinite Magic", "Infinite Rupees", "Infinite Ammo" };
+uint8_t options_max[OPTIONS_SIZE_ALL]      = { 0,        2,              3,              4,          5,            2,                7,                7,              7,              7,               0,             0,                0,           0,           7,              0,              0,              0,           0,                0,                 0,               0,                 15,            15,    0,                  0,             0,                0,                0,                 0               };
+int8_t  options_recenter[OPTIONS_SIZE_ALL] = { 40,       15,             15,             30,         22,           10,               10,               10,             10,             10,              17,            5,                25,          25,          15,             15,             15,             27,          5,                0,                 10,              0,                 20,            50,    -5,                 20,            0,                5,                0,                 10              };
 uint8_t options_cursor                     = 0;
 
 void toggle_options_menu() {
@@ -113,30 +113,55 @@ void handle_options_menu_input(pad_t pad_pressed) {
 			return;
 			
 		case OPTION_DAMAGE_TAKEN:
-			EXTRA_SRAM_6 = write_option(SAVE_DAMAGE_TAKEN, EXTRA_SRAM_6, 0, pad_pressed);
+			EXTRA_SRAM_6 = write_option(SAVE_DAMAGE_TAKEN,         EXTRA_SRAM_6, 0, pad_pressed);
 			return;
 			
 		case OPTION_RUPEE_DRAIN:
-			EXTRA_SRAM_3 = write_option(SAVE_RUPEE_DRAIN,  EXTRA_SRAM_3, 0, pad_pressed);
+			EXTRA_SRAM_3 = write_option(SAVE_RUPEE_DRAIN,          EXTRA_SRAM_3, 0, pad_pressed);
 			return;
 		
 		case OPTION_HIDE_HUD:
-			EXTRA_SRAM_3 = write_option(SAVE_HIDE_HUD,     EXTRA_SRAM_3, 4, pad_pressed);
+			EXTRA_SRAM_3 = write_option(SAVE_HIDE_HUD,             EXTRA_SRAM_3, 4, pad_pressed);
 			return;
 		
 		case OPTION_DPAD:
-			EXTRA_SRAM_4 = write_option(SAVE_DPAD,         EXTRA_SRAM_4, 0, pad_pressed);
+			EXTRA_SRAM_4 = write_option(SAVE_DPAD,                 EXTRA_SRAM_4, 0, pad_pressed);
 			if (SAVE_DPAD == 0)
 				{ z64_dpad_lens_1 = 0x504E; z64_dpad_lens_2 = 0x504F; z64_dpad_lens_3 = 0x5458; }
 			else check_lens();
 			return;
 		
 		case OPTION_SHOW_DPAD:
-			EXTRA_SRAM_4 = write_option(SAVE_SHOW_DPAD,    EXTRA_SRAM_4, 2, pad_pressed);
+			EXTRA_SRAM_4 = write_option(SAVE_SHOW_DPAD,            EXTRA_SRAM_4, 2, pad_pressed);
 			return;
 		
 		case OPTION_HUD_LAYOUT:
-			EXTRA_SRAM_4 = write_option(SAVE_HUD_LAYOUT,   EXTRA_SRAM_4, 4, pad_pressed);
+			EXTRA_SRAM_4 = write_option(SAVE_HUD_LAYOUT,           EXTRA_SRAM_4, 4, pad_pressed);
+			reset_layout();
+			return;
+			
+		case OPTION_A_BUTTON_SCALE:
+			EXTRA_SRAM_6 = write_option(SAVE_A_BUTTON_SCALE,       EXTRA_SRAM_6, 3, pad_pressed);
+			reset_layout();
+			return;
+		
+		case OPTION_B_BUTTON_SCALE:
+			EXTRA_SRAM_7 = write_option(SAVE_B_BUTTON_SCALE,       EXTRA_SRAM_7, 0, pad_pressed);
+			reset_layout();
+			return;
+		
+		case OPTION_C_LEFT_BUTTON_SCALE:
+			EXTRA_SRAM_7 = write_option(SAVE_C_LEFT_BUTTON_SCALE,  EXTRA_SRAM_7, 3, pad_pressed);
+			reset_layout();
+			return;
+		
+		case OPTION_C_DOWN_BUTTON_SCALE:
+			EXTRA_SRAM_8 = write_option(SAVE_C_DOWN_BUTTON_SCALE,  EXTRA_SRAM_8, 0, pad_pressed);
+			reset_layout();
+			return;
+		
+		case OPTION_C_RIGHT_BUTTON_SCALE:
+			EXTRA_SRAM_8 = write_option(SAVE_C_RIGHT_BUTTON_SCALE, EXTRA_SRAM_8, 3, pad_pressed);
 			reset_layout();
 			return;
 		
@@ -244,6 +269,36 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 			setting = SAVE_HUD_LAYOUT;	
 			text_print("Choose from five different",  tooltipLeft, top + 50);
 			text_print("layouts to change the HUD",   tooltipLeft, top + 70);
+			break;
+		
+		case OPTION_A_BUTTON_SCALE:
+			setting = SAVE_A_BUTTON_SCALE;	
+			text_print("Set the scale for the",       tooltipLeft, top + 50);
+			text_print("A button",                    tooltipLeft, top + 70);
+			break;
+		
+		case OPTION_B_BUTTON_SCALE:
+			setting = SAVE_B_BUTTON_SCALE;	
+			text_print("Set the scale for the",       tooltipLeft, top + 50);
+			text_print("B button",                    tooltipLeft, top + 70);
+			break;
+			
+		case OPTION_C_LEFT_BUTTON_SCALE:
+			setting = SAVE_C_LEFT_BUTTON_SCALE;	
+			text_print("Set the scale for the",       tooltipLeft, top + 50);
+			text_print("C-Left button",               tooltipLeft, top + 70);
+			break;
+			
+		case OPTION_C_DOWN_BUTTON_SCALE:
+			setting = SAVE_C_DOWN_BUTTON_SCALE;	
+			text_print("Set the scale for the",       tooltipLeft, top + 50);
+			text_print("C-Down button",               tooltipLeft, top + 70);
+			break;
+			
+		case OPTION_C_RIGHT_BUTTON_SCALE:
+			setting = SAVE_C_RIGHT_BUTTON_SCALE;	
+			text_print("Set the scale for the",       tooltipLeft, top + 50);
+			text_print("C-Right button",              tooltipLeft, top + 70);
 			break;
 		
 		case OPTION_INVERSE_AIM:

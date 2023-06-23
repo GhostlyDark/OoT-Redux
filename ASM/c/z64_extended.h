@@ -80,15 +80,20 @@ typedef enum {
 } tunic_color_t;
 
 typedef enum {
-	OPTIONS_SIZE_CORE	= 9,
-	OPTIONS_SIZE_MAIN	= 18,
-	OPTIONS_SIZE_ALL	= 25,
+	OPTIONS_SIZE_CORE	= 14,
+	OPTIONS_SIZE_MAIN	= 23,
+	OPTIONS_SIZE_ALL	= 30,
 	
 	OPTION_30_FPS		= 0,
 	OPTION_DPAD,
 	OPTION_SHOW_DPAD,
 	OPTION_HIDE_HUD,
 	OPTION_HUD_LAYOUT,
+	OPTION_A_BUTTON_SCALE,
+	OPTION_B_BUTTON_SCALE,
+	OPTION_C_LEFT_BUTTON_SCALE,
+	OPTION_C_DOWN_BUTTON_SCALE,
+	OPTION_C_RIGHT_BUTTON_SCALE,
 	OPTION_INVERSE_AIM,
 	OPTION_NO_IDLE_CAMERA,
 	OPTION_KEEP_MASK,
@@ -112,6 +117,14 @@ typedef enum {
 	OPTION_INFINITE_RUPEES,
 	OPTION_INFINITE_AMMO,
 } option;
+
+typedef enum {
+	A_BUTTON = -1,
+	B_BUTTON = 0,
+	C_LEFT_BUTTON,
+	C_DOWN_BUTTON,
+	C_RIGHT_BUTTON,
+} button;
 
 typedef struct {
 	char		item[0x002C];
@@ -196,6 +209,7 @@ typedef struct {
 #define BLOCK_DPAD						(0x00000001 | 0x00000002 | 0x00000080 | 0x00000400 | 0x10000000 | 0x20000000)
 #define CAN_USE_DPAD					( (z64_link.state_flags_1 & BLOCK_DPAD) == 0 && (uint32_t)z64_ctxt.state_dtor == z64_state_ovl_tab[3].vram_dtor && z64_file.game_mode == 0 && (z64_event_state_1 & 0x20) == 0)
 #define CAN_DRAW_HUD					( ( (uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && (z64_file.game_mode == 0) && ( (z64_event_state_1 & 0x20) == 0) )
+#define IS_SEMI_ALPHA					(z64_game.pause_ctxt.state == 0 && alpha >= 0x46)
 
 /* D-Pad Usability for Items */
 #define BLOCK_ITEMS						(0x00800000 | 0x00000800 | 0x00200000 | 0x08000000)
@@ -274,7 +288,19 @@ typedef struct {
 
 #define EXTRA_SRAM_6					(*(uint8_t*)			0x8011B4F9) // 0x31
 #define SAVE_DAMAGE_TAKEN				  (EXTRA_SRAM_6 & 7)
+#define SAVE_A_BUTTON_SCALE				( (EXTRA_SRAM_6 & 0x38) >> 3)
 
+#define EXTRA_SRAM_7					(*(uint8_t*)			0x8011B51A) // 0x53
+#define SAVE_B_BUTTON_SCALE				  (EXTRA_SRAM_7 & 7)
+#define SAVE_C_LEFT_BUTTON_SCALE		( (EXTRA_SRAM_7 & 0x38) >> 3)
+
+#define EXTRA_SRAM_8					(*(uint8_t*)			0x8011B51B) // 0x54
+#define SAVE_C_DOWN_BUTTON_SCALE		  (EXTRA_SRAM_8 & 7)
+#define SAVE_C_RIGHT_BUTTON_SCALE		( (EXTRA_SRAM_8 & 0x38) >> 3)
+
+/* Keeping track of values */
+#define A_BUTTON_SCALE					(*(uint16_t*)			0x80074F76)
+#define A_BUTTON_TEXT_SCALE				(*(uint16_t*)			0x8007650E)
 #define MAX_SWORD_HEALTH				(*(uint8_t*)			0x8038E1A3)
 #define SWORD_HEALTH					(*(uint8_t*)			0x8011B4F8) // 0x30
 

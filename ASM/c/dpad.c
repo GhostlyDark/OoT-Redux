@@ -37,6 +37,7 @@ void handle_dpad() {
 		handle_dpad_ingame();
 		handle_dpad_paused();
 		handle_options_menu();
+		handle_button_scaling();
 		handle_layout();
 		handle_hud();
 		handle_fps();
@@ -149,7 +150,7 @@ void handle_dpad_ingame() {
 			CHECKED_LENS = 0;
 			if (dpad_alt)
 				play_sfx = 0x4813;
-			else 0x4814;
+			else play_sfx = 0x4814;
 		}
 	}
 	
@@ -172,10 +173,8 @@ void draw_dpad_icons(z64_disp_buf_t *db) {
 		return;
 	
 	uint8_t *dpad_active = check_dpad_actions();
-	if (z64_game.pause_ctxt.state == 0)
-		if (!dpad_active[0] && !dpad_active[1] && !dpad_active[2] && !dpad_active[3])
-			return;
-	
+	if (z64_game.pause_ctxt.state == 0 && !dpad_active[0] && !dpad_active[1] && !dpad_active[2] && !dpad_active[3])
+		return;
 	
 	if (SAVE_SHOW_DPAD == 2) {
 		dpad_x = 271;
@@ -209,10 +208,14 @@ void draw_dpad_icons(z64_disp_buf_t *db) {
 			dpad_y += 18;
 	}
 	
+	uint8_t alpha = 255;
+	if (alpha > z64_game.hud_alpha_channels.hearts_navi)
+		alpha = z64_game.hud_alpha_channels.hearts_navi;
+	
 	gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
-	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 255);
+	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
 	sprite_load(db, &dpad_sprite, 0, 1);
 	sprite_draw(db, &dpad_sprite, 0, dpad_x, dpad_y, 16, 16);
 	
-	draw_dpad_actions(db);
+	draw_dpad_actions(db, alpha);
 }

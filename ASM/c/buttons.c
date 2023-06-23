@@ -83,11 +83,84 @@ void toggle_minimap() {
 	}
 }
 
+uint16_t get_scale_value(uint8_t scale) {
+	switch (scale) {
+		case 31: return 525;
+		case 30: return 550;
+		case 29: return 575;
+		case 28: return 605;
+		case 27: return 620;
+		case 26: return 640;
+		case 25: return 660;
+		case 24: return 680;
+		case 23: return 705;
+		case 22: return 735;
+		case 21: return 770;
+		case 20: return 810;
+		case 19: return 860;
+		case 18: return 910;
+		case 17: return 960;
+		case 16: return 1020;
+		case 15: return 1090;
+		case 14: return 1175;
+		case 13: return 1270;
+		case 12: return 1370;
+		case 11: return 1480;
+		case 10: return 1620;
+		case 9:  return 1780;
+		default: return 550;
+	}
+}
+
+void set_scale_values(uint8_t option, uint8_t button, int8_t icon_size, int8_t c_size) {
+	switch (option) {
+		case 1:
+			z64_gameinfo.item_button_space[button] = 28 + c_size;
+			break;
+		
+		case 2:
+			z64_gameinfo.item_button_space[button] = 27 + c_size;
+			break;
+		
+		case 3:
+			z64_gameinfo.item_button_space[button] = 25 + c_size;
+			break;
+		
+		case 4:
+			z64_gameinfo.item_button_space[button] = 23 + c_size;
+			break;
+		
+		case 5:
+			z64_gameinfo.item_button_space[button] = 21 + c_size;
+			break;
+		
+		case 6:
+			z64_gameinfo.item_button_space[button] = 19 + c_size;
+			break;
+		
+		case 7:
+			z64_gameinfo.item_button_space[button] = 17 + c_size;
+			break;
+	}
+		
+	z64_gameinfo.item_icon_space[button] = z64_gameinfo.item_button_space[button] + icon_size;
+	z64_gameinfo.item_button_dd[button]  = get_scale_value(z64_gameinfo.item_button_space[button]);
+	z64_gameinfo.item_icon_dd[button]    = get_scale_value(z64_gameinfo.item_icon_space[button]);
+}
+
+void handle_button_scaling() {
+	if (SAVE_A_BUTTON_SCALE       > 0)   { A_BUTTON_SCALE = A_BUTTON_TEXT_SCALE = 0x3F80 - 0x40 * SAVE_A_BUTTON_SCALE; }
+	if (SAVE_B_BUTTON_SCALE       > 0)   { set_scale_values(SAVE_B_BUTTON_SCALE,       0,  1,  0); }
+	if (SAVE_C_LEFT_BUTTON_SCALE  > 0)   { set_scale_values(SAVE_C_LEFT_BUTTON_SCALE,  1, -3, -2); }
+	if (SAVE_C_DOWN_BUTTON_SCALE  > 0)   { set_scale_values(SAVE_C_DOWN_BUTTON_SCALE,  2, -3, -2); }
+	if (SAVE_C_RIGHT_BUTTON_SCALE > 0)   { set_scale_values(SAVE_C_RIGHT_BUTTON_SCALE, 3, -3, -2); }
+}
+
 void handle_layout() {
-	if (SAVE_HUD_LAYOUT == 0)
+	if (SAVE_HUD_LAYOUT == 0 && SAVE_B_BUTTON_SCALE == 0 && SAVE_C_LEFT_BUTTON_SCALE == 0 && SAVE_C_DOWN_BUTTON_SCALE == 0 && SAVE_C_RIGHT_BUTTON_SCALE == 0)
 		return;
 	
-	if (z64_game.pause_ctxt.state == 6) {
+	if (z64_game.pause_ctxt.state == 6 && SAVE_HUD_LAYOUT > 0) {
 		if (SAVE_HUD_LAYOUT == 2) { // Nintendo
 			z64_c_left_x_set_item  = 0x343 + (0x208 * CFG_WS);
 			z64_c_down_x_set_item  = 0x4FB + (0x208 * CFG_WS);
@@ -114,7 +187,7 @@ void handle_layout() {
 		}
 	}
 	
-	if (CAN_DRAW_HUD && z64_gameinfo.a_button_y == 0x09) {
+	if (CAN_DRAW_HUD && z64_gameinfo.a_button_y == 0x09 && z64_gameinfo.item_button_y[0] == 0x11 && z64_gameinfo.item_button_y[1] == 0x12 && z64_gameinfo.item_button_y[2] == 0x22 && z64_gameinfo.item_button_y[3] == 0x12 && z64_gameinfo.c_up_button_y == 0x10) {
 		uint16_t a_x = 0, a_y = 0, b_x = 0, b_y = 0, c_left_x = 0, c_left_y = 0, c_down_x = 0, c_down_y = 0, c_right_x = 0, c_right_y = 0, c_up_x = 0, c_up_y = 0;
 		
 		if (SAVE_HUD_LAYOUT == 1) { // Majora's Mask
@@ -176,6 +249,29 @@ void handle_layout() {
 			c_right_y	= -10; // 18  -> 8
 			c_up_x		= -20; // 254 -> 234
 		}
+		
+		if (SAVE_B_BUTTON_SCALE > 0) {
+			uint8_t val = SAVE_B_BUTTON_SCALE * 0.5;
+			b_x += val;
+			b_y += val;
+			z64_b_button_label_x -= val / 2;
+			z64_b_button_label_y -= val / 1.3;
+		}
+		if (SAVE_C_LEFT_BUTTON_SCALE > 0) {
+			uint8_t val = SAVE_C_LEFT_BUTTON_SCALE * 0.5;
+			c_left_x += val;
+			c_left_y += val;
+		}
+		if (SAVE_C_DOWN_BUTTON_SCALE > 0) {
+			uint8_t val = SAVE_C_DOWN_BUTTON_SCALE * 0.5;
+			c_down_x += val;
+			c_down_y += val;
+		}
+		if (SAVE_C_RIGHT_BUTTON_SCALE > 0) {
+			uint8_t val = SAVE_C_RIGHT_BUTTON_SCALE * 0.5;
+			c_right_x += val;
+			c_right_y += val;
+		}
 	
 		z64_gameinfo.a_button_x       += a_x;       z64_gameinfo.a_button_y       += a_y;       z64_gameinfo.a_button_icon_x += a_x;       z64_gameinfo.a_button_icon_y += a_y;
 		z64_gameinfo.item_button_x[0] += b_x;       z64_gameinfo.item_button_y[0] += b_y;       z64_gameinfo.item_icon_x[0]  += b_x;       z64_gameinfo.item_icon_y[0]  += b_y;       z64_gameinfo.item_ammo_x[0] += b_x;       z64_gameinfo.item_ammo_y[0] += b_y; z64_b_button_label_x += b_x; z64_b_button_label_y += b_y;
@@ -187,6 +283,16 @@ void handle_layout() {
 }
 
 void reset_layout() {
+	A_BUTTON_SCALE = A_BUTTON_TEXT_SCALE = 0x3F80;
+	z64_gameinfo.item_button_dd[0]       = 575;
+	z64_gameinfo.item_icon_dd[0]         = 550;
+	z64_gameinfo.item_button_space[0]    = 29;
+	z64_gameinfo.item_icon_space[0]      = 30;
+	z64_gameinfo.item_button_dd[1]       = z64_gameinfo.item_button_dd[2]    = z64_gameinfo.item_button_dd[3]    = 620;
+	z64_gameinfo.item_icon_dd[1]         = z64_gameinfo.item_icon_dd[2]      = z64_gameinfo.item_icon_dd[3]      = 680;
+	z64_gameinfo.item_button_space[1]    = z64_gameinfo.item_button_space[2] = z64_gameinfo.item_button_space[3] = 27;
+	z64_gameinfo.item_icon_space[1]      = z64_gameinfo.item_icon_space[2]   = z64_gameinfo.item_icon_space[3]   = 24;
+	
 	z64_gameinfo.a_button_y       = z64_gameinfo.a_button_icon_y = 0x9;
 	z64_gameinfo.item_button_y[0] = z64_gameinfo.item_icon_y[0]  = 0x11;
 	z64_gameinfo.item_ammo_y[0]   = z64_gameinfo.item_ammo_y[1]  = z64_gameinfo.item_ammo_y[3] = 0x23;
