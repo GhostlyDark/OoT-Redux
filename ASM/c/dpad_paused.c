@@ -217,8 +217,9 @@ void handle_downgrading() {
 	if (!SAVE_DOWNGRADE_ITEM || z64_game.pause_ctxt.state != 6 || z64_game.pause_ctxt.unk_02_[1] != 0)
 		return;
 	
-	if ( (z64_file.broken_giants_knife && z64_file.bgs_hits_left > 0) ||  (!z64_file.broken_giants_knife && z64_file.bgs_hits_left == 0) )
-		z64_file.broken_giants_knife ^= 1;
+	if (z64_file.giants_knife)
+		if ( (z64_file.broken_giants_knife && z64_file.bgs_hits_left > 0) ||  (!z64_file.broken_giants_knife && z64_file.bgs_hits_left == 0) )
+			z64_file.broken_giants_knife ^= 1;
 	
 	if (!z64_game.common.input[0].pad_pressed.cu)
 		return;
