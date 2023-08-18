@@ -3,6 +3,12 @@
 extern uint8_t CFG_WS;
 extern uint8_t CFG_OPTIONS_MENU;
 
+extern colorRGB8_t CFG_TUNIC_MAGICIAN;
+extern colorRGB8_t CFG_TUNIC_GUARDIAN;
+extern colorRGB8_t CFG_TUNIC_HERO;
+extern colorRGB8_t CFG_TUNIC_NONE;
+extern colorRGB8_t CFG_TUNIC_SHADOW;
+
 extern uint8_t  compare_frames;
 extern uint16_t play_sfx;
 
@@ -22,6 +28,11 @@ uint8_t restore_secs		= 0;
 uint8_t magic_frames		= 0;
 uint8_t magic_secs			= 0;
 uint8_t restore_health		= 0;
+
+uint8_t checked_tunics		= 0;
+colorRGB8_t tunic_kokiri;
+colorRGB8_t tunic_goron;
+colorRGB8_t tunic_zora;
 
 void handle_l_button() {
 	if (z64_game.pause_ctxt.state != 0)
@@ -431,19 +442,64 @@ void handle_weaker_swords() {
 }
 
 void handle_abilities_tunic_colors() {
-	if (!SAVE_EXTRA_ABILITIES || z64_file.game_mode != 0)
-		return;
+	if (!checked_tunics) {
+		checked_tunics = 1;
+		tunic_kokiri.r = TUNIC_KOKIRI_R;
+		tunic_kokiri.g = TUNIC_KOKIRI_G;
+		tunic_kokiri.b = TUNIC_KOKIRI_B;
+		tunic_goron.r  = TUNIC_GORON_R;
+		tunic_goron.g  = TUNIC_GORON_G;
+		tunic_goron.b  = TUNIC_GORON_B;
+		tunic_zora.r   = TUNIC_ZORA_R;
+		tunic_zora.g   = TUNIC_ZORA_G;
+		tunic_zora.b   = TUNIC_ZORA_B;
+	}
 	
-	if (z64_file.forest_medallion && z64_file.equip_tunic == 1)
-		z64_tunic_color = COLOR_FOREST;
-	else if (z64_file.fire_medallion && z64_file.equip_tunic == 2)
-		z64_tunic_color = COLOR_FIRE;
-	else if (z64_file.water_medallion && z64_file.equip_tunic == 3)
-		z64_tunic_color = COLOR_WATER;
-	else if (z64_file.equip_tunic == 0)
-		if (z64_file.shadow_medallion)
-			z64_tunic_color = COLOR_SHADOW;
-		else z64_tunic_color = COLOR_NONE;
+	if (z64_file.forest_medallion && SAVE_EXTRA_ABILITIES) {
+		TUNIC_KOKIRI_R = CFG_TUNIC_MAGICIAN.r;
+		TUNIC_KOKIRI_G = CFG_TUNIC_MAGICIAN.g;
+		TUNIC_KOKIRI_B = CFG_TUNIC_MAGICIAN.b;
+	}
+	else {
+		TUNIC_KOKIRI_R = tunic_kokiri.r;
+		TUNIC_KOKIRI_G = tunic_kokiri.g;
+		TUNIC_KOKIRI_B = tunic_kokiri.b;
+	}
+		
+	if (z64_file.fire_medallion && SAVE_EXTRA_ABILITIES) {
+		TUNIC_GORON_R = CFG_TUNIC_GUARDIAN.r;
+		TUNIC_GORON_G = CFG_TUNIC_GUARDIAN.g;
+		TUNIC_GORON_B = CFG_TUNIC_GUARDIAN.b;
+	}
+	else {
+		TUNIC_GORON_R = tunic_goron.r;
+		TUNIC_GORON_G = tunic_goron.g;
+		TUNIC_GORON_B = tunic_goron.b;
+	}
+		
+	if (z64_file.water_medallion && SAVE_EXTRA_ABILITIES) {
+		TUNIC_ZORA_R = CFG_TUNIC_HERO.r;
+		TUNIC_ZORA_G = CFG_TUNIC_HERO.g;
+		TUNIC_ZORA_B = CFG_TUNIC_HERO.b;
+	}
+	else {
+		TUNIC_ZORA_R = tunic_zora.r;
+		TUNIC_ZORA_G = tunic_zora.g;
+		TUNIC_ZORA_B = tunic_zora.b;
+	}
+	
+	if (z64_file.equip_tunic == 0)
+		z64_tunic_color = 3;
+	if (z64_file.shadow_medallion && SAVE_EXTRA_ABILITIES) {
+		TUNIC_UNUSED_R = CFG_TUNIC_SHADOW.r;
+		TUNIC_UNUSED_G = CFG_TUNIC_SHADOW.g;
+		TUNIC_UNUSED_B = CFG_TUNIC_SHADOW.b;
+	}
+	else {
+		TUNIC_UNUSED_R = CFG_TUNIC_NONE.r;
+		TUNIC_UNUSED_G = CFG_TUNIC_NONE.g;
+		TUNIC_UNUSED_B = CFG_TUNIC_NONE.b;
+	}
 }
 
 void handle_abilities() {

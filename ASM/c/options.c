@@ -85,18 +85,18 @@ void handle_options_menu_input(pad_t pad_pressed) {
 	switch (options_cursor) {
 		case OPTION_INVERSE_AIM:		EXTRA_SRAM_1 ^= 1 << 5; return;
 		case OPTION_NO_IDLE_CAMERA:		EXTRA_SRAM_1 ^= 1 << 6; return;
-		case OPTION_EXTRA_ABILITIES:	EXTRA_SRAM_1 ^= 1 << 7; return;
-		case OPTION_UNEQUIP_GEAR:		EXTRA_SRAM_2 ^= 1;      return;
-		case OPTION_UNEQUIP_ITEM:		EXTRA_SRAM_2 ^= 1 << 1; return;
-		case OPTION_ITEM_ON_B:			EXTRA_SRAM_2 ^= 1 << 2; return;
-		case OPTION_WEAKER_SWORDS:		EXTRA_SRAM_2 ^= 1 << 3; return;
-		case OPTION_DOWNGRADE_ITEM:		EXTRA_SRAM_2 ^= 1 << 4; return;
-		case OPTION_CROUCH_STAB_FIX:	EXTRA_SRAM_2 ^= 1 << 5; return;
 		case OPTION_KEEP_MASK:			EXTRA_SRAM_2 ^= 1 << 6; return;
 		case OPTION_TRISWIPE:			EXTRA_SRAM_2 ^= 1 << 7; return;
+		case OPTION_UNEQUIP_ITEM:		EXTRA_SRAM_2 ^= 1 << 1; return;
+		case OPTION_UNEQUIP_GEAR:		EXTRA_SRAM_2 ^= 1;		return;
+		case OPTION_ITEM_ON_B:			EXTRA_SRAM_2 ^= 1 << 2; return;
+		case OPTION_DOWNGRADE_ITEM:		EXTRA_SRAM_2 ^= 1 << 4; return;
+		case OPTION_CROUCH_STAB_FIX:	EXTRA_SRAM_2 ^= 1 << 5; return;
+		case OPTION_WEAKER_SWORDS:		EXTRA_SRAM_2 ^= 1 << 3; return;
+		case OPTION_EXTRA_ABILITIES:	EXTRA_SRAM_1 ^= 1 << 7; return;
+		case OPTION_LEVITATION:			EXTRA_SRAM_5 ^= 1 << 4; return;
 		case OPTION_INFINITE_HP:		EXTRA_SRAM_3 ^= 1 << 7; return;
 		case OPTION_INFINITE_MP:		EXTRA_SRAM_4 ^= 1 << 7; return;
-		case OPTION_LEVITATION:			EXTRA_SRAM_5 ^= 1 << 4; return;
 		case OPTION_INFINITE_RUPEES:	EXTRA_SRAM_5 ^= 1 << 5; return;
 		case OPTION_INFINITE_AMMO:		EXTRA_SRAM_5 ^= 1 << 6; return;
 		
@@ -104,24 +104,6 @@ void handle_options_menu_input(pad_t pad_pressed) {
 			EXTRA_SRAM_1 ^= 1 << 4;
 			if (!SAVE_30_FPS)
 				reset_fps_values();
-			return;
-			
-		case OPTION_INVENTORY_EDITOR:
-			z64_game.pause_ctxt.unk_02_[1] = 2;
-			z64_game.common.input[0].raw.pad.a = z64_game.common.input[0].pad_pressed.a = 0;
-			z64_game.common.input[0].raw.pad.b = z64_game.common.input[0].pad_pressed.b = 0;
-			return;
-			
-		case OPTION_DAMAGE_TAKEN:
-			EXTRA_SRAM_6 = write_option(SAVE_DAMAGE_TAKEN,         EXTRA_SRAM_6, 0, pad_pressed);
-			return;
-			
-		case OPTION_RUPEE_DRAIN:
-			EXTRA_SRAM_3 = write_option(SAVE_RUPEE_DRAIN,          EXTRA_SRAM_3, 0, pad_pressed);
-			return;
-		
-		case OPTION_HIDE_HUD:
-			EXTRA_SRAM_3 = write_option(SAVE_HIDE_HUD,             EXTRA_SRAM_3, 4, pad_pressed);
 			return;
 		
 		case OPTION_DPAD:
@@ -135,11 +117,15 @@ void handle_options_menu_input(pad_t pad_pressed) {
 			EXTRA_SRAM_4 = write_option(SAVE_SHOW_DPAD,            EXTRA_SRAM_4, 2, pad_pressed);
 			return;
 		
+		case OPTION_HIDE_HUD:
+			EXTRA_SRAM_3 = write_option(SAVE_HIDE_HUD,             EXTRA_SRAM_3, 4, pad_pressed);
+			return;
+		
 		case OPTION_HUD_LAYOUT:
 			EXTRA_SRAM_4 = write_option(SAVE_HUD_LAYOUT,           EXTRA_SRAM_4, 4, pad_pressed);
 			reset_layout();
 			return;
-			
+		
 		case OPTION_A_BUTTON_SCALE:
 			EXTRA_SRAM_6 = write_option(SAVE_A_BUTTON_SCALE,       EXTRA_SRAM_6, 3, pad_pressed);
 			reset_layout();
@@ -165,10 +151,24 @@ void handle_options_menu_input(pad_t pad_pressed) {
 			reset_layout();
 			return;
 		
+		case OPTION_DAMAGE_TAKEN:
+			EXTRA_SRAM_6 = write_option(SAVE_DAMAGE_TAKEN,         EXTRA_SRAM_6, 0, pad_pressed);
+			return;
+		
+		case OPTION_RUPEE_DRAIN:
+			EXTRA_SRAM_3 = write_option(SAVE_RUPEE_DRAIN,          EXTRA_SRAM_3, 0, pad_pressed);
+			return;
+		
 		case OPTION_FOG:
 			EXTRA_SRAM_5 = write_option(SAVE_FOG,          EXTRA_SRAM_5, 0, pad_pressed);
 			if (SAVE_FOG == 0)
 				z64_game.fog_distance = 10.0f;
+			return;
+		
+		case OPTION_INVENTORY_EDITOR:
+			z64_game.pause_ctxt.unk_02_[1] = 2;
+			z64_game.common.input[0].raw.pad.a = z64_game.common.input[0].pad_pressed.a = 0;
+			z64_game.common.input[0].raw.pad.b = z64_game.common.input[0].pad_pressed.b = 0;
 			return;
 	}
 }
