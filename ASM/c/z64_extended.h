@@ -69,17 +69,6 @@ typedef enum {
 } limit_item_t;
 
 typedef enum {
-	COLOR_KOKIRI		= 0x0,
-	COLOR_GORON			= 0x1,
-	COLOR_ZORA			= 0x2,
-	COLOR_NONE			= 0x3,
-	COLOR_FOREST		= 0x10,
-	COLOR_FIRE			= 0x4,
-	COLOR_WATER			= 0x5,
-	COLOR_SHADOW		= 0xC0,
-} tunic_color_t;
-
-typedef enum {
 	OPTIONS_SIZE_CORE	= 14,
 	OPTIONS_SIZE_MAIN	= 23,
 	OPTIONS_SIZE_ALL	= 30,
@@ -303,5 +292,19 @@ typedef struct {
 #define A_BUTTON_TEXT_SCALE				(*(uint16_t*)			0x8007650E)
 #define MAX_SWORD_HEALTH				(*(uint8_t*)			0x8038E1A3)
 #define SWORD_HEALTH					(*(uint8_t*)			0x8011B4F8) // 0x30
+
+/* Extra Ability Tunic Colors */
+#define TUNIC_KOKIRI_R				(*(uint8_t*)			0x800F7AD8)
+#define TUNIC_KOKIRI_G				(*(uint8_t*)			0x800F7AD9)
+#define TUNIC_KOKIRI_B				(*(uint8_t*)			0x800F7ADA)
+#define TUNIC_GORON_R				(*(uint8_t*)			0x800F7ADB)
+#define TUNIC_GORON_G				(*(uint8_t*)			0x800F7ADC)
+#define TUNIC_GORON_B				(*(uint8_t*)			0x800F7ADD)
+#define TUNIC_ZORA_R				(*(uint8_t*)			0x800F7ADE)
+#define TUNIC_ZORA_G				(*(uint8_t*)			0x800F7ADF)
+#define TUNIC_ZORA_B				(*(uint8_t*)			0x800F7AE0)
+#define TUNIC_UNUSED_R				(*(uint8_t*)			0x800F7AE1)
+#define TUNIC_UNUSED_G				(*(uint8_t*)			0x800F7AE2)
+#define TUNIC_UNUSED_B				(*(uint8_t*)			0x800F7AE3)
 
 #endif

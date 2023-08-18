@@ -213,7 +213,7 @@ void run_action(uint8_t action) {
 	else if (action == DPAD_OCARINA)
 		use_item(Z64_SLOT_OCARINA, CAN_USE_OCARINA);
 	else if (action == DPAD_LENS)
-		use_item(Z64_SLOT_LENS, CAN_USE_ITEMS);
+		use_item(Z64_SLOT_LENS, CAN_USE_LENS);
 	else if (action == DPAD_NUT && !z64_throwing_nut)
 		use_item(Z64_SLOT_NUT, CAN_USE_ITEMS);
 	else if (action == DPAD_DINS_FIRE)
