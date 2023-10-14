@@ -7,6 +7,7 @@
 #include "text.h"
 #include "util.h"
 #include "dpad.h"
+#include "arrow_cycle.h"
 #include "misc_colors.h"
 #include "hud_colors.h"
 #include "z64.h"
@@ -28,6 +29,8 @@ void c_init() {
 }
 
 void before_game_state_update() {
+	arrow_cycle_handle(&z64_link, &z64_game);
+	draw_health(&(z64_ctxt.gfx->overlay), z64_game.target_actor);
     //handle_pending_items();
     handle_dpad();
     update_misc_colors();

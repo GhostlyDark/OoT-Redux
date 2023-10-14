@@ -338,32 +338,32 @@ void reset_layout() {
 
 void handle_hud() {
 		if (SAVE_HIDE_HUD == 0) {
-			if (z64_file.unk_15_[13] == 1)
-				z64_file.unk_15_[13] = 50;
+			if (z64_file.prev_hud_visibility_mode == 1)
+				z64_file.prev_hud_visibility_mode = 50;
 		}
 		else if (SAVE_HIDE_HUD == 1) {
-			if (z64_file.unk_15_[13] == 50)
-				z64_file.unk_15_[13] = 6;
-			if (z64_file.unk_15_[7] == 50)
-				z64_file.unk_15_[7] = 6;
+			if (z64_file.prev_hud_visibility_mode == 50)
+				z64_file.prev_hud_visibility_mode = 6;
+			if (z64_file.next_hud_visibility_mode == 50)
+				z64_file.next_hud_visibility_mode = 6;
 		}
 		else if (SAVE_HIDE_HUD == 2) {
-			if (z64_file.unk_15_[13] == 6)
-				z64_file.unk_15_[13] = 9;
-			if (z64_file.unk_15_[7] == 50)
-				z64_file.unk_15_[7] = 9;
+			if (z64_file.prev_hud_visibility_mode == 6)
+				z64_file.prev_hud_visibility_mode = 9;
+			if (z64_file.next_hud_visibility_mode == 50)
+				z64_file.next_hud_visibility_mode = 9;
 		}
 		else if (SAVE_HIDE_HUD == 3) {
-			if (z64_file.unk_15_[13] == 9)
-				z64_file.unk_15_[13] = 11;
-			if (z64_file.unk_15_[7] == 50)
-				z64_file.unk_15_[7] = 11;
+			if (z64_file.prev_hud_visibility_mode == 9)
+				z64_file.prev_hud_visibility_mode = 11;
+			if (z64_file.next_hud_visibility_mode == 50)
+				z64_file.next_hud_visibility_mode = 11;
 		}
 		else if (SAVE_HIDE_HUD == 4) {
-			if (z64_file.unk_15_[13] == 11)
-				z64_file.unk_15_[13] = 1;
-			if (z64_file.unk_15_[7] == 50)
-				z64_file.unk_15_[7] = 1;
+			if (z64_file.prev_hud_visibility_mode == 11)
+				z64_file.prev_hud_visibility_mode = 1;
+			if (z64_file.next_hud_visibility_mode == 50)
+				z64_file.next_hud_visibility_mode = 1;
 		}
 }
 

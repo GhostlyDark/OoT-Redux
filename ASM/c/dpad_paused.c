@@ -287,7 +287,7 @@ void unequip_sword(uint8_t play) {
 	if (z64_file.link_age)
 		z64_file.child_equip_sword  = 0;
 	else z64_file.adult_equip_sword = 0;
-	z64_file.inf_table[29]          = 1;
+	z64_file.sword_flag             = 1;
 	z64_file.button_items[0]        = -1;
 	unequip_gear(play);
 }

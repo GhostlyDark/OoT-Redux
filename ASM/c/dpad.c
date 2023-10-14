@@ -204,8 +204,9 @@ void draw_dpad_icons(z64_disp_buf_t *db) {
 			dpad_y += 10;
 		else if (z64_file.magic_acquired)
 			dpad_y += 14;
-		if (z64_file.timer_1_state > 0 || z64_file.timer_2_state > 0)
-			dpad_y += 18;
+		if (z64_game.pause_ctxt.state == 0)
+			if (z64_file.timer_1_state > 0 || z64_file.timer_2_state > 0)
+				dpad_y += 18;
 	}
 	
 	uint8_t alpha = 255;
@@ -218,4 +219,57 @@ void draw_dpad_icons(z64_disp_buf_t *db) {
 	sprite_draw(db, &dpad_sprite, 0, dpad_x, dpad_y, 16, 16);
 	
 	draw_dpad_actions(db, alpha);
+}
+
+void draw_health(z64_disp_buf_t *db, z64_actor_t* actor) {
+	if (!SAVE_SHOW_HEALTH || z64_game.pause_ctxt.state != 0 || actor == NULL)
+		return;
+	
+	uint8_t type = actor->actor_type;
+	if (type != ACTORTYPE_ENEMY && type != ACTORTYPE_BOSS)
+		return;
+	
+	int currentHealth = actor->health;
+	/*if (actor->parent != NULL)
+		currentHealth = actor->parent->health;
+	else currentHealth = actor->health;*/
+	
+	if (currentHealth <= 0)
+		return;
+			
+	gSPDisplayList(db->p++, &setup_db);
+	gDPPipeSync(db->p++);
+	
+	uint16_t x = 70;
+	uint16_t y = 205;
+	
+	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+	sprite_load(db, &linkhead_skull_sprite, 1, 1);
+	sprite_draw(db, &linkhead_skull_sprite, 0, x, y, 16, 16);
+	
+	// Type
+	//sprite_load(db, &counter_digit_sprite, type, 1);
+	//sprite_draw(db, &counter_digit_sprite, 0, x + 16,  y + 1 - 20, 8, 16);
+			
+	uint8_t count = 0;
+	int8_t  health = currentHealth;
+			
+	while (health != 0) {
+		health /= 10;
+		count++;
+	}
+			
+	uint8_t healthArray[count];
+	count = 0;    
+	health = currentHealth;
+	while (health != 0) {
+		healthArray[count] = health % 10;
+		health /= 10;
+		count++;
+	}
+	
+	for (uint8_t i=0; i<count; i++) {
+		sprite_load(db, &counter_digit_sprite, healthArray[count-i-1], 1);
+		sprite_draw(db, &counter_digit_sprite, 0, x + 16 + 8 * i,  y + 1, 8, 16);
+	}
 }

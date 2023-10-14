@@ -17,9 +17,9 @@ uint8_t holding_stick     = 0;
 
 char medallion_item[9][17]                 = { "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Shadow Medallion", "Spirit Medallion", "Kokiri's Emerald", "Goron's Ruby", "Zora's Sapphire" };
 char medallion_ability[9][16]              = { "Long Jump",       "Magician Tunic",   "Guardian Tunic", "Hero Tunic",      "Shadow Tunic",     "Hover Dash Jump",  "Dash",             "Faster Dash",  "Cheaper Dash"    };
-char options[OPTIONS_SIZE_ALL][17]         = { "30 FPS", "D-Pad Config", "D-Pad Layout", "Hide HUD", "HUD Layout", "A Button Scale", "B Button Scale", "C-Left Scale", "C-Down Scale", "C-Right Scale", "Inverse Aim", "No Idle Camera", "Keep Mask", "Tri-Swipe", "Damage Taken", "Unequip Item", "Unequip Gear", "Item on B", "Downgrade Item", "Crouch Stab Fix", "Weaker Swords", "Extra Abilities", "Rupee Drain", "Fog", "Inventory Editor", "Levitation", "Infinite Health", "Infinite Magic", "Infinite Rupees", "Infinite Ammo" };
-uint8_t options_max[OPTIONS_SIZE_ALL]      = { 0,        2,              3,              4,          5,            2,                7,                7,              7,              7,               0,             0,                0,           0,           7,              0,              0,              0,           0,                0,                 0,               0,                 15,            15,    0,                  0,             0,                0,                0,                 0               };
-int8_t  options_recenter[OPTIONS_SIZE_ALL] = { 40,       15,             15,             30,         22,           10,               10,               10,             10,             10,              17,            5,                25,          25,          15,             15,             15,             27,          5,                0,                 10,              0,                 20,            50,    -5,                 20,            0,                5,                0,                 10              };
+char options[OPTIONS_SIZE_ALL][17]         = { "30 FPS", "D-Pad Config", "D-Pad Layout", "Hide HUD", "HUD Layout", "Show Health", "A Button Scale", "B Button Scale", "C-Left Scale", "C-Down Scale", "C-Right Scale", "Inverse Aim", "No Idle Camera", "Keep Mask", "Tri-Swipe", "Damage Taken", "Unequip Item", "Unequip Gear", "Item on B", "Downgrade Item", "Crouch Stab Fix", "Weaker Swords", "Extra Abilities", "Rupee Drain", "Fog", "Inventory Editor", "Levitation", "Infinite Health", "Infinite Magic", "Infinite Rupees", "Infinite Ammo" };
+uint8_t options_max[OPTIONS_SIZE_ALL]      = { 0,        2,              3,              4,          5,            0,             2,                7,                7,              7,              7,               0,             0,                0,           0,           7,              0,              0,              0,           0,                0,                 0,               0,                 15,            15,    0,                  0,             0,                0,                0,                 0               };
+int8_t  options_recenter[OPTIONS_SIZE_ALL] = { 40,       15,             15,             30,         22,           17,            6,                6,                11,             11,             10,              17,            5,                25,          25,          15,             15,             15,             27,          5,                0,                 10,              0,                 20,            50,    -5,                 20,            0,                5,                0,                 10              };
 uint8_t options_cursor                     = 0;
 
 void toggle_options_menu() {
@@ -83,6 +83,7 @@ void handle_options_menu() {
 
 void handle_options_menu_input(pad_t pad_pressed) {
 	switch (options_cursor) {
+		case OPTION_SHOW_HEALTH:		EXTRA_SRAM_5 ^= 1 << 7; return;
 		case OPTION_INVERSE_AIM:		EXTRA_SRAM_1 ^= 1 << 5; return;
 		case OPTION_NO_IDLE_CAMERA:		EXTRA_SRAM_1 ^= 1 << 6; return;
 		case OPTION_KEEP_MASK:			EXTRA_SRAM_2 ^= 1 << 6; return;
@@ -160,7 +161,7 @@ void handle_options_menu_input(pad_t pad_pressed) {
 			return;
 		
 		case OPTION_FOG:
-			EXTRA_SRAM_5 = write_option(SAVE_FOG,          EXTRA_SRAM_5, 0, pad_pressed);
+			EXTRA_SRAM_5 = write_option(SAVE_FOG,                  EXTRA_SRAM_5, 0, pad_pressed);
 			if (SAVE_FOG == 0)
 				z64_game.fog_distance = 10.0f;
 			return;
@@ -269,6 +270,13 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 			setting = SAVE_HUD_LAYOUT;	
 			text_print("Choose from five different",  tooltipLeft, top + 50);
 			text_print("layouts to change the HUD",   tooltipLeft, top + 70);
+			break;
+		
+		case OPTION_SHOW_HEALTH:
+			setting = SAVE_SHOW_HEALTH;	
+			text_print("Show the amount of health",  tooltipLeft, top + 50);
+			text_print("enemies have left in the ",  tooltipLeft, top + 70);
+			text_print("HUD",                        tooltipLeft, top + 90);           
 			break;
 		
 		case OPTION_A_BUTTON_SCALE:

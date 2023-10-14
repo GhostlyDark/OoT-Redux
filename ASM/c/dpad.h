@@ -14,5 +14,6 @@ void handle_dpad();
 void handle_dpad_ingame();
 void draw_dpad();
 void draw_dpad_icons(z64_disp_buf_t *db);
+void draw_health(z64_disp_buf_t *db, z64_actor_t* actor);
 
 #endif
