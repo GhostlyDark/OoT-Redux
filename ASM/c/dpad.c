@@ -5,10 +5,46 @@
 #include "options.h"
 #include "buttons.h"
 #include "fps.h"
+#include "actor.h"
 
 extern uint8_t CFG_WS;
 extern uint8_t CFG_TYCOON_WALLET;
 extern uint8_t CFG_OPTIONS_MENU;
+
+// Default Options
+extern uint8_t CFG_DEFAULT_30_FPS;
+extern uint8_t CFG_DEFAULT_ARROW_TOGGLE;
+extern uint8_t CFG_DEFAULT_DPAD;
+extern uint8_t CFG_DEFAULT_SHOW_DPAD;
+extern uint8_t CFG_DEFAULT_HIDE_HUD;
+extern uint8_t CFG_DEFAULT_HUD_LAYOUT;
+extern uint8_t CFG_DEFAULT_SHOW_HEALTH;
+extern uint8_t CFG_DEFAULT_CHEST_CONTENTS;
+extern uint8_t CFG_DEFAULT_A_BUTTON_SCALE;
+extern uint8_t CFG_DEFAULT_B_BUTTON_SCALE;
+extern uint8_t CFG_DEFAULT_C_LEFT_BUTTON_SCALE;
+extern uint8_t CFG_DEFAULT_C_DOWN_BUTTON_SCALE;
+extern uint8_t CFG_DEFAULT_C_RIGHT_BUTTON_SCALE;
+extern uint8_t CFG_DEFAULT_INVERSE_AIM;
+extern uint8_t CFG_DEFAULT_NO_IDLE_CAMERA;
+extern uint8_t CFG_DEFAULT_KEEP_MASK;
+extern uint8_t CFG_DEFAULT_TRISWIPE;
+extern uint8_t CFG_DEFAULT_DAMAGE_TAKEN;
+extern uint8_t CFG_DEFAULT_RANDOM_ENEMIES;
+extern uint8_t CFG_DEFAULT_UNEQUIP_ITEM;
+extern uint8_t CFG_DEFAULT_UNEQUIP_GEAR;
+extern uint8_t CFG_DEFAULT_ITEM_ON_B;
+extern uint8_t CFG_DEFAULT_DOWNGRADE_ITEM;
+extern uint8_t CFG_DEFAULT_CROUCH_STAB_FIX;
+extern uint8_t CFG_DEFAULT_WEAKER_SWORDS;
+extern uint8_t CFG_DEFAULT_EXTRA_ABILITIES;
+extern uint8_t CFG_DEFAULT_RUPEE_DRAIN;
+extern uint8_t CFG_DEFAULT_FOG;
+extern uint8_t CFG_DEFAULT_LEVITATION;
+extern uint8_t CFG_DEFAULT_INFINITE_HP;
+extern uint8_t CFG_DEFAULT_INFINITE_MP;
+extern uint8_t CFG_DEFAULT_INFINITE_RUPEES;
+extern uint8_t CFG_DEFAULT_INFINITE_AMMO;
 
 uint8_t  dpad_alt        = 0;
 uint16_t dpad_x          = 0;
@@ -92,8 +128,11 @@ void handle_dpad() {
 	if (CAN_CONTROL_LINK) {
 		if (CFG_OPTIONS_MENU >= 1) {
 			if (SAVE_INVERSE_AIM)
-				if (z64_camera_view == 1 || z64_camera_view == 2)
-					z64_y_axis_input *= -1;
+				if (z64_MessageGetState(((uint8_t *)(&z64_game)) + 0x20D8) != 4 && (z64_game.camera_mode == CAM_MODE_FIRST_PERSON || z64_game.camera_mode == CAM_MODE_AIM_ADULT || z64_game.camera_mode == CAM_MODE_AIM_BOOMERANG || z64_game.camera_mode == CAM_MODE_AIM_CHILD) ) {
+					z64_game.common.input[0].raw.y      = -z64_game.common.input[0].raw.y;
+					z64_game.common.input[0].y_diff     = -z64_game.common.input[0].y_diff;
+					z64_game.common.input[0].adjusted_y = -z64_game.common.input[0].adjusted_y;
+				}
 		
 			if (SAVE_NO_IDLE_CAMERA)
 				if (z64_idle_camera_counter < 10)
@@ -121,22 +160,57 @@ void handle_dpad() {
 		if (CFG_TYCOON_WALLET && z64_file.gs_tokens >= 40 && z64_file.wallet == 2 && TYCOON_WALLET)
 			z64_file.wallet = 3;
 		
-		if (!DPAD_INIT_SETUP) {
-			EXTRA_SRAM_1 |= 1;      // Init
-			EXTRA_SRAM_2 |= 1 << 6; // Keep Mask
-			EXTRA_SRAM_4 |= 2;      // D-Pad
-			EXTRA_SRAM_4 |= 1 << 2; // Show D-Pad
-	
-			DPAD_ADULT_UP		= DPAD_ARROWS		* 16 + DPAD_SWORD;
-			DPAD_ADULT_RIGHT	= DPAD_HOVER_BOOTS  * 16 + DPAD_BOOTS;
-			DPAD_ADULT_DOWN		= DPAD_OCARINA		* 16 + DPAD_SHIELD;
-			DPAD_ADULT_LEFT		= DPAD_IRON_BOOTS	* 16 + DPAD_TUNIC;
-			DPAD_CHILD_UP		= DPAD_LENS			* 16 + DPAD_SWORD;
-			DPAD_CHILD_RIGHT	= DPAD_CHILD_TRADE	* 16 + DPAD_BOOTS;
-			DPAD_CHILD_DOWN		= DPAD_OCARINA		* 16 + DPAD_SHIELD;
-			DPAD_CHILD_LEFT		= DPAD_NULL			* 16 + DPAD_TUNIC;
-		}
+		if (!DPAD_INIT_SETUP)
+			run_default_options_setup();
 	}
+}
+
+void run_default_options_setup() {
+	z64_file.inf_table[0x15] |= 1 << 0; // Init
+	
+	z64_file.inf_table[0x15] |= CFG_DEFAULT_30_FPS               << 4;
+	z64_file.inf_table[0x15] |= CFG_DEFAULT_ARROW_TOGGLE         << 5;
+	z64_file.inf_table[0x15] |= CFG_DEFAULT_SHOW_HEALTH          << 6;
+	z64_file.inf_table[0x15] |= CFG_DEFAULT_CHEST_CONTENTS       << 7;
+	z64_file.inf_table[0x15] |= CFG_DEFAULT_INVERSE_AIM          << 8;
+	z64_file.inf_table[0x15] |= CFG_DEFAULT_NO_IDLE_CAMERA       << 9;
+	z64_file.inf_table[0x15] |= CFG_DEFAULT_KEEP_MASK            << 10;
+	z64_file.inf_table[0x15] |= CFG_DEFAULT_TRISWIPE             << 11;
+	z64_file.inf_table[0x15] |= CFG_DEFAULT_UNEQUIP_ITEM         << 12;
+	z64_file.inf_table[0x15] |= CFG_DEFAULT_UNEQUIP_GEAR         << 13;
+	z64_file.inf_table[0x15] |= CFG_DEFAULT_ITEM_ON_B            << 14;
+	z64_file.inf_table[0x15] |= CFG_DEFAULT_DOWNGRADE_ITEM       << 15;
+	z64_file.inf_table[0x14] |= CFG_DEFAULT_CROUCH_STAB_FIX      << 8;
+	z64_file.inf_table[0x14] |= CFG_DEFAULT_WEAKER_SWORDS        << 9;
+	z64_file.inf_table[0x14] |= CFG_DEFAULT_EXTRA_ABILITIES      << 10;
+	z64_file.inf_table[0x14] |= CFG_DEFAULT_LEVITATION           << 11;
+	z64_file.inf_table[0x14] |= CFG_DEFAULT_INFINITE_HP          << 12;
+	z64_file.inf_table[0x14] |= CFG_DEFAULT_INFINITE_MP          << 13;
+	z64_file.inf_table[0x14] |= CFG_DEFAULT_INFINITE_RUPEES      << 14;
+	z64_file.inf_table[0x14] |= CFG_DEFAULT_INFINITE_AMMO        << 15;
+	
+	z64_file.inf_table[0x1B] |= CFG_DEFAULT_DPAD                 << 0;
+	z64_file.inf_table[0x1B] |= CFG_DEFAULT_SHOW_DPAD            << 2;
+	z64_file.inf_table[0x1B] |= CFG_DEFAULT_HIDE_HUD             << 4;
+	z64_file.inf_table[0x1B] |= CFG_DEFAULT_HUD_LAYOUT           << 7;
+	z64_file.inf_table[0x1B] |= CFG_DEFAULT_A_BUTTON_SCALE       << 10;
+	z64_file.inf_table[0x1B] |= CFG_DEFAULT_B_BUTTON_SCALE       << 12;
+	z64_file.inf_table[0x1B] |= CFG_DEFAULT_RANDOM_ENEMIES       << 15;
+	z64_file.inf_table[0x1C] |= CFG_DEFAULT_C_LEFT_BUTTON_SCALE  << 0;
+	z64_file.inf_table[0x1C] |= CFG_DEFAULT_C_DOWN_BUTTON_SCALE  << 4;
+	z64_file.inf_table[0x1C] |= CFG_DEFAULT_C_RIGHT_BUTTON_SCALE << 8;
+	z64_file.inf_table[0x1C] |= CFG_DEFAULT_DAMAGE_TAKEN         << 12;
+	z64_file.inf_table[0x18] |= CFG_DEFAULT_RUPEE_DRAIN          << 0;
+	z64_file.inf_table[0x18] |= CFG_DEFAULT_FOG                  << 4;
+	
+	DPAD_ADULT_UP		= DPAD_ARROWS		* 16 + DPAD_SWORD;
+	DPAD_ADULT_RIGHT	= DPAD_HOVER_BOOTS  * 16 + DPAD_BOOTS;
+	DPAD_ADULT_DOWN		= DPAD_OCARINA		* 16 + DPAD_SHIELD;
+	DPAD_ADULT_LEFT		= DPAD_IRON_BOOTS	* 16 + DPAD_TUNIC;
+	DPAD_CHILD_UP		= DPAD_LENS			* 16 + DPAD_SWORD;
+	DPAD_CHILD_RIGHT	= DPAD_CHILD_TRADE	* 16 + DPAD_BOOTS;
+	DPAD_CHILD_DOWN		= DPAD_OCARINA		* 16 + DPAD_SHIELD;
+	DPAD_CHILD_LEFT		= DPAD_NULL			* 16 + DPAD_TUNIC;
 }
 
 void handle_dpad_ingame() {
@@ -163,6 +237,7 @@ void draw_dpad() {
 	gSPDisplayList(db->p++, &setup_db);
 	gDPPipeSync(db->p++);
 	
+	draw_health(db);
 	if (!draw_settings_menu(db))
 		if (!draw_abilities_info(db))
 			draw_dpad_icons(db);
@@ -219,57 +294,4 @@ void draw_dpad_icons(z64_disp_buf_t *db) {
 	sprite_draw(db, &dpad_sprite, 0, dpad_x, dpad_y, 16, 16);
 	
 	draw_dpad_actions(db, alpha);
-}
-
-void draw_health(z64_disp_buf_t *db, z64_actor_t* actor) {
-	if (!SAVE_SHOW_HEALTH || z64_game.pause_ctxt.state != 0 || actor == NULL)
-		return;
-	
-	uint8_t type = actor->actor_type;
-	if (type != ACTORTYPE_ENEMY && type != ACTORTYPE_BOSS)
-		return;
-	
-	int currentHealth = actor->health;
-	/*if (actor->parent != NULL)
-		currentHealth = actor->parent->health;
-	else currentHealth = actor->health;*/
-	
-	if (currentHealth <= 0)
-		return;
-			
-	gSPDisplayList(db->p++, &setup_db);
-	gDPPipeSync(db->p++);
-	
-	uint16_t x = 70;
-	uint16_t y = 205;
-	
-	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
-	sprite_load(db, &linkhead_skull_sprite, 1, 1);
-	sprite_draw(db, &linkhead_skull_sprite, 0, x, y, 16, 16);
-	
-	// Type
-	//sprite_load(db, &counter_digit_sprite, type, 1);
-	//sprite_draw(db, &counter_digit_sprite, 0, x + 16,  y + 1 - 20, 8, 16);
-			
-	uint8_t count = 0;
-	int8_t  health = currentHealth;
-			
-	while (health != 0) {
-		health /= 10;
-		count++;
-	}
-			
-	uint8_t healthArray[count];
-	count = 0;    
-	health = currentHealth;
-	while (health != 0) {
-		healthArray[count] = health % 10;
-		health /= 10;
-		count++;
-	}
-	
-	for (uint8_t i=0; i<count; i++) {
-		sprite_load(db, &counter_digit_sprite, healthArray[count-i-1], 1);
-		sprite_draw(db, &counter_digit_sprite, 0, x + 16 + 8 * i,  y + 1, 8, 16);
-	}
 }

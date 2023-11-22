@@ -227,7 +227,7 @@ void handle_downgrading() {
 	if (z64_game.pause_ctxt.screen_idx == 3) { // Swap knife
 		if (z64_game.pause_ctxt.equip_cursor == 3 && (DOWNGRADE_GIANTS_KNIFE || z64_file.bgs_flag) ) {
 			if (!DOWNGRADE_GIANTS_KNIFE)
-				EXTRA_SRAM_1 |= 2;
+				z64_file.inf_table[0x15] |= 1 << 1;
 			
 			z64_file.bgs_flag ^= 1;
 			if (!z64_file.bgs_flag)
@@ -242,7 +242,7 @@ void handle_downgrading() {
 			
 	if (z64_game.pause_ctxt.screen_idx == 0) { // Downgrade / Upgrade items
 		if (z64_game.pause_ctxt.item_cursor == 7 && (DOWNGRADE_OCARINA || z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME) ) {
-			EXTRA_SRAM_1 |= 4;
+			z64_file.inf_table[0x15] |= 1 << 2;
 			if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_OCARINA_OF_TIME)
 				swap_item(Z64_SLOT_OCARINA, Z64_ITEM_OCARINA_OF_TIME, Z64_ITEM_FAIRY_OCARINA);
 			else if (z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA)
@@ -250,7 +250,7 @@ void handle_downgrading() {
 		}
 		
 		if (z64_game.pause_ctxt.item_cursor == 9 && (DOWNGRADE_HOOKSHOT || z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_LONGSHOT) ) {
-			EXTRA_SRAM_1 |= 8;
+			z64_file.inf_table[0x15] |= 1 << 3;
 			if (z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_LONGSHOT)
 				swap_item(Z64_SLOT_HOOKSHOT, Z64_ITEM_LONGSHOT, Z64_ITEM_HOOKSHOT);
 			else if (z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_HOOKSHOT)

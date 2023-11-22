@@ -18,19 +18,21 @@ static uint8_t DPAD_ACTIVE[4] = {0, 0, 0, 0};
 
 void change_sword(uint8_t sword) {
 	z64_file.equip_sword				= sword;
-		if (z64_file.link_age)
+	if (z64_file.link_age)
 		z64_file.child_equip_sword		= sword;
 	else z64_file.adult_equip_sword		= sword;
-	change_equipment();
 	if (z64_file.equip_sword == 0) {
-		z64_file.inf_table[29]			= 1;
-		z64_file.button_items[0]		= -1;
+		z64_file.inf_table[29]   = 1;
+		z64_file.button_items[0] = -1;
 	}
 	else {
-		z64_file.inf_table[29]			= 0;
-		z64_file.button_items[0]		= z64_file.equip_sword + 0x3A;
-		z64_UpdateItemButton(&z64_game, 0);
+		z64_file.inf_table[29] = 0;
+		if (z64_file.equip_sword == 3 && z64_file.broken_giants_knife)
+			z64_file.button_items[0] = 0x55;
+		else z64_file.button_items[0] = z64_file.equip_sword + 0x3A;
 	}
+	change_equipment();
+	z64_UpdateItemButton(&z64_game, 0);
 }
 
 void change_shield(uint8_t shield) {
@@ -521,8 +523,11 @@ void use_item(z64_slot_t slot, uint8_t usability) {
 void draw_sword_icon(z64_disp_buf_t *db, uint16_t icon_x, uint16_t icon_y, uint8_t alpha) {
 	if (z64_file.equip_sword == 0)
 		return;
+	uint8_t index = 58 + z64_file.equip_sword;
+	if (z64_file.equip_sword == 3 && z64_file.broken_giants_knife)
+		index = 85;
 	gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, alpha);
-	sprite_load(db, &items_sprite, (58 + z64_file.equip_sword), 1);
+	sprite_load(db, &items_sprite, index, 1);
 	sprite_draw(db, &items_sprite, 0, (dpad_x + icon_x), (dpad_y + icon_y), 12, 12);
 }
 

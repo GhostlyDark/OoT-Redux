@@ -17,9 +17,9 @@ uint8_t holding_stick     = 0;
 
 char medallion_item[9][17]                 = { "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Shadow Medallion", "Spirit Medallion", "Kokiri's Emerald", "Goron's Ruby", "Zora's Sapphire" };
 char medallion_ability[9][16]              = { "Long Jump",       "Magician Tunic",   "Guardian Tunic", "Hero Tunic",      "Shadow Tunic",     "Hover Dash Jump",  "Dash",             "Faster Dash",  "Cheaper Dash"    };
-char options[OPTIONS_SIZE_ALL][17]         = { "30 FPS", "D-Pad Config", "D-Pad Layout", "Hide HUD", "HUD Layout", "Show Health", "A Button Scale", "B Button Scale", "C-Left Scale", "C-Down Scale", "C-Right Scale", "Inverse Aim", "No Idle Camera", "Keep Mask", "Tri-Swipe", "Damage Taken", "Unequip Item", "Unequip Gear", "Item on B", "Downgrade Item", "Crouch Stab Fix", "Weaker Swords", "Extra Abilities", "Rupee Drain", "Fog", "Inventory Editor", "Levitation", "Infinite Health", "Infinite Magic", "Infinite Rupees", "Infinite Ammo" };
-uint8_t options_max[OPTIONS_SIZE_ALL]      = { 0,        2,              3,              4,          5,            0,             2,                7,                7,              7,              7,               0,             0,                0,           0,           7,              0,              0,              0,           0,                0,                 0,               0,                 15,            15,    0,                  0,             0,                0,                0,                 0               };
-int8_t  options_recenter[OPTIONS_SIZE_ALL] = { 40,       15,             15,             30,         22,           17,            6,                6,                11,             11,             10,              17,            5,                25,          25,          15,             15,             15,             27,          5,                0,                 10,              0,                 20,            50,    -5,                 20,            0,                5,                0,                 10              };
+char options[OPTIONS_SIZE_ALL][17]         = { "30 FPS", "Arrow Toggle", "D-Pad Config", "D-Pad Layout", "Hide HUD", "HUD Layout", "Show Health", "Chest Contents", "A Button Scale", "B Button Scale", "C-Left Scale", "C-Down Scale", "C-Right Scale", "Inverse Aim", "No Idle Camera", "Keep Mask", "Tri-Swipe", "Damage Taken", "Random Enemies", "Unequip Item", "Unequip Gear", "Item on B", "Downgrade Item", "Crouch Stab Fix", "Weaker Swords", "Extra Abilities", "Rupee Drain", "Fog", "Inventory Editor", "Levitation", "Infinite Health", "Infinite Magic", "Infinite Rupees", "Infinite Ammo" };
+uint8_t options_max[OPTIONS_SIZE_ALL]      = { 0,        0,              2,              3,              4,          5,            0,             0,                2,                7,                7,              7,              7,               0,             0,                0,           0,           7,              0,                0,              0,              0,           0,                0,                 0,               0,                 15,            15,    0,                  0,             0,                0,                0,                 0               };
+int8_t  options_recenter[OPTIONS_SIZE_ALL] = { 40,       15,             15,             15,             30,         22,           17,            8,               6,                6,                11,             11,             10,              17,            5,                25,          25,          15,              8,                15,             15,             27,          5,                0,                 10,              0,                 20,            50,    -5,                 20,            0,                5,                0,                 10              };
 uint8_t options_cursor                     = 0;
 
 void toggle_options_menu() {
@@ -83,85 +83,89 @@ void handle_options_menu() {
 
 void handle_options_menu_input(pad_t pad_pressed) {
 	switch (options_cursor) {
-		case OPTION_SHOW_HEALTH:		EXTRA_SRAM_5 ^= 1 << 7; return;
-		case OPTION_INVERSE_AIM:		EXTRA_SRAM_1 ^= 1 << 5; return;
-		case OPTION_NO_IDLE_CAMERA:		EXTRA_SRAM_1 ^= 1 << 6; return;
-		case OPTION_KEEP_MASK:			EXTRA_SRAM_2 ^= 1 << 6; return;
-		case OPTION_TRISWIPE:			EXTRA_SRAM_2 ^= 1 << 7; return;
-		case OPTION_UNEQUIP_ITEM:		EXTRA_SRAM_2 ^= 1 << 1; return;
-		case OPTION_UNEQUIP_GEAR:		EXTRA_SRAM_2 ^= 1;		return;
-		case OPTION_ITEM_ON_B:			EXTRA_SRAM_2 ^= 1 << 2; return;
-		case OPTION_DOWNGRADE_ITEM:		EXTRA_SRAM_2 ^= 1 << 4; return;
-		case OPTION_CROUCH_STAB_FIX:	EXTRA_SRAM_2 ^= 1 << 5; return;
-		case OPTION_WEAKER_SWORDS:		EXTRA_SRAM_2 ^= 1 << 3; return;
-		case OPTION_EXTRA_ABILITIES:	EXTRA_SRAM_1 ^= 1 << 7; return;
-		case OPTION_LEVITATION:			EXTRA_SRAM_5 ^= 1 << 4; return;
-		case OPTION_INFINITE_HP:		EXTRA_SRAM_3 ^= 1 << 7; return;
-		case OPTION_INFINITE_MP:		EXTRA_SRAM_4 ^= 1 << 7; return;
-		case OPTION_INFINITE_RUPEES:	EXTRA_SRAM_5 ^= 1 << 5; return;
-		case OPTION_INFINITE_AMMO:		EXTRA_SRAM_5 ^= 1 << 6; return;
+		case OPTION_ARROW_TOGGLE:		z64_file.inf_table[0x15] ^= 1 << 5;  return;
+		case OPTION_SHOW_HEALTH:		z64_file.inf_table[0x15] ^= 1 << 6;  return;
+		case OPTION_CHEST_CONTENTS:		z64_file.inf_table[0x15] ^= 1 << 7;  return;
+		case OPTION_INVERSE_AIM:		z64_file.inf_table[0x15] ^= 1 << 8;  return;
+		case OPTION_NO_IDLE_CAMERA:		z64_file.inf_table[0x15] ^= 1 << 9;  return;
+		case OPTION_KEEP_MASK:			z64_file.inf_table[0x15] ^= 1 << 10; return;
+		case OPTION_TRISWIPE:			z64_file.inf_table[0x15] ^= 1 << 11; return;
+		case OPTION_UNEQUIP_ITEM:		z64_file.inf_table[0x15] ^= 1 << 12; return;
+		case OPTION_UNEQUIP_GEAR:		z64_file.inf_table[0x15] ^= 1 << 13; return;
+		case OPTION_ITEM_ON_B:			z64_file.inf_table[0x15] ^= 1 << 14; return;
+		case OPTION_RANDOM_ENEMIES:		z64_file.inf_table[0x1B] ^= 1 << 15; return;
+		case OPTION_DOWNGRADE_ITEM:		z64_file.inf_table[0x15] ^= 1 << 15; return;
+		case OPTION_CROUCH_STAB_FIX:	z64_file.inf_table[0x14] ^= 1 << 8;  return;
+		case OPTION_WEAKER_SWORDS:		z64_file.inf_table[0x14] ^= 1 << 9;  return;
+		case OPTION_EXTRA_ABILITIES:	z64_file.inf_table[0x14] ^= 1 << 10; return;
+		case OPTION_LEVITATION:			z64_file.inf_table[0x14] ^= 1 << 11; return;
+		case OPTION_INFINITE_HP:		z64_file.inf_table[0x14] ^= 1 << 12; return;
+		case OPTION_INFINITE_MP:		z64_file.inf_table[0x14] ^= 1 << 13; return;
+		case OPTION_INFINITE_RUPEES:	z64_file.inf_table[0x14] ^= 1 << 14; return;
+		case OPTION_INFINITE_AMMO:		z64_file.inf_table[0x14] ^= 1 << 15; return;
 		
 		case OPTION_30_FPS:
-			EXTRA_SRAM_1 ^= 1 << 4;
+			z64_file.inf_table[0x15] ^= 1 << 4;
 			if (!SAVE_30_FPS)
 				reset_fps_values();
 			return;
 		
 		case OPTION_DPAD:
-			EXTRA_SRAM_4 = write_option(SAVE_DPAD,                 EXTRA_SRAM_4, 0, pad_pressed);
+			write_option(0x1B, 0,  pad_pressed, SAVE_DPAD);
 			if (SAVE_DPAD == 0)
 				{ z64_dpad_lens_1 = 0x504E; z64_dpad_lens_2 = 0x504F; z64_dpad_lens_3 = 0x5458; }
 			else check_lens();
 			return;
 		
 		case OPTION_SHOW_DPAD:
-			EXTRA_SRAM_4 = write_option(SAVE_SHOW_DPAD,            EXTRA_SRAM_4, 2, pad_pressed);
+			write_option(0x1B, 2,  pad_pressed, SAVE_SHOW_DPAD);
 			return;
 		
 		case OPTION_HIDE_HUD:
-			EXTRA_SRAM_3 = write_option(SAVE_HIDE_HUD,             EXTRA_SRAM_3, 4, pad_pressed);
+			write_option(0x1B, 4,  pad_pressed, SAVE_HIDE_HUD);
 			return;
 		
 		case OPTION_HUD_LAYOUT:
-			EXTRA_SRAM_4 = write_option(SAVE_HUD_LAYOUT,           EXTRA_SRAM_4, 4, pad_pressed);
+			write_option(0x1B, 7,  pad_pressed, SAVE_HUD_LAYOUT);
 			reset_layout();
 			return;
 		
 		case OPTION_A_BUTTON_SCALE:
-			EXTRA_SRAM_6 = write_option(SAVE_A_BUTTON_SCALE,       EXTRA_SRAM_6, 3, pad_pressed);
+			write_option(0x1B, 10, pad_pressed, SAVE_A_BUTTON_SCALE);
 			reset_layout();
 			return;
 		
 		case OPTION_B_BUTTON_SCALE:
-			EXTRA_SRAM_7 = write_option(SAVE_B_BUTTON_SCALE,       EXTRA_SRAM_7, 0, pad_pressed);
+			write_option(0x1B, 12, pad_pressed, SAVE_B_BUTTON_SCALE);
 			reset_layout();
 			return;
 		
 		case OPTION_C_LEFT_BUTTON_SCALE:
-			EXTRA_SRAM_7 = write_option(SAVE_C_LEFT_BUTTON_SCALE,  EXTRA_SRAM_7, 3, pad_pressed);
+			write_option(0x1C, 0,  pad_pressed, SAVE_C_LEFT_BUTTON_SCALE);
 			reset_layout();
 			return;
 		
 		case OPTION_C_DOWN_BUTTON_SCALE:
-			EXTRA_SRAM_8 = write_option(SAVE_C_DOWN_BUTTON_SCALE,  EXTRA_SRAM_8, 0, pad_pressed);
+			write_option(0x1C, 4,  pad_pressed, SAVE_C_DOWN_BUTTON_SCALE);
 			reset_layout();
 			return;
 		
 		case OPTION_C_RIGHT_BUTTON_SCALE:
-			EXTRA_SRAM_8 = write_option(SAVE_C_RIGHT_BUTTON_SCALE, EXTRA_SRAM_8, 3, pad_pressed);
+			write_option(0x1C, 8,  pad_pressed, SAVE_C_RIGHT_BUTTON_SCALE);
 			reset_layout();
 			return;
 		
 		case OPTION_DAMAGE_TAKEN:
-			EXTRA_SRAM_6 = write_option(SAVE_DAMAGE_TAKEN,         EXTRA_SRAM_6, 0, pad_pressed);
+			write_option(0x1C, 12, pad_pressed, SAVE_DAMAGE_TAKEN);
 			return;
+
 		
 		case OPTION_RUPEE_DRAIN:
-			EXTRA_SRAM_3 = write_option(SAVE_RUPEE_DRAIN,          EXTRA_SRAM_3, 0, pad_pressed);
+			write_option(0x18, 0,  pad_pressed, SAVE_RUPEE_DRAIN);
 			return;
 		
 		case OPTION_FOG:
-			EXTRA_SRAM_5 = write_option(SAVE_FOG,                  EXTRA_SRAM_5, 0, pad_pressed);
+			write_option(0x18, 4,  pad_pressed, SAVE_FOG);
 			if (SAVE_FOG == 0)
 				z64_game.fog_distance = 10.0f;
 			return;
@@ -174,22 +178,20 @@ void handle_options_menu_input(pad_t pad_pressed) {
 	}
 }
 
-uint8_t write_option(uint8_t save, uint8_t sram, uint8_t shift, pad_t pad_pressed) {
-	int8_t max = options_max[options_cursor] << shift;
-	int8_t one = 1 << shift;
+uint8_t write_option(uint8_t index, uint8_t shift, pad_t pad_pressed, uint16_t save) {
+	uint16_t max = options_max[options_cursor] << shift;
+	uint16_t one = 1 << shift;
 	
 	if (pad_pressed.a) {
 		if (save < options_max[options_cursor])
-			sram += one;
-		else sram -= max;
+			z64_file.inf_table[index] += one;
+		else z64_file.inf_table[index] -= max;
 	}
 	else {
 		if (save > 0)
-			sram -= one;
-		else sram += max;
+			z64_file.inf_table[index] -= one;
+		else z64_file.inf_table[index] += max;
 	}
-	
-	return sram;
 }
 
 uint8_t draw_settings_menu(z64_disp_buf_t *db) {
@@ -253,6 +255,13 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 			text_print("1. Enabled",                  tooltipLeft, top + 70);
 			text_print("2. Dual Set",                 tooltipLeft, top + 90);
 			break;
+			
+		case OPTION_ARROW_TOGGLE:
+			setting = SAVE_ARROW_TOGGLE;
+			text_print("Enables Arrow Toggle",       tooltipLeft, top + 50);
+			text_print("Press R while aiming to",    tooltipLeft, top + 70);
+			text_print("toggle arrow types ",        tooltipLeft, top + 90);
+			break;
 		
 		case OPTION_SHOW_DPAD:
 			setting = SAVE_SHOW_DPAD;
@@ -275,8 +284,15 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 		case OPTION_SHOW_HEALTH:
 			setting = SAVE_SHOW_HEALTH;	
 			text_print("Show the amount of health",  tooltipLeft, top + 50);
-			text_print("enemies have left in the ",  tooltipLeft, top + 70);
+			text_print("enemies have left in the",   tooltipLeft, top + 70);
 			text_print("HUD",                        tooltipLeft, top + 90);           
+			break;
+		
+		case OPTION_CHEST_CONTENTS:
+			setting = SAVE_CHEST_CONTENTS;	
+			text_print("Adjusts the appearance of",  tooltipLeft, top + 50);
+			text_print("the chest according to",     tooltipLeft, top + 70);
+			text_print("the contents it contains",   tooltipLeft, top + 90);           
 			break;
 		
 		case OPTION_A_BUTTON_SCALE:
@@ -342,6 +358,13 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 			text_print("Multiplies taken damage",     tooltipLeft, top + 50);
 			text_print("by the factor shown below",   tooltipLeft, top + 70);
 			text_print("0 = Off",                     tooltipLeft, top + 90);
+			break;
+		
+		case OPTION_RANDOM_ENEMIES:
+			setting = SAVE_RANDOM_ENEMIES;
+			text_print("Multiplies the health and",   tooltipLeft, top + 50);
+			text_print("changes the subtype for",     tooltipLeft, top + 70);
+			text_print("regular enemies randomly",    tooltipLeft, top + 90);
 			break;
 		
 		case OPTION_UNEQUIP_ITEM:

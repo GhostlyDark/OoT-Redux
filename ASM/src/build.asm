@@ -103,6 +103,7 @@ RANDO_CONTEXT:
 .include "mask_deequip.asm"
 .include "blue_fire_arrows.asm"
 .include "armos.asm"
+;.include "actor.asm"
 
 .align 0x10
 .importobj "../build/bundle.o"
@@ -113,18 +114,32 @@ DPAD_TEXTURE:
 .incbin("../resources/dpad.bin")
 TRIFORCE_ICON_TEXTURE:
 ;.incbin("../resources/triforce_sprite.bin")
-GILDED_CHEST_FRONT_TEXTURE:
+
+;GILDED_CHEST_FRONT_TEXTURE:
 ;.incbin("../resources/gilded_chest_front.bin")
-GILDED_CHEST_BASE_TEXTURE:
+;GILDED_CHEST_BASE_TEXTURE:
 ;.incbin("../resources/gilded_chest_base.bin")
-SILVER_CHEST_FRONT_TEXTURE:
+;SILVER_CHEST_FRONT_TEXTURE:
 ;.incbin("../resources/silver_chest_front.bin")
-SILVER_CHEST_BASE_TEXTURE:
+;SILVER_CHEST_BASE_TEXTURE:
 ;.incbin("../resources/silver_chest_base.bin")
-SKULL_CHEST_FRONT_TEXTURE:
+;SKULL_CHEST_FRONT_TEXTURE:
 ;.incbin("../resources/skull_chest_front.bin")
-SKULL_CHEST_BASE_TEXTURE:
+;SKULL_CHEST_BASE_TEXTURE:
 ;.incbin("../resources/skull_chest_base.bin")
+
+LEATHER_CHEST_FRONT_TEXTURE:
+.incbin("../resources/chests/Leather.front")
+LEATHER_CHEST_BASE_TEXTURE:
+.incbin("../resources/chests/Leather.back")
+LEATHER_SYEO_CHEST_FRONT_TEXTURE:
+.incbin("../resources/chests/Leather Syeo.front")
+LEATHER_SYEO_CHEST_BASE_TEXTURE:
+.incbin("../resources/chests/Leather Syeo.back")
+KEY_CHEST_FRONT_TEXTURE:
+.incbin("../resources/chests/Key.front")
+KEY_CHEST_BASE_TEXTURE:
+.incbin("../resources/chests/Key.back")
 
 .align 0x10
 PAYLOAD_END:

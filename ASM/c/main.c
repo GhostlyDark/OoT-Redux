@@ -7,6 +7,7 @@
 #include "text.h"
 #include "util.h"
 #include "dpad.h"
+#include "actor.h"
 #include "arrow_cycle.h"
 #include "misc_colors.h"
 #include "hud_colors.h"
@@ -30,7 +31,6 @@ void c_init() {
 
 void before_game_state_update() {
 	arrow_cycle_handle(&z64_link, &z64_game);
-	draw_health(&(z64_ctxt.gfx->overlay), z64_game.target_actor);
     //handle_pending_items();
     handle_dpad();
     update_misc_colors();
@@ -39,6 +39,8 @@ void before_game_state_update() {
 }
 
 void after_game_state_update() {
+	get_health(z64_game.target_actor);
+	elite_enemies(&z64_game);
     //draw_dungeon_info(&(z64_ctxt.gfx->overlay));
     //draw_triforce_count(&(z64_ctxt.gfx->overlay));
     //give_ganon_boss_key();

@@ -6,6 +6,8 @@
 typedef void(*playsfx_t)(uint16_t sfx, z64_xyzf_t *unk_00_, int8_t unk_01_ , float *unk_02_, float *unk_03_, float *unk_04_);
 typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uint8_t button);
 
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+
 typedef enum {
 	DPAD_NULL			= 0x0,
 	DPAD_SWORD			= 0x1,
@@ -69,16 +71,18 @@ typedef enum {
 } limit_item_t;
 
 typedef enum {
-	OPTIONS_SIZE_CORE	= 15,
-	OPTIONS_SIZE_MAIN	= 24,
-	OPTIONS_SIZE_ALL	= 31,
+	OPTIONS_SIZE_CORE	= 17,
+	OPTIONS_SIZE_MAIN	= 27,
+	OPTIONS_SIZE_ALL	= 34,
 	
 	OPTION_30_FPS		= 0,
+	OPTION_ARROW_TOGGLE,
 	OPTION_DPAD,
 	OPTION_SHOW_DPAD,
 	OPTION_HIDE_HUD,
 	OPTION_HUD_LAYOUT,
 	OPTION_SHOW_HEALTH,
+	OPTION_CHEST_CONTENTS,
 	OPTION_A_BUTTON_SCALE,
 	OPTION_B_BUTTON_SCALE,
 	OPTION_C_LEFT_BUTTON_SCALE,
@@ -90,6 +94,7 @@ typedef enum {
 	OPTION_TRISWIPE,
 	
 	OPTION_DAMAGE_TAKEN,
+	OPTION_RANDOM_ENEMIES,
 	OPTION_UNEQUIP_ITEM,
 	OPTION_UNEQUIP_GEAR,
 	OPTION_ITEM_ON_B,
@@ -107,6 +112,133 @@ typedef enum {
 	OPTION_INFINITE_RUPEES,
 	OPTION_INFINITE_AMMO,
 } option;
+
+typedef enum {
+    /* 0x01 */ CHEST_BOMBS_5 = 1,
+	/* 0x02 */ CHEST_DEKU_NUTS,
+	/* 0x03 */ CHEST_BOMBCHU_10,
+	/* 0x04 */ CHEST_FAIRY_BOW,
+	/* 0x05 */ CHEST_FAIRY_SLINGSHOT,
+	/* 0x06 */ CHEST_BOOMERANG,
+	/* 0x07 */ CHEST_DEKU_STICK_1,
+	/* 0x08 */ CHEST_HOOKSHOT,
+	/* 0x09 */ CHEST_LONGSHOT,
+	/* 0x0A */ CHEST_LENS_OF_TRUTH,
+	/* 0x0B */ CHEST_ZELDAS_LETTER,
+	/* 0x0C */ CHEST_OCARINA_OF_TIME,
+	/* 0x0D */ CHEST_MEGATON_HAMMER,
+	/* 0x0E */ CHEST_COJIRO,
+	/* 0x0F */ CHEST_EMPTY_BOTTLE,
+	/* 0x10 */ CHEST_RED_POTION,
+	/* 0x11 */ CHEST_GREEN_POTION,
+	/* 0x12 */ CHEST_BLUE_POTION,
+	/* 0x13 */ CHEST_FAIRY,
+	/* 0x14 */ CHEST_LON_LON_MILK_FULL,
+	/* 0x15 */ CHEST_RUTOS_LETTER,
+	/* 0x16 */ CHEST_MAGIC_BEAN,
+	/* 0x17 */ CHEST_SKULL_MASK,
+	/* 0x18 */ CHEST_SPOOKY_MASK,
+	/* 0x19 */ CHEST_CUCCO,
+	/* 0x1A */ CHEST_KEATON_MASK,
+	/* 0x1B */ CHEST_BUNNY_HOOD,
+	/* 0x1C */ CHEST_MASK_OF_TRUTH,
+	/* 0x1D */ CHEST_POCKET_EGG,
+	/* 0x1E */ CHEST_POCKET_CUCCO,
+	/* 0x1F */ CHEST_ODD_MUSHROOM,
+	/* 0x20 */ CHEST_ODD_POTION,
+	/* 0x21 */ CHEST_POACHERS_SAW,
+	/* 0x22 */ CHEST_BROKEN_GORONS_SWORD,
+	/* 0x23 */ CHEST_PRESCRIPTION,
+	/* 0x24 */ CHEST_EYEBALL_FROG,
+	/* 0x25 */ CHEST_EYE_DROPS,
+	/* 0x26 */ CHEST_CLAIM_CHECK,
+	/* 0x27 */ CHEST_KOKIRI_SWORD,
+	/* 0x28 */ CHEST_GIANTS_KNIFE,
+	/* 0x29 */ CHEST_DEKU_SHIELD,
+	/* 0x2A */ CHEST_HYLIAN_SHIELD,
+	/* 0x2B */ CHEST_MIRROR_SHIELD,
+	/* 0x2C */ CHEST_GORON_TUNIC,
+	/* 0x2D */ CHEST_ZORA_TUNIC,
+	/* 0x2E */ CHEST_IRON_BOOTS,
+	/* 0x2F */ CHEST_HOVER_BOOTS,
+	/* 0x30 */ CHEST_QUIVER_40,
+	/* 0x31 */ CHEST_QUIVER_50,
+	/* 0x32 */ CHEST_BOMB_BAG_20,
+	/* 0x33 */ CHEST_BOMB_BAG_30,
+	/* 0x34 */ CHEST_BOMB_BAG_40,
+	/* 0x35 */ CHEST_SILVER_GAUNTLETS,
+	/* 0x36 */ CHEST_GOLDEN_GAUNTLETS,
+	/* 0x37 */ CHEST_SILVER_SCALE,
+	/* 0x38 */ CHEST_GOLDEN_SCALE,
+	/* 0x39 */ CHEST_STONE_OF_AGONY,
+	/* 0x3A */ CHEST_GERUDO_MEMBERSHIP_CARD,
+	/* 0x3B */ CHEST_FAIRY_OCARINA,
+	/* 0x3C */ CHEST_DEKU_SEEDS_5,
+	/* 0x3D */ CHEST_HEART_CONTAINER,
+	/* 0x3E */ CHEST_PIECE_OF_HEART,
+	/* 0x3F */ CHEST_BOSS_KEY,
+	/* 0x40 */ CHEST_COMPASS,
+	/* 0x41 */ CHEST_DUNGEON_MAP,
+	/* 0x42 */ CHEST_SMALL_KEY,
+	/* 0x43 */ CHEST_SMALL_MAGIC_JAR,
+	/* 0x44 */ CHEST_LARGE_MAGIC_JAR,
+	/* 0x45 */ CHEST_ADULT_WALLET,
+	/* 0x46 */ CHEST_GIANT_WALLET,
+	/* 0x47 */ CHEST_WEIRD_EGG,
+	/* 0x48 */ CHEST_RECOVERY_HEART,
+	/* 0x49 */ CHEST_ARROWS_5,
+	/* 0x4A */ CHEST_ARROWS_10,
+	/* 0x4B */ CHEST_ARROWS_30,
+	/* 0x4C */ CHEST_GREEN_RUPEE,
+	/* 0x4D */ CHEST_BLUE_RUPEE,
+	/* 0x4E */ CHEST_RED_RUPEE,
+	/* 0x4F */ CHEST_HEART_CONTAINER_2,
+	/* 0x50 */ CHEST_LON_LON_MILK,
+	/* 0x51 */ CHEST_GORON_MASK,
+	/* 0x52 */ CHEST_ZORA_MASK,
+	/* 0x53 */ CHEST_GERUDO_MASK,
+	/* 0x54 */ CHEST_GORONS_BRACELET,
+	/* 0x55 */ CHEST_PURPLE_RUPEE,
+	/* 0x56 */ CHEST_GOLD_RUPEE,
+	/* 0x57 */ CHEST_BIGGORON_SWORD,
+	/* 0x58 */ CHEST_FIRE_ARROW,
+	/* 0x59 */ CHEST_ICE_ARROW,
+	/* 0x5A */ CHEST_LIGHT_ARROW,
+	/* 0x5B */ CHEST_GOLD_SKULLTULA_TOKEN,
+	/* 0x5C */ CHEST_DINS_FIRE,
+	/* 0x5D */ CHEST_FARORES_WIND,
+	/* 0x5E */ CHEST_NAYRUS_LOVE,
+	/* 0x5F */ CHEST_BULLET_BAG_30,
+	/* 0x60 */ CHEST_BULLET_BAG_40,
+	/* 0x61 */ CHEST_DEKU_STICKS_5,
+	/* 0x62 */ CHEST_DEKU_STICK_10,
+	/* 0x63 */ CHEST_DEKU_NUTS_5,
+	/* 0x64 */ CHEST_DEKU_NUTS_10,
+	/* 0x65 */ CHEST_BOMB,
+	/* 0x66 */ CHEST_BOMBS_10,
+	/* 0x67 */ CHEST_BOMBS_20,
+	/* 0x68 */ CHEST_BOMBS_30,
+	/* 0x69 */ CHEST_DEKU_SEEDS_30,
+	/* 0x6A */ CHEST_BOMBCHU_5,
+	/* 0x6B */ CHEST_BOMBCHU_20,
+	/* 0x6C */ CHEST_FISH,
+	/* 0x6D */ CHEST_BUG,
+	/* 0x6E */ CHEST_BLUE_FIRE,
+	/* 0x6F */ CHEST_POE,
+	/* 0x70 */ CHEST_BIG_POE,
+	/* 0x71 */ CHEST_DOOR_KEY,
+	/* 0x72 */ CHEST_LOSER_GREEN_RUPEE,
+	/* 0x73 */ CHEST_LOSER_BLUE_RUPEE,
+	/* 0x74 */ CHEST_LOSER_RED_RUPEE,
+	/* 0x75 */ CHEST_WINNER_PURPLE_RUPEE,
+	/* 0x76 */ CHEST_WINNER_PIECE_OF_HEART,
+	/* 0x77 */ CHEST_DEKU_STICK_UPGRADE_20,
+	/* 0x78 */ CHEST_DEKU_STICK_UPGRADE_30,
+	/* 0x79 */ CHEST_DEKU_NUT_UPGRADE_30,
+	/* 0x7A */ CHEST_DEKU_NUT_UPGRADE_40,
+	/* 0x7B */ CHEST_BULLET_BAG_50,
+	/* 0x7C */ CHEST_ICE_TRAP,
+} ChestItemID;
 
 typedef enum {
 	A_BUTTON = -1,
@@ -130,10 +262,6 @@ typedef struct {
 	uint16_t	nut_upgrade[4];		// 0,  10,  20,  30
 	
 } z64_capacity_t;
-
-typedef enum {
-	ACTOR_EN_ARROW = 0x0016,
-} z64_actor_id_t;
 
 typedef enum {
 	HUD_VISIBILITY_NO_CHANGE       = 0,
@@ -264,55 +392,46 @@ typedef enum {
 #define DPAD_CHILD_SET2_LEFT			(DPAD_CHILD_LEFT & 0xF)
 
 /* Extra saving for Redux (8011B4C8) */
-#define EXTRA_SRAM_1					(*(uint8_t*)			0x8011B4FE) // 0x37
-#define DPAD_INIT_SETUP					  (EXTRA_SRAM_1 & 1)
-#define DOWNGRADE_GIANTS_KNIFE			( (EXTRA_SRAM_1 & 2)    >> 1)
-#define DOWNGRADE_OCARINA				( (EXTRA_SRAM_1 & 4)    >> 2)
-#define DOWNGRADE_HOOKSHOT				( (EXTRA_SRAM_1 & 8)    >> 3)
-#define SAVE_30_FPS						( (EXTRA_SRAM_1 & 0x10) >> 4)
-#define SAVE_INVERSE_AIM				( (EXTRA_SRAM_1 & 0x20) >> 5)
-#define SAVE_NO_IDLE_CAMERA				( (EXTRA_SRAM_1 & 0x40) >> 6)
-#define SAVE_EXTRA_ABILITIES			( (EXTRA_SRAM_1 & 0x80) >> 7)
 
-#define EXTRA_SRAM_2					(*(uint8_t*)			0x8011B4FF) // 0x38
-#define SAVE_UNEQUIP_GEAR				  (EXTRA_SRAM_2 & 1)
-#define SAVE_UNEQUIP_ITEM				( (EXTRA_SRAM_2 & 2)    >> 1)
-#define SAVE_ITEM_ON_B					( (EXTRA_SRAM_2 & 4)    >> 2)
-#define SAVE_WEAKER_SWORDS				( (EXTRA_SRAM_2 & 8)    >> 3)
-#define SAVE_DOWNGRADE_ITEM				( (EXTRA_SRAM_2 & 0x10) >> 4)
-#define SAVE_CROUCH_STAB_FIX			( (EXTRA_SRAM_2 & 0x20) >> 5)
-#define SAVE_KEEP_MASK					( (EXTRA_SRAM_2 & 0x40) >> 6)
-#define SAVE_TRISWIPE					( (EXTRA_SRAM_2 & 0x80) >> 7)
+#define DPAD_INIT_SETUP					( (z64_file.inf_table[0x15] & 0x0001) >> 0)
+#define DOWNGRADE_GIANTS_KNIFE			( (z64_file.inf_table[0x15] & 0x0002) >> 1)
+#define DOWNGRADE_OCARINA				( (z64_file.inf_table[0x15] & 0x0004) >> 2)
+#define DOWNGRADE_HOOKSHOT				( (z64_file.inf_table[0x15] & 0x0008) >> 3)
 
-#define EXTRA_SRAM_3					(*(uint8_t*)			0x8011B500) // 0x39
-#define SAVE_RUPEE_DRAIN				  (EXTRA_SRAM_3 & 15)
-#define SAVE_HIDE_HUD					( (EXTRA_SRAM_3 & 0x70) >> 4)
-#define SAVE_INFINITE_HP				( (EXTRA_SRAM_3 & 0x80) >> 7)
+#define SAVE_30_FPS						( (z64_file.inf_table[0x15] & 0x0010) >> 4)
+#define SAVE_ARROW_TOGGLE				( (z64_file.inf_table[0x15] & 0x0020) >> 5)
+#define SAVE_SHOW_HEALTH				( (z64_file.inf_table[0x15] & 0x0040) >> 6)
+#define SAVE_CHEST_CONTENTS				( (z64_file.inf_table[0x15] & 0x0080) >> 7)
+#define SAVE_INVERSE_AIM				( (z64_file.inf_table[0x15] & 0x0100) >> 8)
+#define SAVE_NO_IDLE_CAMERA				( (z64_file.inf_table[0x15] & 0x0200) >> 9)
+#define SAVE_KEEP_MASK					( (z64_file.inf_table[0x15] & 0x0400) >> 10)
+#define SAVE_TRISWIPE					( (z64_file.inf_table[0x15] & 0x0800) >> 11)
+#define SAVE_UNEQUIP_ITEM				( (z64_file.inf_table[0x15] & 0x1000) >> 12)
+#define SAVE_UNEQUIP_GEAR				( (z64_file.inf_table[0x15] & 0x2000) >> 13)
+#define SAVE_ITEM_ON_B					( (z64_file.inf_table[0x15] & 0x4000) >> 14)
+#define SAVE_DOWNGRADE_ITEM				( (z64_file.inf_table[0x15] & 0x8000) >> 15)
+#define SAVE_CROUCH_STAB_FIX			( (z64_file.inf_table[0x15] & 0x0100) >> 8)
+#define SAVE_WEAKER_SWORDS				( (z64_file.inf_table[0x14] & 0x0200) >> 9)
+#define SAVE_EXTRA_ABILITIES			( (z64_file.inf_table[0x14] & 0x0400) >> 10)
+#define SAVE_LEVITATION					( (z64_file.inf_table[0x14] & 0x0800) >> 11)
+#define SAVE_INFINITE_HP				( (z64_file.inf_table[0x14] & 0x1000) >> 12)
+#define SAVE_INFINITE_MP				( (z64_file.inf_table[0x14] & 0x2000) >> 13)
+#define SAVE_INFINITE_RUPEES			( (z64_file.inf_table[0x14] & 0x4000) >> 14)
+#define SAVE_INFINITE_AMMO				( (z64_file.inf_table[0x14] & 0x8000) >> 15)
 
-#define EXTRA_SRAM_4					(*(uint8_t*)			0x8011B501) // 0x3A
-#define SAVE_DPAD						  (EXTRA_SRAM_4 & 0x3)
-#define SAVE_SHOW_DPAD					( (EXTRA_SRAM_4 & 0xC)  >> 2)
-#define SAVE_HUD_LAYOUT					( (EXTRA_SRAM_4 & 0x70) >> 4)
-#define SAVE_INFINITE_MP				( (EXTRA_SRAM_4 & 0x80) >> 7)
-
-#define EXTRA_SRAM_5					(*(uint8_t*)			0x8011B4F2) // 0x2B
-#define SAVE_FOG						  (EXTRA_SRAM_5 & 15)
-#define SAVE_LEVITATION					( (EXTRA_SRAM_5 & 0x10) >> 4)
-#define SAVE_INFINITE_RUPEES			( (EXTRA_SRAM_5 & 0x20) >> 5)
-#define SAVE_INFINITE_AMMO				( (EXTRA_SRAM_5 & 0x40) >> 6)
-#define SAVE_SHOW_HEALTH				( (EXTRA_SRAM_5 & 0x80) >> 7)
-
-#define EXTRA_SRAM_6					(*(uint8_t*)			0x8011B4F9) // 0x31
-#define SAVE_DAMAGE_TAKEN				  (EXTRA_SRAM_6 & 7)
-#define SAVE_A_BUTTON_SCALE				( (EXTRA_SRAM_6 & 0x38) >> 3)
-
-#define EXTRA_SRAM_7					(*(uint8_t*)			0x8011B51A) // 0x53
-#define SAVE_B_BUTTON_SCALE				  (EXTRA_SRAM_7 & 7)
-#define SAVE_C_LEFT_BUTTON_SCALE		( (EXTRA_SRAM_7 & 0x38) >> 3)
-
-#define EXTRA_SRAM_8					(*(uint8_t*)			0x8011B51B) // 0x54
-#define SAVE_C_DOWN_BUTTON_SCALE		  (EXTRA_SRAM_8 & 7)
-#define SAVE_C_RIGHT_BUTTON_SCALE		( (EXTRA_SRAM_8 & 0x38) >> 3)
+#define SAVE_DPAD						( (z64_file.inf_table[0x1B] & 0x0003) >> 0)  // Options: 2
+#define SAVE_SHOW_DPAD					( (z64_file.inf_table[0x1B] & 0x000C) >> 2)  // Options: 3
+#define SAVE_HIDE_HUD					( (z64_file.inf_table[0x1B] & 0x0070) >> 4)  // Options: 4
+#define SAVE_HUD_LAYOUT					( (z64_file.inf_table[0x1B] & 0x0380) >> 7)  // Options: 5
+#define SAVE_A_BUTTON_SCALE				( (z64_file.inf_table[0x1B] & 0x0C00) >> 10) // Options: 2
+#define SAVE_B_BUTTON_SCALE				( (z64_file.inf_table[0x1B] & 0x7000) >> 12) // Options: 7
+#define SAVE_RANDOM_ENEMIES				( (z64_file.inf_table[0x1B] & 0x8000) >> 15) // Options: 1
+#define SAVE_C_LEFT_BUTTON_SCALE		( (z64_file.inf_table[0x1C] & 0x0007) >> 0)  // Options: 7
+#define SAVE_C_DOWN_BUTTON_SCALE		( (z64_file.inf_table[0x1C] & 0x0070) >> 4)  // Options: 7
+#define SAVE_C_RIGHT_BUTTON_SCALE		( (z64_file.inf_table[0x1C] & 0x0700) >> 8)  // Options: 7
+#define SAVE_DAMAGE_TAKEN				( (z64_file.inf_table[0x1C] & 0x7000) >> 12) // Options: 7
+#define SAVE_RUPEE_DRAIN				( (z64_file.inf_table[0x18] & 0x000F) >> 0)  // Options: 15
+#define SAVE_FOG						( (z64_file.inf_table[0x18] & 0x00F0) >> 4)  // Options: 15
 
 /* Keeping track of values */
 #define A_BUTTON_SCALE					(*(uint16_t*)			0x80074F76)
@@ -321,17 +440,21 @@ typedef enum {
 #define SWORD_HEALTH					(*(uint8_t*)			0x8011B4F8) // 0x30
 
 /* Extra Ability Tunic Colors */
-#define TUNIC_KOKIRI_R				(*(uint8_t*)			0x800F7AD8)
-#define TUNIC_KOKIRI_G				(*(uint8_t*)			0x800F7AD9)
-#define TUNIC_KOKIRI_B				(*(uint8_t*)			0x800F7ADA)
-#define TUNIC_GORON_R				(*(uint8_t*)			0x800F7ADB)
-#define TUNIC_GORON_G				(*(uint8_t*)			0x800F7ADC)
-#define TUNIC_GORON_B				(*(uint8_t*)			0x800F7ADD)
-#define TUNIC_ZORA_R				(*(uint8_t*)			0x800F7ADE)
-#define TUNIC_ZORA_G				(*(uint8_t*)			0x800F7ADF)
-#define TUNIC_ZORA_B				(*(uint8_t*)			0x800F7AE0)
-#define TUNIC_UNUSED_R				(*(uint8_t*)			0x800F7AE1)
-#define TUNIC_UNUSED_G				(*(uint8_t*)			0x800F7AE2)
-#define TUNIC_UNUSED_B				(*(uint8_t*)			0x800F7AE3)
+#define TUNIC_KOKIRI_R					(*(uint8_t*)			0x800F7AD8)
+#define TUNIC_KOKIRI_G					(*(uint8_t*)			0x800F7AD9)
+#define TUNIC_KOKIRI_B					(*(uint8_t*)			0x800F7ADA)
+#define TUNIC_GORON_R					(*(uint8_t*)			0x800F7ADB)
+#define TUNIC_GORON_G					(*(uint8_t*)			0x800F7ADC)
+#define TUNIC_GORON_B					(*(uint8_t*)			0x800F7ADD)
+#define TUNIC_ZORA_R					(*(uint8_t*)			0x800F7ADE)
+#define TUNIC_ZORA_G					(*(uint8_t*)			0x800F7ADF)
+#define TUNIC_ZORA_B					(*(uint8_t*)			0x800F7AE0)
+#define TUNIC_UNUSED_R					(*(uint8_t*)			0x800F7AE1)
+#define TUNIC_UNUSED_G					(*(uint8_t*)			0x800F7AE2)
+#define TUNIC_UNUSED_B					(*(uint8_t*)			0x800F7AE3)
+
+#define MP_FIRE_ARROW					(*(uint8_t*)			0x803AAC00)
+#define MP_ICE_ARROW					(*(uint8_t*)			0x803AAC01)
+#define MP_LIGHT_ARROW					(*(uint8_t*)			0x803AAC02)
 
 #endif
