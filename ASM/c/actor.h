@@ -27,18 +27,18 @@ z64_actor_t *Actor_SpawnEntry_Hack(void *actorCtx, ActorEntry *actorEntry, z64_g
 #define HP_GANON					(*(uint8_t*)			0x801FA2DF)
 
 typedef enum {
-	EN_TEST		 	= 0x0002,
+	EN_TEST			= 0x0002,
 	BOSS_DODONGO	= 0x0012, // 0x0027
-	EN_FIREFLY	 	= 0x0013,
+	EN_FIREFLY		= 0x0013,
 	EN_ARROW		= 0x0016,
 	EN_TITE			= 0x001B,
-	EN_REEBA	 	= 0x001C,
-	EN_ZF		 	= 0x0025,
+	EN_REEBA		= 0x001C,
+	EN_ZF			= 0x0025,
 	EN_ST			= 0x0037,
 	BOSS_GANONDROF	= 0x0052,
 	EN_FLOORMAS		= 0x008E,
-	EN_RD		 	= 0x0090,
-	BOSS_FD		 	= 0x0096,
+	EN_RD			= 0x0090,
+	BOSS_FD			= 0x0096,
 	EN_FD			= 0x0099,
 	BOSS_FD2		= 0x00A2,
 	EN_FW			= 0x00AB,
