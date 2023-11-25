@@ -47,7 +47,7 @@ void get_health(z64_actor_t* actor) {
 }
 
 void draw_health(z64_disp_buf_t *db) {
-	if (!SAVE_SHOW_HEALTH || z64_game.pause_ctxt.state != 0 || currentHealth == 0 || z64_file.hud_visibility_mode == 1 || !CAN_DRAW_HUD)
+	if (!SAVE_SHOW_HEALTH || currentHealth == 0 || z64_file.hud_visibility_mode == 1 || !CAN_DRAW_HUD || !CAN_CONTROL_LINK || z64_textbox != 0)
 		return;
 	
 	uint16_t x = 70;

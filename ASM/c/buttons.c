@@ -337,7 +337,21 @@ void reset_layout() {
 }
 
 void handle_hud() {
-		if (SAVE_HIDE_HUD == 0) {
+		if (!CAN_DRAW_HUD || !CAN_CONTROL_LINK || z64_textbox != 0)
+			return;
+	
+		if (SAVE_HIDE_HUD == 0)
+			set_hide_hud(50);
+		else if (SAVE_HIDE_HUD == 1)
+			set_hide_hud(6);
+		else if (SAVE_HIDE_HUD == 2)
+			set_hide_hud(9);
+		else if (SAVE_HIDE_HUD == 3)
+			set_hide_hud(11);
+		else if (SAVE_HIDE_HUD == 4)
+			set_hide_hud(1);
+	
+		/*if (SAVE_HIDE_HUD == 0) {
 			if (z64_file.prev_hud_visibility_mode == 1)
 				z64_file.prev_hud_visibility_mode = 50;
 		}
@@ -364,7 +378,14 @@ void handle_hud() {
 				z64_file.prev_hud_visibility_mode = 1;
 			if (z64_file.next_hud_visibility_mode == 50)
 				z64_file.next_hud_visibility_mode = 1;
-		}
+		}*/
+}
+
+void set_hide_hud(uint8_t value) {
+	if (z64_file.prev_hud_visibility_mode == 1 || z64_file.prev_hud_visibility_mode == 6  || z64_file.prev_hud_visibility_mode == 9 || z64_file.prev_hud_visibility_mode == 11 || z64_file.prev_hud_visibility_mode == 50)
+		z64_file.prev_hud_visibility_mode = value;
+	if (z64_file.next_hud_visibility_mode == 1 || z64_file.next_hud_visibility_mode == 6  || z64_file.next_hud_visibility_mode == 9 || z64_file.next_hud_visibility_mode == 11 || z64_file.next_hud_visibility_mode == 50)
+		z64_file.next_hud_visibility_mode = value;
 }
 
 void set_b_button(pad_t pad_pressed) {

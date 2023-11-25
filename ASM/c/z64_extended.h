@@ -308,6 +308,7 @@ typedef enum {
 #define z64_damage_taken_modifier_1		(*(uint32_t*)			0x8038E5D0)
 #define z64_damage_taken_modifier_2		(*(uint32_t*)			0x8038E5D8)
 #define z64_damage_taken_modifier_3		(*(uint16_t*)			0x8038E5EA)
+#define z64_textbox						(*(uint16_t*)			0x801D8870)
 
 /* DRAM addresses & data for HUD */
 #define z64_b_button_label_x			(*(uint16_t*)			0x801C7C3A)
