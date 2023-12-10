@@ -104,6 +104,7 @@ RANDO_CONTEXT:
 .include "blue_fire_arrows.asm"
 .include "armos.asm"
 ;.include "actor.asm"
+.include "volvagia.asm"
 
 .align 0x10
 .importobj "../build/bundle.o"

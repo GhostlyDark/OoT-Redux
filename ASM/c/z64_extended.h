@@ -411,7 +411,7 @@ typedef enum {
 #define SAVE_UNEQUIP_GEAR				( (z64_file.inf_table[0x15] & 0x2000) >> 13)
 #define SAVE_ITEM_ON_B					( (z64_file.inf_table[0x15] & 0x4000) >> 14)
 #define SAVE_DOWNGRADE_ITEM				( (z64_file.inf_table[0x15] & 0x8000) >> 15)
-#define SAVE_CROUCH_STAB_FIX			( (z64_file.inf_table[0x15] & 0x0100) >> 8)
+#define SAVE_CROUCH_STAB_FIX			( (z64_file.inf_table[0x14] & 0x0100) >> 8)
 #define SAVE_WEAKER_SWORDS				( (z64_file.inf_table[0x14] & 0x0200) >> 9)
 #define SAVE_EXTRA_ABILITIES			( (z64_file.inf_table[0x14] & 0x0400) >> 10)
 #define SAVE_LEVITATION					( (z64_file.inf_table[0x14] & 0x0800) >> 11)

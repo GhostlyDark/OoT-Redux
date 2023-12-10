@@ -631,3 +631,12 @@ Gameplay_InitSkybox:
 .orga 0xA9B524 ; In memory: 0x800255C4
     j       Actor_SpawnEntry_Hack
     nop
+
+;===================================================================================================
+; Cancel Volvagia flying form hitbox when her health is already at O
+;===================================================================================================
+; Replaces addiu   a2, $zero, 0x0004
+;          andi    t6, a1, 0x0002
+.orga 0xCEA41C
+    jal     volvagia_flying_hitbox
+    nop
