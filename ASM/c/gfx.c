@@ -158,9 +158,9 @@ void sprite_draw(z64_disp_buf_t *db, sprite_t *sprite, int tile_index,
 }
 
 void gfx_init() {
-	if (CFG_WS)
+    if (CFG_WS)
         setup_db[2] = gsDPSetScissor(G_SC_NON_INTERLACE, 0, 0, Z64_SCREEN_WIDTH + 104, Z64_SCREEN_HEIGHT);
-	
+    
     file_t title_static = {
         NULL, z64_file_select_static_vaddr, z64_file_select_static_vsize
     };
@@ -185,17 +185,17 @@ void gfx_init() {
         NULL, z64_icon_item_dungeon_static_vaddr, z64_icon_item_dungeon_static_vsize
     };
     file_init(&icon_item_dungeon_static);
-	
+    
     file_t subscreen_static = {
         NULL, 0x008193C0, 0x29E00
     };
     file_init(&subscreen_static);
-	
-	file_t item_name_static = {
+    
+    file_t item_name_static = {
         NULL, 0x00880000, 0x03D800
     };
     file_init(&item_name_static);
-	
+    
     stones_sprite.buf = title_static.buf + 0x2A300;
     medals_sprite.buf = title_static.buf + 0x2980;
     items_sprite.buf = icon_item_static.buf;
@@ -211,14 +211,14 @@ void gfx_init() {
     counter_digit_sprite.buf = parameter_static.buf + 0x3040;
     ammo_digit_sprite.buf = parameter_static.buf + 0x35C0;
     subscreen_sprite.buf = subscreen_static.buf;
-	item_name_sprite.buf = item_name_static.buf + 0x38400;
+    item_name_sprite.buf = item_name_static.buf + 0x38400;
     title_sprite.buf = title_static.buf + 0x2D700;
-	
+    
     int font_bytes = sprite_bytes(&font_sprite);
     font_sprite.buf = heap_alloc(font_bytes);
     for (int i = 0; i < font_bytes / 2; i++) {
         font_sprite.buf[2*i] = (FONT_TEXTURE[i] >> 4) | 0xF0;
         font_sprite.buf[2*i + 1] = FONT_TEXTURE[i] | 0xF0;
     }
-	
+    
 }

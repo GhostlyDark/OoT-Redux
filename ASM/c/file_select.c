@@ -64,34 +64,32 @@ void draw_file_select_hash(uint32_t fade_out_alpha, z64_menudata_t* menu_data) {
     // Call setup display list
     gSPDisplayList(db->p++, &setup_db);
 
-    int icon_count = 5;
+
+/*  int icon_count = 5;
     int icon_size = 24;
     int padding = 8;
     int width = (icon_count * icon_size) + ((icon_count - 1) * padding);
     int left = (Z64_SCREEN_WIDTH - width) / 2;
     int top = 12;
-	
-	if (CFG_WS)
-		left = (Z64_SCREEN_WIDTH + 104 - width) / 2;
 
     gDPPipeSync(db->p++);
     gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
     gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
 
-//  int hash = cfg_file_select_hash;
-//  for (int i = 0; i < icon_count; i++) {
-//      int sym_index = hash & 0x1F;
-//      hash >>= 5;
-//      hash_symbol_t *sym_desc = &(hash_symbols[sym_index]);
-//      sprite_t *sym_sprite = hash_sprites[sym_desc->sprite_index];
-//
-//      sprite_load(db, sym_sprite, sym_desc->tile_index, 1);
-//      sprite_draw(db, sym_sprite, 0, left, top, icon_size, icon_size);
+    int hash = cfg_file_select_hash;
+    for (int i = 0; i < icon_count; i++) {
+        int sym_index = hash & 0x1F;
+        hash >>= 5;
+        hash_symbol_t *sym_desc = &(hash_symbols[sym_index]);
+        sprite_t *sym_sprite = hash_sprites[sym_desc->sprite_index];
+  
+        sprite_load(db, sym_sprite, sym_desc->tile_index, 1);
+        sprite_draw(db, sym_sprite, 0, left, top, icon_size, icon_size);
 
-//      left += icon_size + padding;
-//  }
+        left += icon_size + padding;
+    }
     
-//  draw_file_message(db, menu_data);
+    draw_file_message(db, menu_data);*/
     draw_file_icons(db, menu_data);
 
     // Fade out once a file is selected
@@ -99,19 +97,9 @@ void draw_file_select_hash(uint32_t fade_out_alpha, z64_menudata_t* menu_data) {
     gDPPipeSync(db->p++);
     gDPSetCombineMode(db->p++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
     gDPSetPrimColor(db->p++, 0, 0, 0x00, 0x00, 0x00, fade_out_alpha);
+	
+	uint8_t width = 0;
 	if (CFG_WS)
-		gSPTextureRectangle(db->p++,
-            0, 0,
-            Z64_SCREEN_WIDTH+104<<2, Z64_SCREEN_HEIGHT<<2,
-            0,
-            0, 0,
-            1<<10, 1<<10);
-	else {
-        gSPTextureRectangle(db->p++,
-            0, 0,
-            Z64_SCREEN_WIDTH<<2, Z64_SCREEN_HEIGHT<<2,
-            0,
-            0, 0,
-            1<<10, 1<<10);
-	}
+		width = 104;
+	gSPTextureRectangle(db->p++, 0, 0, Z64_SCREEN_WIDTH+width<<2, Z64_SCREEN_HEIGHT<<2, 0, 0, 0, 1<<10, 1<<10);
 }

@@ -5,7 +5,7 @@
 #include "z64_extended.h"
 
 /* Functions */
-#define z64_playsfx						((playsfx_t)			0x800C806C)
+#define z64_playsfx ((playsfx_t) 0x800C806C)
 
 void handle_dpad();
 void run_default_options_setup();

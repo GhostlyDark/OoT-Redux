@@ -93,7 +93,7 @@ void draw_triforce_count(z64_disp_buf_t *db) {
     gDPSetPrimColor(db->p++, 0, 0, 0xDA, 0xD3, 0x0B, alpha);
 
     if (CFG_WS)
-		draw_x = (Z64_SCREEN_WIDTH + 104) / 2 - total_w / 2;
+        draw_x = (Z64_SCREEN_WIDTH + 104) / 2 - total_w / 2;
 
     text_print(text , draw_x, draw_y_text);
     draw_x += str_len * font_sprite.tile_w;
