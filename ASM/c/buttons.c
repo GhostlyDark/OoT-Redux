@@ -198,7 +198,7 @@ void handle_layout() {
         }
     }
     
-    if (CAN_DRAW_HUD && z64_gameinfo.a_button_y == 0x09 && z64_gameinfo.item_button_y[0] == 0x11 && z64_gameinfo.item_button_y[1] == 0x12 && z64_gameinfo.item_button_y[2] == 0x22 && z64_gameinfo.item_button_y[3] == 0x12 && z64_gameinfo.c_up_button_y == 0x10) {
+    if (CAN_DRAW_HUD && ( (!CFG_WS && z64_gameinfo.a_button_x == 186) || (CFG_WS && z64_gameinfo.a_button_x == 290) ) & z64_gameinfo.a_button_y == 9 && z64_gameinfo.item_button_y[0] == 0x11 && z64_gameinfo.item_button_y[1] == 0x12 && z64_gameinfo.item_button_y[2] == 0x22 && z64_gameinfo.item_button_y[3] == 0x12 && z64_gameinfo.c_up_button_y == 0x10) {
         uint16_t a_x = 0, a_y = 0, b_x = 0, b_y = 0, c_left_x = 0, c_left_y = 0, c_down_x = 0, c_down_y = 0, c_right_x = 0, c_right_y = 0, c_up_x = 0, c_up_y = 0;
         
         if (SAVE_HUD_LAYOUT == 1) { // Majora's Mask
@@ -206,7 +206,11 @@ void handle_layout() {
             a_y       = 14;  // 9   -> 23
             b_x       = 7;   // 160 -> 167
         }
-        else if (SAVE_HUD_LAYOUT == 2) { // Nintendo
+        else if (SAVE_HUD_LAYOUT == 2) { // Inverted A and B
+            a_x       = -32; // 186 -> 156
+            b_x       = 34;  // 160 -> 192
+        }
+        else if (SAVE_HUD_LAYOUT == 3) { // Nintendo
             a_x       = 70;  // 186 -> 256
             a_y       = 23;  // 9   -> 32
             b_x       = 80;  // 160 -> 240
@@ -220,7 +224,7 @@ void handle_layout() {
             c_up_x    = 10;  // 254 -> 264
             c_up_y    = -10; // 16  -> 6
         }
-        else if (SAVE_HUD_LAYOUT == 3) { // Modern
+        else if (SAVE_HUD_LAYOUT == 4) { // Modern
             a_x       = 46;  // 186 -> 234
             a_y       = 45;  // 9   -> 54
             b_x       = 104; // 160 -> 264
@@ -234,7 +238,7 @@ void handle_layout() {
             c_up_x    = 10;  // 254 -> 264        
             c_up_y    = -10; // 16  -> 6        
         }
-        else if (SAVE_HUD_LAYOUT == 4) { // GameCube (Original)
+        else if (SAVE_HUD_LAYOUT == 5) { // GameCube (Original)
             a_x       = 55;  // 186 -> 241
             a_y       = 20;  // 9   -> 29
             b_x       = 65;  // 160 -> 225
@@ -247,7 +251,7 @@ void handle_layout() {
             c_right_y = 25;  // 18  -> 43
             c_up_x    = -20; // 254 -> 234
         }
-        else if (SAVE_HUD_LAYOUT == 5) { // GameCube (Modern)
+        else if (SAVE_HUD_LAYOUT == 6) { // GameCube (Modern)
             a_x       = 55;  // 186 -> 241
             a_y       = 20;  // 9   -> 29
             b_x       = 65;  // 160 -> 225

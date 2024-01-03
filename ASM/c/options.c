@@ -18,7 +18,7 @@ uint8_t holding_stick     = 0;
 char medallion_item[9][17]                 = { "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Shadow Medallion", "Spirit Medallion", "Kokiri's Emerald", "Goron's Ruby", "Zora's Sapphire" };
 char medallion_ability[9][16]              = { "Long Jump",       "Magician Tunic",   "Guardian Tunic", "Hero Tunic",      "Shadow Tunic",     "Hover Dash Jump",  "Dash",             "Faster Dash",  "Cheaper Dash"    };
 char options[OPTIONS_SIZE_ALL][17]         = { "30 FPS", "Arrow Toggle", "D-Pad Config", "D-Pad Layout", "Hide HUD", "HUD Layout", "Show Health", "Chest Contents", "A Button Scale", "B Button Scale", "C-Left Scale", "C-Down Scale", "C-Right Scale", "Inverse Aim", "No Idle Camera", "Keep Mask", "Tri-Swipe", "Damage Taken", "Random Enemies", "Unequip Item", "Unequip Gear", "Item on B", "Downgrade Item", "Crouch Stab Fix", "Weaker Swords", "Extra Abilities", "Rupee Drain", "Fog", "Inventory Editor", "Levitation", "Infinite Health", "Infinite Magic", "Infinite Rupees", "Infinite Ammo" };
-uint8_t options_max[OPTIONS_SIZE_ALL]      = { 0,        0,              2,              3,              4,          5,            0,             0,                2,                7,                7,              7,              7,               0,             0,                0,           0,           7,              0,                0,              0,              0,           0,                0,                 0,               0,                 15,            15,    0,                  0,             0,                0,                0,                 0               };
+uint8_t options_max[OPTIONS_SIZE_ALL]      = { 0,        0,              2,              3,              4,          6,            0,             0,                2,                7,                7,              7,              7,               0,             0,                0,           0,           7,              0,                0,              0,              0,           0,                0,                 0,               0,                 15,            15,    0,                  0,             0,                0,                0,                 0               };
 int8_t  options_recenter[OPTIONS_SIZE_ALL] = { 40,       15,             15,             15,             30,         22,           17,            8,                6,                6,                11,             11,             10,              17,            5,                25,          25,          15,             8,                15,             15,             27,          5,                0,                 10,              0,                 20,            50,    -5,                 20,            0,                5,                0,                 10              };
 uint8_t options_cursor                     = 0;
 
@@ -277,7 +277,7 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
         
         case OPTION_HUD_LAYOUT:
             setting = SAVE_HUD_LAYOUT;    
-            text_print("Choose from five different",  tooltipLeft, top + 50);
+            text_print("Choose from six different",   tooltipLeft, top + 50);
             text_print("layouts to change the HUD",   tooltipLeft, top + 70);
             break;
         

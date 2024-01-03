@@ -422,7 +422,7 @@ typedef enum {
 #define SAVE_DPAD                       ( (z64_file.inf_table[0x1B] & 0x0003) >> 0)  // Options: 2
 #define SAVE_SHOW_DPAD                  ( (z64_file.inf_table[0x1B] & 0x000C) >> 2)  // Options: 3
 #define SAVE_HIDE_HUD                   ( (z64_file.inf_table[0x1B] & 0x0070) >> 4)  // Options: 4
-#define SAVE_HUD_LAYOUT                 ( (z64_file.inf_table[0x1B] & 0x0380) >> 7)  // Options: 5
+#define SAVE_HUD_LAYOUT                 ( (z64_file.inf_table[0x1B] & 0x0380) >> 7)  // Options: 6
 #define SAVE_A_BUTTON_SCALE             ( (z64_file.inf_table[0x1B] & 0x0C00) >> 10) // Options: 2
 #define SAVE_B_BUTTON_SCALE             ( (z64_file.inf_table[0x1B] & 0x7000) >> 12) // Options: 7
 #define SAVE_RANDOM_ENEMIES             ( (z64_file.inf_table[0x1B] & 0x8000) >> 15) // Options: 1
