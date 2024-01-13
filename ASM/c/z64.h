@@ -23,6 +23,30 @@
 
 #define Z64_ETAB_LENGTH       0x0614
 
+#define NA_BGM_SMALL_ITEM_GET    0x39
+#define NA_SE_SY_GET_RUPY        0x4803
+#define NA_SE_SY_GET_ITEM        0x4824
+#define NA_SE_SY_DECIDE          0x4808
+#define NA_SE_SY_CURSOR          0x4809
+#define NA_SE_SY_CANCEL          0x480A
+#define NA_SE_SY_FSEL_CURSOR     0x4839
+#define NA_SE_SY_FSEL_DECIDE_S   0x483A
+#define NA_SE_SY_FSEL_DECIDE_L   0x483B
+#define NA_SE_SY_FSEL_CLOSE      0x483C
+
+#define FONT_CHAR_TEX_SIZE ((16 * 16) / 2) // 16x16 I4 texture
+
+#define OFFSETOF(structure, member) ((size_t)&(((structure *)0)->member))
+
+#define REG_PAGES 6
+#define REGS_PER_PAGE 16
+#define REGS_PER_GROUP (REG_PAGES * REGS_PER_PAGE)
+#define REG_EDITOR_DATA ((int16_t *)0x801C6EA4)
+#define BASE_REG(n, r) REG_EDITOR_DATA[(n)*REGS_PER_GROUP + (r)]
+#define REG(r) BASE_REG(0, (r))
+#define SREG(r) BASE_REG(1, (r))
+#define R_PAUSE_BG_PRERENDER_STATE SREG(94)
+
 typedef struct
 {
   int16_t x;
@@ -261,7 +285,170 @@ typedef enum
   Z64_ITEM_COMPASS,
   Z64_ITEM_DUNGEON_MAP,
   Z64_ITEM_SMALL_KEY,
+  Z64_ITEM_MAGIC_SMALL,
+  Z64_ITEM_MAGIC_LARGE,
 } z64_item_t;
+
+typedef enum
+{
+  Z64_EXCH_ITEM_NONE,
+  Z64_EXCH_ITEM_LETTER_ZELDA,
+  Z64_EXCH_ITEM_WEIRD_EGG,
+  Z64_EXCH_ITEM_CHICKEN,
+  Z64_EXCH_ITEM_BEAN,
+  Z64_EXCH_ITEM_POCKET_EGG,
+  Z64_EXCH_ITEM_POCKET_CUCCO,
+  Z64_EXCH_ITEM_COJIRO,
+  Z64_EXCH_ITEM_ODD_MUSHROOM,
+  Z64_EXCH_ITEM_ODD_POTION,
+  Z64_EXCH_ITEM_SAW,
+  Z64_EXCH_ITEM_SWORD_BROKEN,
+  Z64_EXCH_ITEM_PRESCRIPTION,
+  Z64_EXCH_ITEM_FROG,
+  Z64_EXCH_ITEM_EYEDROPS,
+  Z64_EXCH_ITEM_CLAIM_CHECK,
+  Z64_EXCH_ITEM_MASK_SKULL,
+  Z64_EXCH_ITEM_MASK_SPOOKY,
+  Z64_EXCH_ITEM_MASK_KEATON,
+  Z64_EXCH_ITEM_MASK_BUNNY,
+  Z64_EXCH_ITEM_MASK_TRUTH,
+  Z64_EXCH_ITEM_MASK_GORON,
+  Z64_EXCH_ITEM_MASK_ZORA,
+  Z64_EXCH_ITEM_MASK_GERUDO,
+  Z64_EXCH_ITEM_FISH,
+  Z64_EXCH_ITEM_BLUE_FIRE,
+  Z64_EXCH_ITEM_BUG,
+  Z64_EXCH_ITEM_POE,
+  Z64_EXCH_ITEM_BIG_POE,
+  Z64_EXCH_ITEM_LETTER_RUTO,
+  Z64_EXCH_ITEM_MAX,
+} z64_exchange_item_t;
+
+typedef enum {
+  PLAYER_AP_NONE,
+  PLAYER_AP_LAST_USED,
+  PLAYER_AP_FISHING_POLE,
+  PLAYER_AP_SWORD_MASTER,
+  PLAYER_AP_SWORD_KOKIRI,
+  PLAYER_AP_SWORD_BGS,
+  PLAYER_AP_STICK,
+  PLAYER_AP_HAMMER,
+  PLAYER_AP_BOW,
+  PLAYER_AP_BOW_FIRE,
+  PLAYER_AP_BOW_ICE,
+  PLAYER_AP_BOW_LIGHT,
+  PLAYER_AP_BOW_0C,
+  PLAYER_AP_BOW_0D,
+  PLAYER_AP_BOW_0E,
+  PLAYER_AP_SLINGSHOT,
+  PLAYER_AP_HOOKSHOT,
+  PLAYER_AP_LONGSHOT,
+  PLAYER_AP_BOMB,
+  PLAYER_AP_BOMBCHU,
+  PLAYER_AP_BOOMERANG,
+  PLAYER_AP_MAGIC_SPELL_15,
+  PLAYER_AP_MAGIC_SPELL_16,
+  PLAYER_AP_MAGIC_SPELL_17,
+  PLAYER_AP_FARORES_WIND,
+  PLAYER_AP_NAYRUS_LOVE,
+  PLAYER_AP_DINS_FIRE,
+  PLAYER_AP_NUT,
+  PLAYER_AP_OCARINA_FAIRY,
+  PLAYER_AP_OCARINA_TIME,
+  PLAYER_AP_BOTTLE,
+  PLAYER_AP_BOTTLE_FISH,
+  PLAYER_AP_BOTTLE_FIRE,
+  PLAYER_AP_BOTTLE_BUG,
+  PLAYER_AP_BOTTLE_POE,
+  PLAYER_AP_BOTTLE_BIG_POE,
+  PLAYER_AP_BOTTLE_LETTER,
+  PLAYER_AP_BOTTLE_POTION_RED,
+  PLAYER_AP_BOTTLE_POTION_BLUE,
+  PLAYER_AP_BOTTLE_POTION_GREEN,
+  PLAYER_AP_BOTTLE_MILK,
+  PLAYER_AP_BOTTLE_MILK_HALF,
+  PLAYER_AP_BOTTLE_FAIRY,
+  PLAYER_AP_LETTER_ZELDA,
+  PLAYER_AP_WEIRD_EGG,
+  PLAYER_AP_CHICKEN,
+  PLAYER_AP_BEAN,
+  PLAYER_AP_POCKET_EGG,
+  PLAYER_AP_POCKET_CUCCO,
+  PLAYER_AP_COJIRO,
+  PLAYER_AP_ODD_MUSHROOM,
+  PLAYER_AP_ODD_POTION,
+  PLAYER_AP_SAW,
+  PLAYER_AP_SWORD_BROKEN,
+  PLAYER_AP_PRESCRIPTION,
+  PLAYER_AP_FROG,
+  PLAYER_AP_EYEDROPS,
+  PLAYER_AP_CLAIM_CHECK,
+  PLAYER_AP_MASK_KEATON,
+  PLAYER_AP_MASK_SKULL,
+  PLAYER_AP_MASK_SPOOKY,
+  PLAYER_AP_MASK_BUNNY,
+  PLAYER_AP_MASK_GORON,
+  PLAYER_AP_MASK_ZORA,
+  PLAYER_AP_MASK_GERUDO,
+  PLAYER_AP_MASK_TRUTH,
+  PLAYER_AP_LENS,
+  PLAYER_AP_MAX
+} z64_action_parameter_t;
+
+typedef enum
+{
+  SI_DEKU_NUTS_5,
+  SI_ARROWS_30,
+  SI_ARROWS_50,
+  SI_BOMBS_5_R25,
+  SI_DEKU_NUTS_10,
+  SI_DEKU_STICK,
+  SI_BOMBS_10,
+  SI_FISH,
+  SI_RED_POTION_R30,
+  SI_GREEN_POTION,
+  SI_BLUE_POTION,
+  SI_LONGSWORD,
+  SI_HYLIAN_SHIELD,
+  SI_DEKU_SHIELD,
+  SI_GORON_TUNIC,
+  SI_ZORA_TUNIC,
+  SI_RECOVERY_HEART,
+  SI_MILK_BOTTLE,
+  SI_WEIRD_EGG,
+  SI_19,
+  SI_20,
+  SI_BOMBCHU_10_1,
+  SI_BOMBCHU_20_1,
+  SI_BOMBCHU_20_2,
+  SI_BOMBCHU_10_2,
+  SI_BOMBCHU_10_3,
+  SI_BOMBCHU_20_3,
+  SI_BOMBCHU_20_4,
+  SI_BOMBCHU_10_4,
+  SI_DEKU_SEEDS_30,
+  SI_KEATON_MASK,
+  SI_SPOOKY_MASK,
+  SI_SKULL_MASK,
+  SI_BUNNY_HOOD,
+  SI_MASK_OF_TRUTH,
+  SI_ZORA_MASK,
+  SI_GORON_MASK,
+  SI_GERUDO_MASK,
+  SI_SOLD_OUT,
+  SI_BLUE_FIRE,
+  SI_BUGS,
+  SI_BIG_POE,
+  SI_POE,
+  SI_FAIRY,
+  SI_ARROWS_10,
+  SI_BOMBS_20,
+  SI_BOMBS_30,
+  SI_BOMBS_5_R35,
+  SI_RED_POTION_R40,
+  SI_RED_POTION_R50,
+  SI_MAX
+} z64_shop_item_t;
 
 typedef enum
 {
@@ -377,36 +564,36 @@ typedef struct
 
 typedef struct
 {
-  int32_t         entrance_index;           /* 0x0000 */
-  int32_t         link_age;                 /* 0x0004 */
-  char            unk_00_[0x0002];          /* 0x0008 */
-  uint16_t        cutscene_index;           /* 0x000A */
-  uint16_t        day_time;                 /* 0x000C */
-  char            unk_01_[0x0002];          /* 0x000E */
-  int32_t         night_flag;               /* 0x0010 */
-  char            unk_02_[0x0008];          /* 0x0014 */
-  char            id[6];                    /* 0x001C */
-  int16_t         deaths;                   /* 0x0022 */
-  char            file_name[0x08];          /* 0x0024 */
-  int16_t         n64dd_flag;               /* 0x002C */
-  int16_t         energy_capacity;          /* 0x002E */
-  int16_t         energy;                   /* 0x0030 */
-  uint8_t         magic_capacity_set;       /* 0x0032 */
-  uint8_t         magic;                    /* 0x0033 */
-  uint16_t        rupees;                   /* 0x0034 */
-  uint16_t        bgs_hits_left;            /* 0x0036 */
-  uint16_t        navi_timer;               /* 0x0038 */
-  uint8_t         magic_acquired;           /* 0x003A */
-  char            unk_03_;                  /* 0x003B */
-  uint8_t         magic_capacity;           /* 0x003C */
-  int8_t          double_defense;           /* 0x003D */
-  int8_t          bgs_flag;                 /* 0x003E */
-  char            unk_05_;                  /* 0x003F */
-  int8_t          child_button_items[4];    /* 0x0040 */
-  int8_t          child_c_button_slots[3];  /* 0x0044 */
+  int32_t         entrance_index;            /* 0x0000 */
+  int32_t         link_age;                  /* 0x0004 */
+  char            unk_00_[0x0002];           /* 0x0008 */
+  uint16_t        cutscene_index;            /* 0x000A */
+  uint16_t        day_time;                  /* 0x000C */
+  char            unk_01_[0x0002];           /* 0x000E */
+  int32_t         night_flag;                /* 0x0010 */
+  char            unk_02_[0x0008];           /* 0x0014 */
+  char            id[6];                     /* 0x001C */
+  int16_t         deaths;                    /* 0x0022 */
+  char            file_name[0x08];           /* 0x0024 */
+  int16_t         n64dd_flag;                /* 0x002C */
+  int16_t         energy_capacity;           /* 0x002E */
+  int16_t         energy;                    /* 0x0030 */
+  uint8_t         magic_capacity_set;        /* 0x0032 */
+  uint8_t         magic;                     /* 0x0033 */
+  uint16_t        rupees;                    /* 0x0034 */
+  uint16_t        bgs_hits_left;             /* 0x0036 */
+  uint16_t        navi_timer;                /* 0x0038 */
+  uint8_t         magic_acquired;            /* 0x003A */
+  char            unk_03_;                   /* 0x003B */
+  uint8_t         magic_capacity;            /* 0x003C */
+  int8_t          double_defense;            /* 0x003D */
+  int8_t          bgs_flag;                  /* 0x003E */
+  char            unk_05_;                   /* 0x003F */
+  int8_t          child_button_items[4];     /* 0x0040 */
+  int8_t          child_c_button_slots[3];   /* 0x0044 */
   union
   {
-    uint16_t      child_equips;             /* 0x0048 */
+    uint16_t      child_equips;              /* 0x0048 */
     struct
     {
       uint16_t    child_equip_boots   : 4;
@@ -415,11 +602,11 @@ typedef struct
       uint16_t    child_equip_sword   : 4;
     };
   };
-  int8_t          adult_button_items[4];    /* 0x004A */
-  int8_t          adult_c_button_slots[3];  /* 0x004E */
+  int8_t          adult_button_items[4];     /* 0x004A */
+  int8_t          adult_c_button_slots[3];   /* 0x004E */
   union
   {
-    uint16_t      adult_equips;             /* 0x0052 */
+    uint16_t      adult_equips;              /* 0x0052 */
     struct
     {
       uint16_t    adult_equip_boots   : 4;
@@ -428,13 +615,13 @@ typedef struct
       uint16_t    adult_equip_sword   : 4;
     };
   };
-  char            unk_06_[0x0012];          /* 0x0054 */
-  int16_t         scene_index;              /* 0x0066 */
-  int8_t          button_items[4];          /* 0x0068 */
-  int8_t          c_button_slots[3];        /* 0x006C */
+  char            unk_06_[0x0012];           /* 0x0054 */
+  int16_t         scene_index;               /* 0x0066 */
+  int8_t          button_items[4];           /* 0x0068 */
+  int8_t          c_button_slots[3];         /* 0x006C */
   union
   {
-    uint16_t      equips;                   /* 0x0070 */
+    uint16_t      equips;                    /* 0x0070 */
     struct
     {
       uint16_t    equip_boots         : 4;
@@ -443,13 +630,13 @@ typedef struct
       uint16_t    equip_sword         : 4;
     };
   };
-  char            unk_07_[0x0002];          /* 0x0072 */
-  int8_t          items[24];                /* 0x0074 */
-  int8_t          ammo[15];                 /* 0x008C */
-  uint8_t         magic_beans_sold;         /* 0x009B */
+  char            unk_07_[0x0002];           /* 0x0072 */
+  int8_t          items[24];                 /* 0x0074 */
+  int8_t          ammo[15];                  /* 0x008C */
+  uint8_t         magic_beans_sold;          /* 0x009B */
   union
   {
-    uint16_t      equipment;                /* 0x009C */
+    uint16_t      equipment;                 /* 0x009C */
     struct
     {
       uint16_t                        : 1;
@@ -529,11 +716,11 @@ typedef struct
       uint8_t     compass             : 1;
       uint8_t     boss_key            : 1;
     };
-  }               dungeon_items[20];        /* 0x00A8 */
-  int8_t          dungeon_keys[19];         /* 0x00BC */
-  uint8_t         defense_hearts;           /* 0x00CF */
-  int16_t         gs_tokens;                /* 0x00D0 */
-  char            unk_09_[0x0002];          /* 0x00D2 */
+  }               dungeon_items[20];         /* 0x00A8 */
+  int8_t          dungeon_keys[19];          /* 0x00BC */
+  uint8_t         defense_hearts;            /* 0x00CF */
+  int16_t         gs_tokens;                 /* 0x00D0 */
+  char            unk_09_[0x0002];           /* 0x00D2 */
   struct
   {
     uint32_t      chest;
@@ -543,80 +730,87 @@ typedef struct
     uint32_t      unk_00_;
     uint32_t      rooms_1;
     uint32_t      rooms_2;
-  }               scene_flags[101];         /* 0x00D4 */
-  char            unk_0A_[0x0284];          /* 0x0BE0 */
-  z64_xyzf_t      fw_pos;                   /* 0x0E64 */
-  z64_angle_t     fw_yaw;                   /* 0x0E70 */
-  char            unk_0B_[0x0008];          /* 0x0E72 */
-  uint16_t        fw_scene_index;           /* 0x0E7A */
-  uint32_t        fw_room_index;            /* 0x0E7C */
-  int32_t         fw_set;                   /* 0x0E80 */
-  char            unk_0C_[0x0018];          /* 0x0E84 */
-  uint8_t         gs_flags[56];             /* 0x0E9C */
-  uint16_t        event_chk_inf[14];        /* 0x0ED4 */
-  uint16_t        item_get_inf[4];          /* 0x0EF0 */
-  uint16_t        inf_table[30];            /* 0x0EF8 */
-  char            unk_0D_[0x041E];          /* 0x0F34 */
-  uint16_t        checksum;                 /* 0x1352 */
-  char            unk_0E_[0x0003];          /* 0x1354 */
-  int8_t          file_index;               /* 0x1357 */
-  char            unk_0F_[0x0004];          /* 0x1358 */
-  int32_t         game_mode;                /* 0x135C */
-  uint32_t        scene_setup_index;        /* 0x1360 */
-  int32_t         void_flag;                /* 0x1364 */
-  z64_xyzf_t      void_pos;                 /* 0x1368 */
-  z64_angle_t     void_yaw;                 /* 0x1374 */
-  int16_t         void_var;                 /* 0x1376 */
-  int16_t         void_entrance;            /* 0x1378 */
-  int8_t          void_room_index;          /* 0x137A */
-  int8_t          unk_10_;                  /* 0x137B */
-  uint32_t        temp_swch_flags;          /* 0x137C */
-  uint32_t        temp_collect_flags;       /* 0x1380 */
-  char            unk_11_[0x0013];          /* 0x1384 */
-  uint8_t         grotto_id;                /* 0x1397 */
-  char            unk_12_[0x0030];          /* 0x1398 */
-  uint16_t        nayrus_love_timer;        /* 0x13C8 */
-  char            unk_13_[0x0004];          /* 0x13CA */
-  int16_t         timer_1_state;            /* 0x13CE */
-  int16_t         timer_1_value;            /* 0x13D0 */
-  int16_t         timer_2_state;            /* 0x13D2 */
-  int16_t         timer_2_value;            /* 0x13D4 */
-  char            unk_14_[0x000A];          /* 0x13D6 */
-  int8_t          seq_index;                /* 0x13E0 */
-  int8_t          night_sfx;                /* 0x13E1 */
-  char            unk_15_[0x0012];          /* 0x13E2 */
-  uint16_t        magic_meter_size;         /* 0x13F4 */
-  char            unk_16_[0x0004];          /* 0x13F6 */
-  uint16_t        event_inf[4];             /* 0x13FA */
-  char            unk_17_[0x0001];          /* 0x1402 */
-  uint8_t         minimap_index;            /* 0x1403 */
-  int16_t         minigame_state;           /* 0x1404 */
-  char            unk_18_[0x0003];          /* 0x1406 */
-  uint8_t         language;                 /* 0x1409 */
-  char            unk_19_[0x0002];          /* 0x140A */
-  uint8_t         z_targeting;              /* 0x140C */
-  char            unk_1A_[0x0001];          /* 0x140D */
-  uint16_t        disable_music_flag;       /* 0x140E */
-  char            unk_1B_[0x0002];          /* 0x1410 */
-  uint16_t        cutscene_next;            /* 0x1412 */
-  char            unk_1C_[0x0010];          /* 0x1414 */
-  uint16_t        refill_hearts;            /* 0x1424 */
-  char            unk_1D_[0x000A];          /* 0x1426 */
-  z64_gameinfo_t *gameinfo;                 /* 0x1430 */
-  char            unk_1E_[0x001C];          /* 0x1434 */
-                                            /* 0x1450 */
+  }               scene_flags[101];          /* 0x00D4 */
+  char            unk_0A_[0x0284];           /* 0x0BE0 */
+  z64_xyzf_t      fw_pos;                    /* 0x0E64 */
+  z64_angle_t     fw_yaw;                    /* 0x0E70 */
+  char            unk_0B_[0x0008];           /* 0x0E72 */
+  uint16_t        fw_scene_index;            /* 0x0E7A */
+  uint32_t        fw_room_index;             /* 0x0E7C */
+  int32_t         fw_set;                    /* 0x0E80 */
+  char            unk_0C_[0x0018];           /* 0x0E84 */
+  uint8_t         gs_flags[56];              /* 0x0E9C */
+  uint16_t        event_chk_inf[14];         /* 0x0ED4 */
+  uint16_t        item_get_inf[4];           /* 0x0EF0 */
+  uint16_t        inf_table[29];             /* 0x0EF8 */
+  uint16_t        sword_flag;                /* 0x0F32 */
+  char            unk_0D_[0x041E];           /* 0x0F34 */
+  uint16_t        checksum;                  /* 0x1352 */
+  char            unk_0E_[0x0003];           /* 0x1354 */
+  int8_t          file_index;                /* 0x1357 */
+  char            unk_0F_[0x0004];           /* 0x1358 */
+  int32_t         game_mode;                 /* 0x135C */
+  uint32_t        scene_setup_index;         /* 0x1360 */
+  int32_t         void_flag;                 /* 0x1364 */
+  z64_xyzf_t      void_pos;                  /* 0x1368 */
+  z64_angle_t     void_yaw;                  /* 0x1374 */
+  int16_t         void_var;                  /* 0x1376 */
+  int16_t         void_entrance;             /* 0x1378 */
+  int8_t          void_room_index;           /* 0x137A */
+  int8_t          unk_10_;                   /* 0x137B */
+  uint32_t        temp_swch_flags;           /* 0x137C */
+  uint32_t        temp_collect_flags;        /* 0x1380 */
+  char            unk_11_[0x0013];           /* 0x1384 */
+  uint8_t         grotto_id;                 /* 0x1397 */
+  char            unk_12_[0x0030];           /* 0x1398 */
+  uint16_t        nayrus_love_timer;         /* 0x13C8 */
+  char            unk_13_[0x0004];           /* 0x13CA */
+  int16_t         timer_1_state;             /* 0x13CE */
+  int16_t         timer_1_value;             /* 0x13D0 */
+  int16_t         timer_2_state;             /* 0x13D2 */
+  int16_t         timer_2_value;             /* 0x13D4 */
+  char            unk_14_[0x000A];           /* 0x13D6 */
+  int8_t          seq_index;                 /* 0x13E0 */
+  int8_t          night_sfx;                 /* 0x13E1 */
+  char            unk_15_1_[0x0006];         /* 0x13E2 */
+  uint16_t        next_hud_visibility_mode;  /* 0x13E8 */
+  uint16_t        hud_visibility_mode;       /* 0x13EA */
+  uint16_t        hud_visibility_mode_timer; /* 0x13EC */
+  uint16_t        prev_hud_visibility_mode;  /* 0x13EE */
+  int16_t         magic_consume_state;       /* 0x13F0 */
+  char            unk_15_2_[0x0002];         /* 0x13F2 */
+  uint16_t        magic_meter_size;          /* 0x13F4 */
+  char            unk_16_[0x0004];           /* 0x13F6 */
+  uint16_t        event_inf[4];              /* 0x13FA */
+  char            unk_17_[0x0001];           /* 0x1402 */
+  uint8_t         minimap_index;             /* 0x1403 */
+  int16_t         minigame_state;            /* 0x1404 */
+  char            unk_18_[0x0003];           /* 0x1406 */
+  uint8_t         language;                  /* 0x1409 */
+  char            unk_19_[0x0002];           /* 0x140A */
+  uint8_t         z_targeting;               /* 0x140C */
+  char            unk_1A_[0x0001];           /* 0x140D */
+  uint16_t        disable_music_flag;        /* 0x140E */
+  char            unk_1B_[0x0002];           /* 0x1410 */
+  uint16_t        cutscene_next;             /* 0x1412 */
+  char            unk_1C_[0x0010];           /* 0x1414 */
+  uint16_t        refill_hearts;             /* 0x1424 */
+  char            unk_1D_[0x000A];           /* 0x1426 */
+  z64_gameinfo_t *gameinfo;                  /* 0x1430 */
+  char            unk_1E_[0x001C];           /* 0x1434 */
+                                             /* 0x1450 */
 } z64_file_t;
 
 typedef struct
 {
-    uint8_t       sound_options;            /* 0x0000 */
-    uint8_t       z_target_options;         /* 0x0001 */
-    uint8_t       language_options;         /* 0x0002 */
-    char          verification_string[9];   /* 0x0003 */
-    char          unk_00_[0x0014];          /* 0x000C */
-    z64_file_t    primary_saves[3];         /* 0x0020 */
-    z64_file_t    backup_saves[3];          /* 0x3D10 */
-                                            /* 0x7A00 */
+    uint8_t       sound_options;             /* 0x0000 */
+    uint8_t       z_target_options;          /* 0x0001 */
+    uint8_t       language_options;          /* 0x0002 */
+    char          verification_string[9];    /* 0x0003 */
+    char          unk_00_[0x0014];           /* 0x000C */
+    z64_file_t    primary_saves[3];          /* 0x0020 */
+    z64_file_t    backup_saves[3];           /* 0x3D10 */
+                                             /* 0x7A00 */
 } z64_sram_data_t;
 
 typedef struct
@@ -793,35 +987,59 @@ struct z64_actor_s
                                     /* 0x013C */
 };
 
-typedef struct
-{
-  z64_actor_t  common;               /* 0x0000 */
-  char         unk_00_[0x02E8];      /* 0x013C */
-  int8_t       incoming_item_id;     /* 0x0424 */
-  char         unk_01_[0x0003];      /* 0x0425 */
-  z64_actor_t *incoming_item_actor;  /* 0x0428 */
-  char         unk_02_[0x0008];      /* 0x042C */
-  uint8_t      action;               /* 0x0434 */
-  char         unk_03_[0x0237];      /* 0x0435 */
-  uint32_t     state_flags_1;        /* 0x066C */
-  uint32_t     state_flags_2;        /* 0x0670 */
-  char         unk_04_[0x0004];      /* 0x0674 */
-  z64_actor_t *boomerang_actor;      /* 0x0678 */
-  z64_actor_t *navi_actor;           /* 0x067C */
-  char         unk_05_[0x01A8];      /* 0x0680 */
-  float        linear_vel;           /* 0x0828 */
-  char         unk_06_[0x0002];      /* 0x082C */
-  uint16_t     target_yaw;           /* 0x082E */
-  char         unk_07_[0x0003];      /* 0x0830 */
-  int8_t       sword_state;          /* 0x0833 */
-  char         unk_08_[0x0050];      /* 0x0834 */
-  int16_t      drop_y;               /* 0x0884 */
-  int16_t      drop_distance;        /* 0x0886 */
-                                     /* 0x0888 */
-} z64_link_t;
+typedef struct {
+    /* 0x00 */ uint16_t   id;
+    /* 0x02 */ z64_xyz_t  pos;
+    /* 0x08 */ z64_xyz_t  rot;
+    /* 0x0E */ uint16_t   params;
+} ActorEntry; // size = 0x10
 
 typedef struct
 {
+  z64_actor_t  common;                 /* 0x0000 */
+  char         unk_00[0x0004];         /* 0x013C */
+  uint8_t      item_button;            /* 0x0140 */
+  int8_t       item_action_param;      /* 0x0141 */
+  uint8_t      held_item_id;           /* 0x0142 */
+  int8_t       boots;                  /* 0x0143 */
+  int8_t       held_item_action_param; /* 0x0144 */
+  char         unk_00_[0x02DF];        /* 0x0145 */
+  int8_t       incoming_item_id;       /* 0x0424 */
+  char         unk_01_[0x0003];        /* 0x0425 */
+  z64_actor_t *incoming_item_actor;    /* 0x0428 */
+  char         unk_02_[0x0008];        /* 0x042C */
+  uint8_t      action;                 /* 0x0434 */
+  char         unk_03_[0x0237];        /* 0x0435 */
+  uint32_t     state_flags_1;          /* 0x066C */
+  uint32_t     state_flags_2;          /* 0x0670 */
+  char         unk_04_[0x0004];        /* 0x0674 */
+  z64_actor_t *boomerang_actor;        /* 0x0678 */
+  z64_actor_t *navi_actor;             /* 0x067C */
+  char         unk_05_[0x01A8];        /* 0x0680 */
+  float        linear_vel;             /* 0x0828 */
+  char         unk_06_[0x0002];        /* 0x082C */
+  uint16_t     target_yaw;             /* 0x082E */
+  char         unk_07_[0x0003];        /* 0x0830 */
+  int8_t       sword_state;            /* 0x0833 */
+  char         unk_08_[0x0050];        /* 0x0834 */
+  int16_t      drop_y;                 /* 0x0884 */
+  int16_t      drop_distance;          /* 0x0886 */
+                                       /* 0x0888 */
+} z64_link_t;
+
+typedef struct DynaPolyActor {
+  z64_actor_t  actor;    /* 0x000 */
+  int32_t      bgId;     /* 0x14C */
+  float        unk_150;  /* 0x150 */
+  float        unk_154;  /* 0x154 */
+  int16_t      unk_158;  /* 0x158 */  // y rotation?
+  uint16_t     unk_15A;  /* 0x15A */
+  uint32_t     unk_15C;  /* 0x15C */
+  uint8_t      unk_160;  /* 0x160 */
+  int16_t      unk_162;  /* 0x162 */
+} DynaPolyActor; // size = 0x164
+
+typedef struct {
   z64_controller_t  raw;
   uint16_t          unk_00_;
   z64_controller_t  raw_prev;
@@ -999,6 +1217,108 @@ typedef struct
 typedef void (*z64_light_handler_t)(z64_gbi_lights_t*, z64_lightn_t*,
                                     z64_actor_t*);
 
+
+typedef struct
+{
+  uint8_t          freeze_flash_timer; /* 0x0000 */
+  char             unk_01_[0x01];      /* 0x0001 */
+  uint8_t          unk_02;             /* 0x0002 */
+  uint8_t          lens_active;        /* 0x0003 */
+  char             unk_04_[0x04];      /* 0x0004 */
+} z64_actor_ctxt_t;
+
+typedef struct {
+    /* 0x0000 */ uint32_t     msgOffset;
+    /* 0x0004 */ uint32_t     msgLength;
+    /* 0x0008 */ uint8_t      charTexBuf[FONT_CHAR_TEX_SIZE * 120];
+    /* 0x3C08 */ uint8_t      iconBuf[FONT_CHAR_TEX_SIZE];
+    /* 0x3C88 */ uint8_t      fontBuf[FONT_CHAR_TEX_SIZE * 320];
+    union {
+    /* 0xDC88 */ char         msgBuf[1280];
+    /* 0xDC88 */ uint16_t     msgBufWide[640];
+    };
+} Font; // size = 0xE188
+
+typedef struct {
+    /* 0x0000 */ uint8_t      view[0x128];
+    /* 0x0128 */ Font         font;
+    /* 0xE2B0 */ void*        textboxSegment; // original name: "fukidashiSegment"
+    /* 0xE2B4 */ char         unk_E2B4[0x4];
+    /* 0xE2B8 */ void*        ocarinaStaff; // original name : "info"
+    /* 0xE2BC */ char         unk_E2BC[0x3C];
+    /* 0xE2F8 */ uint16_t     textId;
+    /* 0xE2FA */ uint16_t     choiceTextId;
+    /* 0xE2FC */ uint8_t      textBoxProperties; // original name : "msg_disp_type"
+    /* 0xE2FD */ uint8_t      textBoxType; // "Text Box Type"
+    /* 0xE2FE */ uint8_t      textBoxPos; // text box position
+    /* 0xE300 */ int32_t      msgLength; // original name : "msg_data"
+    /* 0xE304 */ uint8_t      msgMode; // original name: "msg_mode"
+    /* 0xE305 */ char         unk_E305[0x1];
+    /* 0xE306 */ uint8_t      msgBufDecoded[200]; // decoded message buffer, may be smaller than this
+    /* 0xE3CE */ uint16_t     msgBufPos; // original name : "rdp"
+    /* 0xE3D0 */ uint16_t     unk_E3D0; // unused, only ever set to 0
+    /* 0xE3D2 */ uint16_t     textDrawPos; // draw all decoded characters up to this buffer position
+    /* 0xE3D4 */ uint16_t     decodedTextLen; // decoded message buffer length
+    /* 0xE3D6 */ uint16_t     textUnskippable;
+    /* 0xE3D8 */ int16_t      textPosX;
+    /* 0xE3DA */ int16_t      textPosY;
+    /* 0xE3DC */ int16_t      textColorR;
+    /* 0xE3DE */ int16_t      textColorG;
+    /* 0xE3E0 */ int16_t      textColorB;
+    /* 0xE3E2 */ int16_t      textColorAlpha;
+    /* 0xE3E4 */ uint8_t      textboxEndType; // original name : "select"
+    /* 0xE3E5 */ uint8_t      choiceIndex;
+    /* 0xE3E6 */ uint8_t      choiceNum; // textboxes that are not choice textboxes have a choiceNum of 1
+    /* 0xE3E7 */ uint8_t      stateTimer;
+    /* 0xE3E8 */ uint16_t     textDelayTimer;
+    /* 0xE3EA */ uint16_t     textDelay;
+    /* 0xE3EA */ uint16_t     lastPlayedSong; // original references : "Ocarina_Flog" , "Ocarina_Free"
+    /* 0xE3EE */ uint16_t     ocarinaMode; // original name : "ocarina_mode"
+    /* 0xE3F0 */ uint16_t     ocarinaAction; // original name : "ocarina_no"
+    /* 0xE3F2 */ uint16_t     unk_E3F2; // this is like "lastPlayedSong" but set less often, original name : "chk_ocarina_no"
+    /* 0xE3F4 */ uint16_t     unk_E3F4; // unused, only set to 0 in z_actor
+    /* 0xE3F6 */ uint16_t     textboxBackgroundIdx;
+    /* 0xE3F8 */ uint8_t      textboxBackgroundForeColorIdx;
+    /* 0xE3F8 */ uint8_t      textboxBackgroundBackColorIdx;
+    /* 0xE3F8 */ uint8_t      textboxBackgroundYOffsetIdx;
+    /* 0xE3F8 */ uint8_t      textboxBackgroundUnkArg; // unused, set by the textbox background control character arguments
+    /* 0xE3FC */ char         unk_E3FC[0x2];
+    /* 0xE3FE */ int16_t      textboxColorRed;
+    /* 0xE400 */ int16_t      textboxColorGreen;
+    /* 0xE402 */ int16_t      textboxColorBlue;
+    /* 0xE404 */ int16_t      textboxColorAlphaTarget;
+    /* 0xE406 */ int16_t      textboxColorAlphaCurrent;
+    /* 0xE408 */ z64_actor_t* talkActor;
+    /* 0xE40C */ int16_t      disableWarpSongs; // warp song flag set by scene commands
+    /* 0xE40E */ int16_t      unk_E40E; // ocarina related
+    /* 0xE410 */ uint8_t      lastOcaNoteIdx;
+} MessageContext; // size = 0xE414
+
+typedef enum {
+    /* 0x00 */ CAM_MODE_NORMAL,
+    /* 0x01 */ CAM_MODE_Z_PARALLEL, // Holding Z but with no target, keeps the camera aligned
+    /* 0x02 */ CAM_MODE_Z_TARGET_FRIENDLY,
+    /* 0x03 */ CAM_MODE_TALK,
+    /* 0x04 */ CAM_MODE_Z_TARGET_UNFRIENDLY,
+    /* 0x05 */ CAM_MODE_WALL_CLIMB, // Climbing a wall: ladders and vines
+    /* 0x06 */ CAM_MODE_FIRST_PERSON,
+    /* 0x07 */ CAM_MODE_AIM_ADULT, // First person aiming as adult: bow and hookshot
+    /* 0x08 */ CAM_MODE_Z_AIM, // Third person aiming for all items, child and adult
+    /* 0x09 */ CAM_MODE_HOOKSHOT_FLY, // Player being pulled by the hookshot to a target
+    /* 0x0A */ CAM_MODE_AIM_BOOMERANG, // Aiming the boomerang
+    /* 0x0B */ CAM_MODE_AIM_CHILD, // First person aiming as child: slingshot
+    /* 0x0C */ CAM_MODE_Z_WALL_CLIMB, // Climbing a wall with Z pressed: ladders and vines
+    /* 0x0D */ CAM_MODE_JUMP, // Falling in air from a ledge jump
+    /* 0x0E */ CAM_MODE_LEDGE_HANG, // Hanging from and climbing a ledge
+    /* 0x0F */ CAM_MODE_Z_LEDGE_HANG, // Hanging from and climbing a ledge with Z pressed
+    /* 0x10 */ CAM_MODE_FREE_FALL, // Falling in air except for a ledge jump or knockback
+    /* 0x11 */ CAM_MODE_CHARGE, // Charging a spin attack
+    /* 0x12 */ CAM_MODE_STILL, // Attacks without Z pressed, falling in air from knockback
+    /* 0x13 */ CAM_MODE_PUSH_PULL,
+    /* 0x14 */ CAM_MODE_FOLLOW_BOOMERANG, // Boomerang has been thrown, force-target the boomerang as it flies
+    /* 0x15 */ CAM_MODE_MAX
+} CameraModeType;
+
 /* game context */
 typedef struct
 {
@@ -1064,13 +1384,9 @@ typedef struct
   char             unk_0E_[0x0010];        /* 0x01D58 */
   void            *cutscene_ptr;           /* 0x01D68 */
   int8_t           cutscene_state;         /* 0x01D6C */
-  char             unk_0F_[0xE66F];        /* 0x01D6D */
-  uint8_t          textbox_state_1;        /* 0x103DC */
-  char             unk_10_[0x00DF];        /* 0x103DD */
-  uint8_t          textbox_state_2;        /* 0x104BC */
-  char             unk_11_[0x0002];        /* 0x104BD */
-  uint8_t          textbox_state_3;        /* 0x104BF */
-  char             unk_12_[0x0272];        /* 0x104C0 */
+  char             unk_0F_[0x036B];        /* 0x01D6D */
+  MessageContext   msgContext;             /* 0x020D8 */
+  char             unk_12_[0x0246];        /* 0x104EC */
   struct {
     uint16_t       unk_00_;
     uint16_t       fadeout;
@@ -1268,24 +1584,305 @@ typedef struct
                                               /* 0x01B0 */
 } z64_trail_t;
 
+typedef enum {
+    /* 0x00 */ ITEM00_RUPEE_GREEN,
+    /* 0x01 */ ITEM00_RUPEE_BLUE,
+    /* 0x02 */ ITEM00_RUPEE_RED,
+    /* 0x03 */ ITEM00_HEART,
+    /* 0x04 */ ITEM00_BOMBS_A,
+    /* 0x05 */ ITEM00_ARROWS_SINGLE,
+    /* 0x06 */ ITEM00_HEART_PIECE,
+    /* 0x07 */ ITEM00_HEART_CONTAINER,
+    /* 0x08 */ ITEM00_ARROWS_SMALL,
+    /* 0x09 */ ITEM00_ARROWS_MEDIUM,
+    /* 0x0A */ ITEM00_ARROWS_LARGE,
+    /* 0x0B */ ITEM00_BOMBS_B,
+    /* 0x0C */ ITEM00_NUTS,
+    /* 0x0D */ ITEM00_STICK,
+    /* 0x0E */ ITEM00_MAGIC_LARGE,
+    /* 0x0F */ ITEM00_MAGIC_SMALL,
+    /* 0x10 */ ITEM00_SEEDS,
+    /* 0x11 */ ITEM00_SMALL_KEY,
+    /* 0x12 */ ITEM00_FLEXIBLE,
+    /* 0x13 */ ITEM00_RUPEE_ORANGE,
+    /* 0x14 */ ITEM00_RUPEE_PURPLE,
+    /* 0x15 */ ITEM00_SHIELD_DEKU,
+    /* 0x16 */ ITEM00_SHIELD_HYLIAN,
+    /* 0x17 */ ITEM00_TUNIC_ZORA,
+    /* 0x18 */ ITEM00_TUNIC_GORON,
+    /* 0x19 */ ITEM00_BOMBS_SPECIAL
+} Item00Type;
+
+typedef enum {
+    /* 0x00 */ SLOT_STICK,
+    /* 0x01 */ SLOT_NUT,
+    /* 0x02 */ SLOT_BOMB,
+    /* 0x03 */ SLOT_BOW,
+    /* 0x04 */ SLOT_ARROW_FIRE,
+    /* 0x05 */ SLOT_DINS_FIRE,
+    /* 0x06 */ SLOT_SLINGSHOT,
+    /* 0x07 */ SLOT_OCARINA,
+    /* 0x08 */ SLOT_BOMBCHU,
+    /* 0x09 */ SLOT_HOOKSHOT,
+    /* 0x0A */ SLOT_ARROW_ICE,
+    /* 0x0B */ SLOT_FARORES_WIND,
+    /* 0x0C */ SLOT_BOOMERANG,
+    /* 0x0D */ SLOT_LENS,
+    /* 0x0E */ SLOT_BEAN,
+    /* 0x0F */ SLOT_HAMMER,
+    /* 0x10 */ SLOT_ARROW_LIGHT,
+    /* 0x11 */ SLOT_NAYRUS_LOVE,
+    /* 0x12 */ SLOT_BOTTLE_1,
+    /* 0x13 */ SLOT_BOTTLE_2,
+    /* 0x14 */ SLOT_BOTTLE_3,
+    /* 0x15 */ SLOT_BOTTLE_4,
+    /* 0x16 */ SLOT_TRADE_ADULT,
+    /* 0x17 */ SLOT_TRADE_CHILD,
+    /* 0xFF */ SLOT_NONE = 0xFF
+} InventorySlot;
+
+typedef enum {
+    /* 0x00 */ ITEM_STICK,
+    /* 0x01 */ ITEM_NUT,
+    /* 0x02 */ ITEM_BOMB,
+    /* 0x03 */ ITEM_BOW,
+    /* 0x04 */ ITEM_ARROW_FIRE,
+    /* 0x05 */ ITEM_DINS_FIRE,
+    /* 0x06 */ ITEM_SLINGSHOT,
+    /* 0x07 */ ITEM_OCARINA_FAIRY,
+    /* 0x08 */ ITEM_OCARINA_TIME,
+    /* 0x09 */ ITEM_BOMBCHU,
+    /* 0x0A */ ITEM_HOOKSHOT,
+    /* 0x0B */ ITEM_LONGSHOT,
+    /* 0x0C */ ITEM_ARROW_ICE,
+    /* 0x0D */ ITEM_FARORES_WIND,
+    /* 0x0E */ ITEM_BOOMERANG,
+    /* 0x0F */ ITEM_LENS,
+    /* 0x10 */ ITEM_BEAN,
+    /* 0x11 */ ITEM_HAMMER,
+    /* 0x12 */ ITEM_ARROW_LIGHT,
+    /* 0x13 */ ITEM_NAYRUS_LOVE,
+    /* 0x14 */ ITEM_BOTTLE,
+    /* 0x15 */ ITEM_POTION_RED,
+    /* 0x16 */ ITEM_POTION_GREEN,
+    /* 0x17 */ ITEM_POTION_BLUE,
+    /* 0x18 */ ITEM_FAIRY,
+    /* 0x19 */ ITEM_FISH,
+    /* 0x1A */ ITEM_MILK_BOTTLE,
+    /* 0x1B */ ITEM_LETTER_RUTO,
+    /* 0x1C */ ITEM_BLUE_FIRE,
+    /* 0x1D */ ITEM_BUG,
+    /* 0x1E */ ITEM_BIG_POE,
+    /* 0x1F */ ITEM_MILK_HALF,
+    /* 0x20 */ ITEM_POE,
+    /* 0x21 */ ITEM_WEIRD_EGG,
+    /* 0x22 */ ITEM_CHICKEN,
+    /* 0x23 */ ITEM_LETTER_ZELDA,
+    /* 0x24 */ ITEM_MASK_KEATON,
+    /* 0x25 */ ITEM_MASK_SKULL,
+    /* 0x26 */ ITEM_MASK_SPOOKY,
+    /* 0x27 */ ITEM_MASK_BUNNY,
+    /* 0x28 */ ITEM_MASK_GORON,
+    /* 0x29 */ ITEM_MASK_ZORA,
+    /* 0x2A */ ITEM_MASK_GERUDO,
+    /* 0x2B */ ITEM_MASK_TRUTH,
+    /* 0x2C */ ITEM_SOLD_OUT,
+    /* 0x2D */ ITEM_POCKET_EGG,
+    /* 0x2E */ ITEM_POCKET_CUCCO,
+    /* 0x2F */ ITEM_COJIRO,
+    /* 0x30 */ ITEM_ODD_MUSHROOM,
+    /* 0x31 */ ITEM_ODD_POTION,
+    /* 0x32 */ ITEM_SAW,
+    /* 0x33 */ ITEM_SWORD_BROKEN,
+    /* 0x34 */ ITEM_PRESCRIPTION,
+    /* 0x35 */ ITEM_FROG,
+    /* 0x36 */ ITEM_EYEDROPS,
+    /* 0x37 */ ITEM_CLAIM_CHECK,
+    /* 0x38 */ ITEM_BOW_ARROW_FIRE,
+    /* 0x39 */ ITEM_BOW_ARROW_ICE,
+    /* 0x3A */ ITEM_BOW_ARROW_LIGHT,
+    /* 0x3B */ ITEM_SWORD_KOKIRI,
+    /* 0x3C */ ITEM_SWORD_MASTER,
+    /* 0x3D */ ITEM_SWORD_BGS,
+    /* 0x3E */ ITEM_SHIELD_DEKU,
+    /* 0x3F */ ITEM_SHIELD_HYLIAN,
+    /* 0x40 */ ITEM_SHIELD_MIRROR,
+    /* 0x41 */ ITEM_TUNIC_KOKIRI,
+    /* 0x42 */ ITEM_TUNIC_GORON,
+    /* 0x43 */ ITEM_TUNIC_ZORA,
+    /* 0x44 */ ITEM_BOOTS_KOKIRI,
+    /* 0x45 */ ITEM_BOOTS_IRON,
+    /* 0x46 */ ITEM_BOOTS_HOVER,
+    /* 0x47 */ ITEM_BULLET_BAG_30,
+    /* 0x48 */ ITEM_BULLET_BAG_40,
+    /* 0x49 */ ITEM_BULLET_BAG_50,
+    /* 0x4A */ ITEM_QUIVER_30,
+    /* 0x4B */ ITEM_QUIVER_40,
+    /* 0x4C */ ITEM_QUIVER_50,
+    /* 0x4D */ ITEM_BOMB_BAG_20,
+    /* 0x4E */ ITEM_BOMB_BAG_30,
+    /* 0x4F */ ITEM_BOMB_BAG_40,
+    /* 0x50 */ ITEM_BRACELET,
+    /* 0x51 */ ITEM_GAUNTLETS_SILVER,
+    /* 0x52 */ ITEM_GAUNTLETS_GOLD,
+    /* 0x53 */ ITEM_SCALE_SILVER,
+    /* 0x54 */ ITEM_SCALE_GOLDEN,
+    /* 0x55 */ ITEM_SWORD_KNIFE,
+    /* 0x56 */ ITEM_WALLET_ADULT,
+    /* 0x57 */ ITEM_WALLET_GIANT,
+    /* 0x58 */ ITEM_SEEDS,
+    /* 0x59 */ ITEM_FISHING_POLE,
+    /* 0x5A */ ITEM_SONG_MINUET,
+    /* 0x5B */ ITEM_SONG_BOLERO,
+    /* 0x5C */ ITEM_SONG_SERENADE,
+    /* 0x5D */ ITEM_SONG_REQUIEM,
+    /* 0x5E */ ITEM_SONG_NOCTURNE,
+    /* 0x5F */ ITEM_SONG_PRELUDE,
+    /* 0x60 */ ITEM_SONG_LULLABY,
+    /* 0x61 */ ITEM_SONG_EPONA,
+    /* 0x62 */ ITEM_SONG_SARIA,
+    /* 0x63 */ ITEM_SONG_SUN,
+    /* 0x64 */ ITEM_SONG_TIME,
+    /* 0x65 */ ITEM_SONG_STORMS,
+    /* 0x66 */ ITEM_MEDALLION_FOREST,
+    /* 0x67 */ ITEM_MEDALLION_FIRE,
+    /* 0x68 */ ITEM_MEDALLION_WATER,
+    /* 0x69 */ ITEM_MEDALLION_SPIRIT,
+    /* 0x6A */ ITEM_MEDALLION_SHADOW,
+    /* 0x6B */ ITEM_MEDALLION_LIGHT,
+    /* 0x6C */ ITEM_KOKIRI_EMERALD,
+    /* 0x6D */ ITEM_GORON_RUBY,
+    /* 0x6E */ ITEM_ZORA_SAPPHIRE,
+    /* 0x6F */ ITEM_STONE_OF_AGONY,
+    /* 0x70 */ ITEM_GERUDO_CARD,
+    /* 0x71 */ ITEM_SKULL_TOKEN,
+    /* 0x72 */ ITEM_HEART_CONTAINER,
+    /* 0x73 */ ITEM_HEART_PIECE,
+    /* 0x74 */ ITEM_KEY_BOSS,
+    /* 0x75 */ ITEM_COMPASS,
+    /* 0x76 */ ITEM_DUNGEON_MAP,
+    /* 0x77 */ ITEM_KEY_SMALL,
+    /* 0x78 */ ITEM_MAGIC_SMALL,
+    /* 0x79 */ ITEM_MAGIC_LARGE,
+    /* 0x7A */ ITEM_HEART_PIECE_2,
+    /* 0x7B */ ITEM_INVALID_1,
+    /* 0x7C */ ITEM_INVALID_2,
+    /* 0x7D */ ITEM_INVALID_3,
+    /* 0x7E */ ITEM_INVALID_4,
+    /* 0x7F */ ITEM_INVALID_5,
+    /* 0x80 */ ITEM_INVALID_6,
+    /* 0x81 */ ITEM_INVALID_7,
+    /* 0x82 */ ITEM_MILK,
+    /* 0x83 */ ITEM_HEART,
+    /* 0x84 */ ITEM_RUPEE_GREEN,
+    /* 0x85 */ ITEM_RUPEE_BLUE,
+    /* 0x86 */ ITEM_RUPEE_RED,
+    /* 0x87 */ ITEM_RUPEE_PURPLE,
+    /* 0x88 */ ITEM_RUPEE_GOLD,
+    /* 0x89 */ ITEM_INVALID_8,
+    /* 0x8A */ ITEM_STICKS_5,
+    /* 0x8B */ ITEM_STICKS_10,
+    /* 0x8C */ ITEM_NUTS_5,
+    /* 0x8D */ ITEM_NUTS_10,
+    /* 0x8E */ ITEM_BOMBS_5,
+    /* 0x8F */ ITEM_BOMBS_10,
+    /* 0x90 */ ITEM_BOMBS_20,
+    /* 0x91 */ ITEM_BOMBS_30,
+    /* 0x92 */ ITEM_ARROWS_SMALL,
+    /* 0x93 */ ITEM_ARROWS_MEDIUM,
+    /* 0x94 */ ITEM_ARROWS_LARGE,
+    /* 0x95 */ ITEM_SEEDS_30,
+    /* 0x96 */ ITEM_BOMBCHUS_5,
+    /* 0x97 */ ITEM_BOMBCHUS_20,
+    /* 0x98 */ ITEM_STICK_UPGRADE_20,
+    /* 0x99 */ ITEM_STICK_UPGRADE_30,
+    /* 0x9A */ ITEM_NUT_UPGRADE_30,
+    /* 0x9B */ ITEM_NUT_UPGRADE_40,
+    /* 0xFC */ ITEM_LAST_USED = 0xFC,
+    /* 0xFE */ ITEM_NONE_FE = 0xFE,
+    /* 0xFF */ ITEM_NONE = 0xFF
+} ItemID;
+
+typedef struct EnGSwitch
+{
+  /* 0x0000 */ z64_actor_t actor;
+  /* 0x014C */ void *actionFunc;   // EnGSwitchActionFunc
+  /* 0x0150 */ int16_t type;
+  /* 0x0152 */ int16_t silverCount;
+  /* 0x0154 */ int16_t switchFlag;
+  /* 0x0156 */ int16_t killTimer;
+  /* 0x0158 */ int16_t colorIdx;
+  /* 0x015A */ int16_t broken;
+  /* 0x015C */ int16_t numEffects;
+  /* 0x015E */ int16_t objId;
+  /* 0x0160 */ int16_t index;      // first or second rupee in two-rupee patterns
+  /* 0x0162 */ int16_t delayTimer; // delay between the two blue rupees appearing
+  /* 0x0164 */ int16_t waitTimer;  // time rupee waits before retreating
+  /* 0x0166 */ int16_t moveMode;   // Type of movement in the shooting gallery
+  /* 0x0168 */ int16_t moveState;  // Appear or retreat (for blue rupees and the stationary green one)
+  /* 0x016A */ int16_t noteIndex;
+  /* 0x016C */ z64_xyzf_t targetPos;
+  /* 0x0178 */ int8_t objIndex;
+  /* 0x017C */ uint8_t collider[0x4C];  // ColliderCylinder
+  /* 0x01C8 */ uint8_t effects[0x1130]; // EnGSwitchEffect[100]
+} EnGSwitch; // size = 0x12F8
+
+typedef enum {
+    /* 0 */ PAUSE_BG_PRERENDER_OFF, // Inactive, do nothing.
+    /* 1 */ PAUSE_BG_PRERENDER_SETUP, // The current frame is only drawn for the purpose of serving as the pause background.
+    /* 2 */ PAUSE_BG_PRERENDER_PROCESS, // The previous frame was PAUSE_BG_PRERENDER_SETUP, now apply prerender filters.
+    /* 3 */ PAUSE_BG_PRERENDER_READY, // The pause background is ready to be used.
+    /* 4 */ PAUSE_BG_PRERENDER_MAX
+} PauseBgPreRenderState;
+
+
+
+/* helper macros */
+#define LINK_IS_ADULT (z64_file.link_age == 0)
+#define SLOT(item) gItemSlots[item]
+#define INV_CONTENT(item) z64_file.items[SLOT(item)]
+
+
+
 /* dram addresses */
 #define z64_osSendMesg_addr                     0x80001E20
 #define z64_osRecvMesg_addr                     0x80002030
+#define z64_bzero_addr                          0x80002E80
 #define z64_osCreateMesgQueue_addr              0x80004220
-#define z64_file_mq_addr                        0x80007D40
 #define z64_vi_counter_addr                     0x80009E8C
+#define z64_file_mq_addr                        0x80007D40
+#define z64_EnItem00Action_addr                 0x800127E0
+#define z64_Item_DropCollectible_addr           0x80013678
+#define z64_Item_DropCollectible2_addr          0x800138B0
+#define z64_GetCollectibleFlags_addr            0x800206E8
+#define z64_SetCollectibleFlags_addr            0x8002071C
+#define z64_ActorKill_addr                      0x80020EB4
+#define z64_ActorSetLinkIncomingItemId_addr     0x80022CF4
 #define z64_DrawActors_addr                     0x80024AB4
 #define z64_DeleteActor_addr                    0x80024FE0
 #define z64_SpawnActor_addr                     0x80025110
+#define z64_RemoveActor_addr                    0x80025648
+#define z64_Gfx_DrawDListOpa_addr               0x80028048
+#define z64_memcopy_addr                        0x80057030
+#define GetItem_Draw_addr                       0x800570C0
+#define Font_LoadChar_addr                      0x8005BCE4
+#define z64_Math_SinS_addr                      0x800636C4
+#define PlaySFX_addr                            0x800646F0
 #define z64_minimap_disable_1_addr              0x8006CD50
 #define z64_minimap_disable_2_addr              0x8006D4E4
 #define z64_SwitchAgeEquips_addr                0x8006F804
+#define Interface_LoadItemIcon1_addr            0x8006FB50
 #define z64_UpdateItemButton_addr               0x8006FB50
 #define z64_GiveItem_addr                       0x8006FDCC
+#define Rupees_ChangeBy_addr                    0x800721CC
 #define z64_UpdateEquipment_addr                0x80079764
 #define z64_LoadRoom_addr                       0x80080A3C
 #define z64_UnloadRoom_addr                     0x80080C98
+#define z64_ObjectSpawn_addr                    0x800812F0
+#define z64_ObjectIndex_addr                    0x80081628
+#define z64_ObjectIsLoaded_addr                 0x80081688
 #define z64_Io_addr                             0x80091474
+#define SsSram_ReadWrite_addr                   0x80091474
 #define z64_entrance_offset_hook_addr           0x8009AA44
 #define z64_frame_update_func_addr              0x8009AF1C
 #define z64_frame_update_call_addr              0x8009CAE8
@@ -1297,7 +1894,18 @@ typedef struct
 #define z64_main_hook_addr                      0x800A0C3C
 #define z64_frame_input_call_addr               0x800A16AC
 #define z64_GetMatrixStackTop_addr              0x800AA78C
+#define z64_ScalePitchAndTempo_addr             0x800C64A0
+#define z64_Audio_PlayFanFare_addr              0x800C69A0
+#define z64_Audio_PlaySoundGeneral_addr         0x800C806C
+#define z64_Audio_GetActiveSeqId_addr           0x800CAB18
+#define z64_Rand_ZeroOne_addr                   0x800CDCCC
+#define z64_RandSeed_addr                       0x800CDCC0
+#define Message_ContinueTextbox_addr            0x800DCE80
+#define z64_Message_GetState_addr               0x800DD464
 #define z64_DisplayTextbox_addr                 0x800DCE14
+#define z64_actor_ovl_table_addr                0x800E8530
+#define z64_event_state_1_addr                  0x800EF1B0
+#define z64_state_ovl_tab_addr                  0x800F1340
 #define gspF3DEX2_NoN_fifoTextStart             0x800E3F70
 #define z64_fog_state_addr                      0x800F1640
 #define z64_day_speed_addr                      0x800F1650
@@ -1310,12 +1918,11 @@ typedef struct
 #define gspF3DEX2_NoN_fifoDataStart             0x801145C0
 #define z64_file_addr                           0x8011A5D0
 #define z64_input_direct_addr                   0x8011D730
+#define z64_logo_state_addr                     0x8011F200
 #define z64_stab_addr                           0x80120C38
 #define z64_seq_buf_addr                        0x80124800
 #define z64_ctxt_addr                           0x801C84A0
 #define z64_link_addr                           0x801DAA30
-#define z64_state_ovl_tab_addr                  0x800F1340
-#define z64_event_state_1_addr                  0x800EF1B0
 #define z64_LinkInvincibility_addr              0x8038E578
 #define z64_LinkDamage_addr                     0x8038E6A8
 
@@ -1341,87 +1948,972 @@ typedef struct
 #define z64_ctxt_game_size                      0x00012518
 
 /* function prototypes */
-typedef void (*z64_DrawActors_proc)       (z64_game_t *game, void *actor_ctxt);
-typedef void (*z64_DeleteActor_proc)      (z64_game_t *game, void *actor_ctxt,
-                                           z64_actor_t *actor);
-typedef void (*z64_SpawnActor_proc)       (void *actor_ctxt, z64_game_t *game,
-                                           int actor_id, float x, float y,
-                                           float z, uint16_t rx, uint16_t ry,
-                                           uint16_t rz, uint16_t variable);
-typedef void (*z64_SwitchAgeEquips_proc)  (void);
-typedef void (*z64_UpdateItemButton_proc) (z64_game_t *game, int button_index);
-typedef void (*z64_UpdateEquipment_proc)  (z64_game_t *game, z64_link_t *link);
-typedef void (*z64_LoadRoom_proc)         (z64_game_t *game,
-                                           void *p_ctxt_room_index,
-                                           uint8_t room_index);
-typedef void (*z64_UnloadRoom_proc)       (z64_game_t *game,
-                                           void *p_ctxt_room_index);
-typedef void (*z64_Io_proc)               (uint32_t dev_addr, void *dram_addr,
-                                           uint32_t size, int32_t direction);
-typedef void (*z64_SceneConfig_proc)      (z64_game_t *game);
-typedef void (*z64_DisplayTextbox_proc)   (z64_game_t *game, uint16_t text_id,
-                                           int unknown_);
-typedef void (*z64_GiveItem_proc)         (z64_game_t *game, uint8_t item);
+typedef void(*z64_ActorKillFunc)                        (z64_actor_t *);
+typedef uint8_t(*z64_Message_GetStateFunc)              (uint8_t *);
+typedef void(*z64_Flags_SetCollectibleFunc)             (z64_game_t *game, uint32_t flag);
+typedef int32_t (*z64_Flags_GetCollectibleFunc)         (z64_game_t *game, uint32_t flag);
+typedef void(*z64_Audio_PlaySoundGeneralFunc)           (uint16_t sfxId, void *pos, uint8_t token, float *freqScale, float *a4, uint8_t *reverbAdd);
+typedef void(*z64_Audio_PlayFanFareFunc)                (uint16_t);
+typedef void (*z64_DrawActors_proc)                     (z64_game_t *game, void *actor_ctxt);
+typedef void (*z64_RemoveActor_proc)                    (void *actor_ctxt, z64_actor_t *actor, z64_game_t *game);
+typedef void (*z64_DeleteActor_proc)                    (z64_game_t *game, void *actor_ctxt, z64_actor_t *actor);
+typedef z64_actor_t* (*z64_SpawnActor_proc)             (void *actor_ctxt, z64_game_t *game, int actor_id, float x, float y, float z, uint16_t rx, uint16_t ry, uint16_t rz, uint16_t variable);
+typedef void (*z64_SwitchAgeEquips_proc)                (void);
+typedef void (*z64_UpdateItemButton_proc)               (z64_game_t *game, int button_index);
+typedef void (*z64_UpdateEquipment_proc)                (z64_game_t *game, z64_link_t *link);
+typedef void (*z64_LoadRoom_proc)                       (z64_game_t *game, void *p_ctxt_room_index, uint8_t room_index);
+typedef void (*z64_UnloadRoom_proc)                     (z64_game_t *game, void *p_ctxt_room_index);
+typedef void (*z64_Io_proc)                             (uint32_t dev_addr, void *dram_addr, uint32_t size, int32_t direction);
+typedef void (*z64_SceneConfig_proc)                    (z64_game_t *game);
+typedef void (*z64_DisplayTextbox_proc)                 (z64_game_t *game, uint16_t text_id, int unknown_);
+typedef void (*z64_GiveItem_proc)                       (z64_game_t *game, uint8_t item);
+typedef void(*z64_LinkDamage_proc)                      (z64_game_t *ctxt, z64_link_t *link, uint8_t damage_type, float unk_00, uint32_t unk_01, uint16_t unk_02);
+typedef void(*z64_LinkInvincibility_proc)               (z64_link_t *link, uint8_t frames);
+typedef float *(*z64_GetMatrixStackTop_proc)            ();
+typedef void (*SsSram_ReadWrite_proc)                   (uint32_t addr, void *dramAddr, size_t size, uint32_t direction);
+typedef void *(*z64_memcopy_proc)                       (void *dest, void *src, uint32_t size);
+typedef void (*z64_bzero_proc)                          (void *__s, uint32_t __n);
+typedef void (*z64_Gfx_DrawDListOpa_proc)               (z64_game_t *game, z64_gfx_t *dlist);
+typedef float (*z64_Math_SinS_proc)                     (int16_t angle);
+typedef int32_t(*z64_ObjectSpawn_proc)                  (z64_obj_ctxt_t *object_ctx, int16_t object_id);
+typedef int32_t(*z64_ObjectIndex_proc)                  (z64_obj_ctxt_t *object_ctx, int16_t object_id);
+typedef int32_t(*z64_ObjectIsLoaded_proc)               (z64_obj_ctxt_t *object_ctx, int32_t bank_index);
+typedef int32_t(*z64_ActorSetLinkIncomingItemId_proc)   (z64_actor_t *actor, z64_game_t *game, int32_t get_item_id, float xz_range, float y_range);
+typedef float (*z64_Rand_ZeroOne_proc)                  ();
+typedef void(*z64_RandSeed_proc)                        (uint32_t seed);
+typedef float(*z64_Rand_ZeroOne_proc)                   ();
+typedef void(*Font_LoadChar_proc)                       (void* font, uint8_t character, uint16_t codePointIndex);
+typedef void(*Interface_LoadItemIcon1_proc)             (z64_game_t *game, uint16_t button);
+typedef void(*Rupees_ChangeBy_proc)                     (int16_t rupeeChange);
+typedef void(*Message_ContinueTextbox_proc)             (z64_game_t *play, uint16_t textId);
+typedef void(*PlaySFX_proc)                             (uint16_t sfxId);
+typedef void(*z64_ScalePitchAndTempo_proc)              (float scaleTempoAndFreq, uint8_t duration);
+typedef void(*GetItem_Draw_proc)                        (z64_game_t *game, int16_t drawId);
+typedef uint16_t (*z64_Audio_GetActiveSeqId_proc)       (uint8_t seqId);
+typedef void(*z64_Actor_proc)                           (z64_actor_t *actor, z64_game_t *ctxt);
 
-typedef void(*z64_LinkDamage_proc)        (z64_game_t *ctxt, z64_link_t *link,
-                                           uint8_t damage_type, float unk_00, uint32_t unk_01,
-                                           uint16_t unk_02);
-typedef void(*z64_LinkInvincibility_proc) (z64_link_t *link, uint8_t frames);
-typedef float *(*z64_GetMatrixStackTop_proc)();
+typedef struct
+{
+   int16_t        id;           /* 0x00 */ 
+   uint8_t        type;         /* 0x02 */
+   uint32_t       flags;        /* 0x04 */ 
+   int16_t        objectId;     /* 0x08 */ 
+   uint32_t       instanceSize; /* 0x0C */ 
+   z64_Actor_proc init;         /* 0x10 */ 
+   z64_Actor_proc destroy;      /* 0x14 */ 
+   z64_Actor_proc update;       /* 0x18 */ 
+   z64_Actor_proc draw;         /* 0x1C */ 
+                                /* 0x20 */ 
+} z64_actor_init_t;
+
+typedef struct
+{
+   uint32_t          vrom_start;      /* 0x00 */ 
+   uint32_t          vrom_end;        /* 0x04 */
+   void*             vram_start;      /* 0x08 */ 
+   void*             vram_end;        /* 0x0C */ 
+   void*             loaded_ram_addr; /* 0x10 */ 
+   z64_actor_init_t* init_info;       /* 0x14 */ 
+   char*             name;            /* 0x18 */ 
+   uint16_t          alloc_type;      /* 0x1C */ 
+   int8_t            nb_loaded;       /* 0x1E */ 
+   char              unk_01_[0x1];    /* 0x1F */ 
+                                      /* 0x20 */ 
+} z64_actor_ovl_t;
+
+
 
 /* data */
-#define z64_file_mq             (*(OSMesgQueue*)      z64_file_mq_addr)
-#define z64_vi_counter          (*(uint32_t*)         z64_vi_counter_addr)
-#define z64_stab                (*(z64_stab_t*)       z64_stab_addr)
-#define z64_scene_table         ( (z64_scene_table_t*)z64_scene_table_addr)
-#define z64_fog_state           (*(uint8_t*)          z64_fog_state_addr)
-#define z64_day_speed           (*(uint16_t*)         z64_day_speed_addr)
-#define z64_light_handlers      ( (z64_light_handler_t*)                      \
-                                                      z64_light_handlers_addr)
-#define z64_object_table        ( (z64_object_table_t*)                      \
-                                                      z64_object_table_addr)
-#define z64_entrance_table      ( (z64_entrance_table_t*)                     \
-                                   z64_entrance_table_addr)
-#define z64_scene_config_table  ( (z64_SceneConfig_proc*)                     \
-                                   z64_scene_config_table_addr)
-#define z64_file                (*(z64_file_t*)       z64_file_addr)
-#define z64_input_direct        (*(z64_input_t*)      z64_input_direct_addr)
-#define z64_gameinfo            (*                    z64_file.gameinfo)
-#define z64_ctxt                (*(z64_ctxt_t*)       z64_ctxt_addr)
-#define z64_game                (*(z64_game_t*)      &z64_ctxt)
-#define z64_link                (*(z64_link_t*)       z64_link_addr)
-#define z64_state_ovl_tab       (*(z64_state_ovl_t(*)[6])                     \
-                                                      z64_state_ovl_tab_addr)
-#define z64_event_state_1       (*(uint32_t*)         z64_event_state_1_addr)
+#define z64_file_mq             (*(OSMesgQueue*)            z64_file_mq_addr)
+#define z64_vi_counter          (*(uint32_t*)               z64_vi_counter_addr)
+#define z64_stab                (*(z64_stab_t*)             z64_stab_addr)
+#define z64_scene_table         ( (z64_scene_table_t*)      z64_scene_table_addr)
+#define z64_fog_state           (*(uint8_t*)                z64_fog_state_addr)
+#define z64_day_speed           (*(uint16_t*)               z64_day_speed_addr)
+#define z64_light_handlers      ( (z64_light_handler_t*)    z64_light_handlers_addr)
+#define z64_object_table        ( (z64_object_table_t*)     z64_object_table_addr)
+#define z64_entrance_table      ( (z64_entrance_table_t*)   z64_entrance_table_addr)
+#define z64_scene_config_table  ( (z64_SceneConfig_proc*)   z64_scene_config_table_addr)
+#define z64_file                (*(z64_file_t*)             z64_file_addr)
+#define z64_input_direct        (*(z64_input_t*)            z64_input_direct_addr)
+#define z64_logo_state          (*(uint32_t*)               z64_logo_state_addr)
+#define z64_gameinfo            (*                          z64_file.gameinfo)
+#define z64_ctxt                (*(z64_ctxt_t*)             z64_ctxt_addr)
+#define z64_game                (*(z64_game_t*)             &z64_ctxt)
+#define z64_link                (*(z64_link_t*)             z64_link_addr)
+#define z64_state_ovl_tab       (*(z64_state_ovl_t(*)[6])   z64_state_ovl_tab_addr)
+#define z64_event_state_1       (*(uint32_t*)               z64_event_state_1_addr)
+#define z64_actor_ovl_table     ((z64_actor_ovl_t*)         z64_actor_ovl_table_addr)
+
 
 
 /* functions */
-#define z64_osSendMesg          ((osSendMesg_t)       z64_osSendMesg_addr)
-#define z64_osRecvMesg          ((osRecvMesg_t)       z64_osRecvMesg_addr)
-#define z64_osCreateMesgQueue   ((osCreateMesgQueue_t)                        \
-                                 z64_osCreateMesgQueue_addr)
-#define z64_DrawActors          ((z64_DrawActors_proc)z64_DrawActors_addr)
-#define z64_DeleteActor         ((z64_DeleteActor_proc)                       \
-                                 z64_DeleteActor_addr)
-#define z64_SpawnActor          ((z64_SpawnActor_proc)z64_SpawnActor_addr)
-#define z64_SwitchAgeEquips     ((z64_SwitchAgeEquips_proc)                   \
-                                                      z64_SwitchAgeEquips_addr)
-#define z64_UpdateItemButton    ((z64_UpdateItemButton_proc)                  \
-                                                      z64_UpdateItemButton_addr)
-#define z64_UpdateEquipment     ((z64_UpdateEquipment_proc)                   \
-                                                      z64_UpdateEquipment_addr)
-#define z64_LoadRoom            ((z64_LoadRoom_proc)  z64_LoadRoom_addr)
-#define z64_UnloadRoom          ((z64_UnloadRoom_proc)                        \
-                                                      z64_UnloadRoom_addr)
-#define z64_Io                  ((z64_Io_proc)        z64_Io_addr)
-#define z64_DisplayTextbox      ((z64_DisplayTextbox_proc)                    \
-                                                      z64_DisplayTextbox_addr)
-#define z64_GiveItem            ((z64_GiveItem_proc)  z64_GiveItem_addr)
+#define z64_ActorKill                    ((z64_ActorKillFunc)                     z64_ActorKill_addr)
+#define z64_MessageGetState              ((z64_Message_GetStateFunc)              z64_Message_GetState_addr)
+#define z64_SetCollectibleFlags          ((z64_Flags_SetCollectibleFunc)          z64_SetCollectibleFlags_addr)
+#define z64_Flags_GetCollectible         ((z64_Flags_GetCollectibleFunc)          z64_GetCollectibleFlags_addr)
+#define z64_Audio_PlaySoundGeneral       ((z64_Audio_PlaySoundGeneralFunc)        z64_Audio_PlaySoundGeneral_addr)
+#define z64_Audio_PlayFanFare            ((z64_Audio_PlayFanFareFunc)             z64_Audio_PlayFanFare_addr)
+#define z64_osSendMesg                   ((osSendMesg_t)                          z64_osSendMesg_addr)
+#define z64_osRecvMesg                   ((osRecvMesg_t)                          z64_osRecvMesg_addr)
+#define z64_osCreateMesgQueue            ((osCreateMesgQueue_t)                   z64_osCreateMesgQueue_addr)
+#define z64_DrawActors                   ((z64_DrawActors_proc)                   z64_DrawActors_addr)
+#define z64_RemoveActor                  ((z64_RemoveActor_proc)                  z64_RemoveActor_addr)
+#define z64_DeleteActor                  ((z64_DeleteActor_proc)                  z64_DeleteActor_addr)
+#define z64_SpawnActor                   ((z64_SpawnActor_proc)                   z64_SpawnActor_addr)
+#define z64_SwitchAgeEquips              ((z64_SwitchAgeEquips_proc)              z64_SwitchAgeEquips_addr)
+#define z64_UpdateItemButton             ((z64_UpdateItemButton_proc)             z64_UpdateItemButton_addr)
+#define z64_UpdateEquipment              ((z64_UpdateEquipment_proc)              z64_UpdateEquipment_addr)
+#define z64_LoadRoom                     ((z64_LoadRoom_proc)                     z64_LoadRoom_addr)
+#define z64_UnloadRoom                   ((z64_UnloadRoom_proc)                   z64_UnloadRoom_addr)
+#define z64_Io                           ((z64_Io_proc)                           z64_Io_addr)
+#define z64_DisplayTextbox               ((z64_DisplayTextbox_proc)               z64_DisplayTextbox_addr)
+#define z64_GiveItem                     ((z64_GiveItem_proc)                     z64_GiveItem_addr)
+#define z64_LinkDamage                   ((z64_LinkDamage_proc)                   z64_LinkDamage_addr)
+#define z64_LinkInvincibility            ((z64_LinkInvincibility_proc)            z64_LinkInvincibility_addr)
+#define z64_GetMatrixStackTop            ((z64_GetMatrixStackTop_proc)            z64_GetMatrixStackTop_addr)
+#define z64_RandSeed                     ((z64_RandSeed_proc)                     z64_RandSeed_addr)
+#define z64_Rand_ZeroOne                 ((z64_Rand_ZeroOne_proc)                 z64_Rand_ZeroOne_addr)
+#define z64_ObjectSpawn                  ((z64_ObjectSpawn_proc)                  z64_ObjectSpawn_addr)
+#define z64_ObjectIndex                  ((z64_ObjectIndex_proc)                  z64_ObjectIndex_addr)
+#define z64_ObjectIsLoaded               ((z64_ObjectIsLoaded_proc)               z64_ObjectIsLoaded_addr)
+#define z64_ActorSetLinkIncomingItemId   ((z64_ActorSetLinkIncomingItemId_proc)   z64_ActorSetLinkIncomingItemId_addr)
+#define SsSram_ReadWrite                 ((SsSram_ReadWrite_proc)                 SsSram_ReadWrite_addr)
+#define z64_memcopy                      ((z64_memcopy_proc)                      z64_memcopy_addr)
+#define z64_bzero                        ((z64_bzero_proc)                        z64_bzero_addr)
+#define z64_Item_DropCollectible         ((z64_Item_DropCollectible_proc)         z64_Item_DropCollectible_addr)
+#define z64_Item_DropCollectible2        ((z64_Item_DropCollectible_proc)         z64_Item_DropCollectible2_addr)
+#define z64_Gfx_DrawDListOpa             ((z64_Gfx_DrawDListOpa_proc)             z64_Gfx_DrawDListOpa_addr)
+#define z64_Math_SinS                    ((z64_Math_SinS_proc)                    z64_Math_SinS_addr)
+#define z64_Rand_ZeroOne                 ((z64_Rand_ZeroOne_proc)                 z64_Rand_ZeroOne_addr)
+#define Interface_LoadItemIcon1          ((Interface_LoadItemIcon1_proc)          Interface_LoadItemIcon1_addr)
+#define Rupees_ChangeBy                  ((Rupees_ChangeBy_proc)                  Rupees_ChangeBy_addr)
+#define Message_ContinueTextbox          ((Message_ContinueTextbox_proc)          Message_ContinueTextbox_addr)
+#define z64_ScalePitchAndTempo           ((z64_ScalePitchAndTempo_proc)           z64_ScalePitchAndTempo_addr)
+#define z64_Audio_GetActiveSeqId         ((z64_Audio_GetActiveSeqId_proc)         z64_Audio_GetActiveSeqId_addr)
+#define PlaySFX                          ((PlaySFX_proc)                          PlaySFX_addr)
+#define Font_LoadChar                    ((Font_LoadChar_proc)                    Font_LoadChar_addr)
+#define GetItem_Draw                     ((GetItem_Draw_proc)                     GetItem_Draw_addr)
 
-#define z64_LinkDamage          ((z64_LinkDamage_proc)z64_LinkDamage_addr)
-#define z64_LinkInvincibility   ((z64_LinkInvincibility_proc)                 \
-                                                      z64_LinkInvincibility_addr)
-#define z64_GetMatrixStackTop   ((z64_GetMatrixStackTop_proc) \
-                                                      z64_GetMatrixStackTop_addr)
+/* macros */
+#define GET_EVENTCHKINF(flag)         (z64_file.event_chk_inf[(flag) >> 4] &   (1 << ((flag) & 0xF)))
+#define SET_EVENTCHKINF(flag)         (z64_file.event_chk_inf[(flag) >> 4] |=  (1 << ((flag) & 0xF)))
+#define CLEAR_EVENTCHKINF(flag)       (z64_file.event_chk_inf[(flag) >> 4] &= ~(1 << ((flag) & 0xF)))
+#define TOGGLE_EVENTCHKINF(flag)      (z64_file.event_chk_inf[(flag) >> 4] ^=  (1 << ((flag) & 0xF)))
+#define GET_ITEMGETINF(flag)          (z64_file.item_get_inf[(flag)  >> 4] &   (1 << ((flag) & 0xF)))
+#define SET_ITEMGETINF(flag)          (z64_file.item_get_inf[(flag)  >> 4] |=  (1 << ((flag) & 0xF)))
+#define CLEAR_ITEMGETINF(flag)        (z64_file.item_get_inf[(flag)  >> 4] &= ~(1 << ((flag) & 0xF)))
+#define TOGGLE_ITEMGETINF(flag)       (z64_file.item_get_inf[(flag)  >> 4] ^=  (1 << ((flag) & 0xF)))
+#define GET_INFTABLE(flag)            (z64_file.inf_table[(flag)     >> 4] &   (1 << ((flag) & 0xF)))
+#define SET_INFTABLE(flag)            (z64_file.inf_table[(flag)     >> 4] |=  (1 << ((flag) & 0xF)))
+#define CLEAR_INFTABLE(flag)          (z64_file.inf_table[(flag)     >> 4] &= ~(1 << ((flag) & 0xF)))
+#define TOGGLE_INFTABLE(flag)         (z64_file.inf_table[(flag)     >> 4] ^=  (1 << ((flag) & 0xF)))
+#define CHECK_FLAG_ALL(flags, mask)   (((flags) & (mask)) == (mask))
+
+/*
+ *
+ * SaveContext flags
+ *
+ */
+
+
+
+/*
+ * SaveContext.eventChkInf
+ */
+
+#define EVENTCHKINF_00 0x00 // Unused
+#define EVENTCHKINF_01 0x01 // Unused
+#define EVENTCHKINF_02 0x02
+#define EVENTCHKINF_03 0x03
+#define EVENTCHKINF_04 0x04
+#define EVENTCHKINF_05 0x05
+#define EVENTCHKINF_06 0x06 // Unused
+#define EVENTCHKINF_07 0x07
+#define EVENTCHKINF_08 0x08 // Unused
+#define EVENTCHKINF_09 0x09
+#define EVENTCHKINF_0A 0x0A
+#define EVENTCHKINF_0B 0x0B
+#define EVENTCHKINF_0C 0x0C
+#define EVENTCHKINF_0D 0x0D // Unused
+#define EVENTCHKINF_0E 0x0E // Unused
+#define EVENTCHKINF_0F 0x0F
+#define EVENTCHKINF_10 0x10
+#define EVENTCHKINF_11 0x11
+#define EVENTCHKINF_12 0x12
+#define EVENTCHKINF_13 0x13
+#define EVENTCHKINF_14 0x14
+#define EVENTCHKINF_15 0x15
+#define EVENTCHKINF_16 0x16
+#define EVENTCHKINF_17 0x17 // Unused
+#define EVENTCHKINF_18 0x18
+#define EVENTCHKINF_19 0x19 // Unused
+#define EVENTCHKINF_1A 0x1A // Unused
+#define EVENTCHKINF_1B 0x1B
+#define EVENTCHKINF_1C 0x1C
+#define EVENTCHKINF_1D 0x1D
+#define EVENTCHKINF_1E 0x1E
+#define EVENTCHKINF_1F 0x1F // Unused
+#define EVENTCHKINF_20 0x20
+#define EVENTCHKINF_21 0x21
+#define EVENTCHKINF_22 0x22
+#define EVENTCHKINF_23 0x23
+#define EVENTCHKINF_24 0x24 // Unused
+#define EVENTCHKINF_25 0x25
+#define EVENTCHKINF_26 0x26 // Unused
+#define EVENTCHKINF_27 0x27 // Unused
+#define EVENTCHKINF_28 0x28 // Unused
+#define EVENTCHKINF_29 0x29 // Unused
+#define EVENTCHKINF_2A 0x2A
+#define EVENTCHKINF_2B 0x2B
+#define EVENTCHKINF_2C 0x2C
+#define EVENTCHKINF_2D 0x2D
+#define EVENTCHKINF_2F 0x2F
+#define EVENTCHKINF_30 0x30
+#define EVENTCHKINF_31 0x31
+#define EVENTCHKINF_32 0x32
+#define EVENTCHKINF_33 0x33
+#define EVENTCHKINF_34 0x34 // Unused
+#define EVENTCHKINF_35 0x35 // Unused
+#define EVENTCHKINF_36 0x36 // Unused
+#define EVENTCHKINF_37 0x37
+#define EVENTCHKINF_38 0x38
+#define EVENTCHKINF_39 0x39
+#define EVENTCHKINF_3A 0x3A
+#define EVENTCHKINF_3B 0x3B
+#define EVENTCHKINF_3C 0x3C
+#define EVENTCHKINF_3D 0x3D // Unused
+#define EVENTCHKINF_3E 0x3E // Unused
+#define EVENTCHKINF_3F 0x3F // Unused
+
+// 0x40
+#define EVENTCHKINF_40_INDEX 4
+#define EVENTCHKINF_40_SHIFT 0
+#define EVENTCHKINF_40_MASK (1 << EVENTCHKINF_40_SHIFT)
+#define EVENTCHKINF_40 ((EVENTCHKINF_40_INDEX << 4) | EVENTCHKINF_40_SHIFT)
+
+#define EVENTCHKINF_41 0x41
+#define EVENTCHKINF_42 0x42
+#define EVENTCHKINF_43 0x43
+#define EVENTCHKINF_44 0x44 // Unused
+#define EVENTCHKINF_45 0x45
+#define EVENTCHKINF_46 0x46 // Unused
+#define EVENTCHKINF_47 0x47 // Unused
+#define EVENTCHKINF_48 0x48
+#define EVENTCHKINF_49 0x49
+#define EVENTCHKINF_4A 0x4A
+#define EVENTCHKINF_4B 0x4B
+#define EVENTCHKINF_4C 0x4C
+#define EVENTCHKINF_4D 0x4D
+#define EVENTCHKINF_4E 0x4E
+#define EVENTCHKINF_4F 0x4F
+#define EVENTCHKINF_50 0x50
+#define EVENTCHKINF_51 0x51
+#define EVENTCHKINF_52 0x52
+#define EVENTCHKINF_53 0x53 // Unused
+#define EVENTCHKINF_54 0x54
+#define EVENTCHKINF_55 0x55
+#define EVENTCHKINF_56 0x56 // Unused
+#define EVENTCHKINF_57 0x57 // Unused
+#define EVENTCHKINF_58 0x58 // Unused
+#define EVENTCHKINF_59 0x59
+#define EVENTCHKINF_5A 0x5A
+#define EVENTCHKINF_5B 0x5B
+#define EVENTCHKINF_5C 0x5C
+#define EVENTCHKINF_5D 0x5D // Unused
+#define EVENTCHKINF_5E 0x5E // Unused
+#define EVENTCHKINF_5F 0x5F // Unused
+#define EVENTCHKINF_60 0x60 // Unused
+#define EVENTCHKINF_61 0x61 // Unused
+#define EVENTCHKINF_62 0x62 // Unused
+#define EVENTCHKINF_63 0x63 // Unused
+#define EVENTCHKINF_64 0x64 // Unused
+#define EVENTCHKINF_65 0x65
+#define EVENTCHKINF_67 0x67
+#define EVENTCHKINF_68 0x68
+#define EVENTCHKINF_69 0x69
+#define EVENTCHKINF_6A 0x6A
+
+// 0x6B
+#define EVENTCHKINF_6B_INDEX 6
+#define EVENTCHKINF_6B_SHIFT 11
+#define EVENTCHKINF_6B_MASK (1 << EVENTCHKINF_6B_SHIFT)
+#define EVENTCHKINF_6B ((EVENTCHKINF_6B_INDEX << 4) | EVENTCHKINF_6B_SHIFT)
+
+#define EVENTCHKINF_6C 0x6C // Unused
+#define EVENTCHKINF_6D 0x6D // Unused
+#define EVENTCHKINF_6E 0x6E
+#define EVENTCHKINF_6F 0x6F
+#define EVENTCHKINF_70 0x70
+#define EVENTCHKINF_71 0x71
+#define EVENTCHKINF_72 0x72
+#define EVENTCHKINF_73 0x73
+#define EVENTCHKINF_74 0x74
+#define EVENTCHKINF_75 0x75
+#define EVENTCHKINF_76 0x76
+#define EVENTCHKINF_77 0x77
+#define EVENTCHKINF_78 0x78
+#define EVENTCHKINF_79 0x79 // Unused
+#define EVENTCHKINF_7A 0x7A // Unused
+#define EVENTCHKINF_7B 0x7B // Unused
+#define EVENTCHKINF_7C 0x7C // Unused
+#define EVENTCHKINF_7D 0x7D // Unused
+#define EVENTCHKINF_7E 0x7E // Unused
+#define EVENTCHKINF_7F 0x7F // Unused
+#define EVENTCHKINF_80 0x80
+#define EVENTCHKINF_82 0x82
+#define EVENTCHKINF_8C 0x8C
+#define EVENTCHKINF_8D 0x8D
+#define EVENTCHKINF_8E 0x8E
+#define EVENTCHKINF_8F 0x8F
+
+// 0x90-0x93
+// carpenters freed from the gerudo
+#define EVENTCHKINF_CARPENTERS_FREE_INDEX 9
+#define EVENTCHKINF_CARPENTERS_FREE_SHIFT(n) (0 + (n))
+#define EVENTCHKINF_CARPENTERS_FREE_MASK(n) (1 << EVENTCHKINF_CARPENTERS_FREE_SHIFT(n))
+#define EVENTCHKINF_CARPENTERS_FREE(n) ((EVENTCHKINF_CARPENTERS_FREE_INDEX << 4) | EVENTCHKINF_CARPENTERS_FREE_SHIFT(n))
+#define EVENTCHKINF_CARPENTERS_FREE_MASK_ALL (\
+      EVENTCHKINF_CARPENTERS_FREE_MASK(0)     \
+    | EVENTCHKINF_CARPENTERS_FREE_MASK(1)     \
+    | EVENTCHKINF_CARPENTERS_FREE_MASK(2)     \
+    | EVENTCHKINF_CARPENTERS_FREE_MASK(3)    )
+#define GET_EVENTCHKINF_CARPENTERS_FREE_ALL() \
+    CHECK_FLAG_ALL(z64_file.event_chk_inf[EVENTCHKINF_CARPENTERS_FREE_INDEX], EVENTCHKINF_CARPENTERS_FREE_MASK_ALL)
+
+#define EVENTCHKINF_94 0x94
+#define EVENTCHKINF_95 0x95
+#define EVENTCHKINF_96 0x96
+#define EVENTCHKINF_97 0x97 // Unused
+#define EVENTCHKINF_98 0x98 // Unused
+#define EVENTCHKINF_99 0x99 // Unused
+#define EVENTCHKINF_9A 0x9A // Unused
+#define EVENTCHKINF_9B 0x9B // Unused
+#define EVENTCHKINF_9C 0x9C
+#define EVENTCHKINF_9D 0x9D // Unused
+#define EVENTCHKINF_9E 0x9E // Unused
+#define EVENTCHKINF_9F 0x9F // Unused
+#define EVENTCHKINF_A0 0xA0
+#define EVENTCHKINF_A1 0xA1
+#define EVENTCHKINF_A3 0xA3
+#define EVENTCHKINF_A4 0xA4
+#define EVENTCHKINF_A5 0xA5
+#define EVENTCHKINF_A6 0xA6
+#define EVENTCHKINF_A7 0xA7
+#define EVENTCHKINF_A8 0xA8
+#define EVENTCHKINF_A9 0xA9
+#define EVENTCHKINF_AA 0xAA
+#define EVENTCHKINF_AC 0xAC
+#define EVENTCHKINF_AD 0xAD
+#define EVENTCHKINF_AE 0xAE // Unused
+#define EVENTCHKINF_AF 0xAF // Unused
+#define EVENTCHKINF_B0 0xB0
+#define EVENTCHKINF_B1 0xB1
+#define EVENTCHKINF_B2 0xB2
+#define EVENTCHKINF_B3 0xB3
+#define EVENTCHKINF_B4 0xB4
+#define EVENTCHKINF_B5 0xB5
+#define EVENTCHKINF_B6 0xB6
+#define EVENTCHKINF_B7 0xB7
+#define EVENTCHKINF_B8 0xB8
+#define EVENTCHKINF_B9 0xB9
+#define EVENTCHKINF_BA 0xBA
+#define EVENTCHKINF_BB 0xBB
+#define EVENTCHKINF_BC 0xBC
+#define EVENTCHKINF_BD 0xBD
+#define EVENTCHKINF_BE 0xBE
+#define EVENTCHKINF_BF 0xBF
+#define EVENTCHKINF_C0 0xC0
+#define EVENTCHKINF_C1 0xC1
+#define EVENTCHKINF_C3 0xC3
+#define EVENTCHKINF_C4 0xC4
+#define EVENTCHKINF_C5 0xC5
+#define EVENTCHKINF_C6 0xC6
+#define EVENTCHKINF_C7 0xC7
+#define EVENTCHKINF_C8 0xC8
+#define EVENTCHKINF_C9 0xC9
+#define EVENTCHKINF_CA 0xCA // Unused
+#define EVENTCHKINF_CB 0xCB // Unused
+#define EVENTCHKINF_CC 0xCC // Unused
+#define EVENTCHKINF_CD 0xCD // Unused
+#define EVENTCHKINF_CE 0xCE // Unused
+#define EVENTCHKINF_CF 0xCF // Unused
+
+// 0xD0-0xD6
+#define EVENTCHKINF_SONGS_FOR_FROGS_INDEX 13
+#define EVENTCHKINF_SONGS_FOR_FROGS_CHOIR_SHIFT  0
+#define EVENTCHKINF_SONGS_FOR_FROGS_ZL_SHIFT     1
+#define EVENTCHKINF_SONGS_FOR_FROGS_EPONA_SHIFT  2
+#define EVENTCHKINF_SONGS_FOR_FROGS_SUNS_SHIFT   3
+#define EVENTCHKINF_SONGS_FOR_FROGS_SARIA_SHIFT  4
+#define EVENTCHKINF_SONGS_FOR_FROGS_SOT_SHIFT    5
+#define EVENTCHKINF_SONGS_FOR_FROGS_STORMS_SHIFT 6
+#define EVENTCHKINF_SONGS_FOR_FROGS_CHOIR_MASK  (1 << EVENTCHKINF_SONGS_FOR_FROGS_CHOIR_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_ZL_MASK     (1 << EVENTCHKINF_SONGS_FOR_FROGS_ZL_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_EPONA_MASK  (1 << EVENTCHKINF_SONGS_FOR_FROGS_EPONA_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_SUNS_MASK   (1 << EVENTCHKINF_SONGS_FOR_FROGS_SUNS_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_SARIA_MASK  (1 << EVENTCHKINF_SONGS_FOR_FROGS_SARIA_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_SOT_MASK    (1 << EVENTCHKINF_SONGS_FOR_FROGS_SOT_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_STORMS_MASK (1 << EVENTCHKINF_SONGS_FOR_FROGS_STORMS_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_CHOIR  ((EVENTCHKINF_SONGS_FOR_FROGS_INDEX << 4) | EVENTCHKINF_SONGS_FOR_FROGS_CHOIR_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_ZL     ((EVENTCHKINF_SONGS_FOR_FROGS_INDEX << 4) | EVENTCHKINF_SONGS_FOR_FROGS_ZL_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_EPONA  ((EVENTCHKINF_SONGS_FOR_FROGS_INDEX << 4) | EVENTCHKINF_SONGS_FOR_FROGS_EPONA_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_SUNS   ((EVENTCHKINF_SONGS_FOR_FROGS_INDEX << 4) | EVENTCHKINF_SONGS_FOR_FROGS_SUNS_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_SARIA  ((EVENTCHKINF_SONGS_FOR_FROGS_INDEX << 4) | EVENTCHKINF_SONGS_FOR_FROGS_SARIA_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_SOT    ((EVENTCHKINF_SONGS_FOR_FROGS_INDEX << 4) | EVENTCHKINF_SONGS_FOR_FROGS_SOT_SHIFT)
+#define EVENTCHKINF_SONGS_FOR_FROGS_STORMS ((EVENTCHKINF_SONGS_FOR_FROGS_INDEX << 4) | EVENTCHKINF_SONGS_FOR_FROGS_STORMS_SHIFT)
+
+// 0xDA-0xDE
+#define EVENTCHKINF_DA_DB_DC_DD_DE_INDEX 13
+#define EVENTCHKINF_DA_MASK (1 << 10)
+#define EVENTCHKINF_DB_MASK (1 << 11)
+#define EVENTCHKINF_DC_MASK (1 << 12)
+#define EVENTCHKINF_DD_MASK (1 << 13)
+#define EVENTCHKINF_DE_MASK (1 << 14)
+
+
+
+/*
+ * SaveContext.itemGetInf
+ */
+
+#define ITEMGETINF_02 0x02
+#define ITEMGETINF_03 0x03
+#define ITEMGETINF_04 0x04
+#define ITEMGETINF_05 0x05
+#define ITEMGETINF_06 0x06
+#define ITEMGETINF_07 0x07
+#define ITEMGETINF_08 0x08
+#define ITEMGETINF_09 0x09
+#define ITEMGETINF_0A 0x0A
+#define ITEMGETINF_0B 0x0B
+#define ITEMGETINF_0C 0x0C
+#define ITEMGETINF_0D 0x0D
+#define ITEMGETINF_0E 0x0E
+#define ITEMGETINF_0F 0x0F
+#define ITEMGETINF_10 0x10
+#define ITEMGETINF_11 0x11
+#define ITEMGETINF_12 0x12
+#define ITEMGETINF_13 0x13
+#define ITEMGETINF_15 0x15
+#define ITEMGETINF_16 0x16
+#define ITEMGETINF_17 0x17
+
+// 0x18-0x1A
+#define ITEMGETINF_18_19_1A_INDEX 1
+#define ITEMGETINF_18_SHIFT 8
+#define ITEMGETINF_19_SHIFT 9
+#define ITEMGETINF_1A_SHIFT 10
+#define ITEMGETINF_18_MASK (1 << ITEMGETINF_18_SHIFT)
+#define ITEMGETINF_19_MASK (1 << ITEMGETINF_19_SHIFT)
+#define ITEMGETINF_1A_MASK (1 << ITEMGETINF_1A_SHIFT)
+#define ITEMGETINF_18 ((ITEMGETINF_18_19_1A_INDEX << 4) | ITEMGETINF_18_SHIFT)
+#define ITEMGETINF_19 ((ITEMGETINF_18_19_1A_INDEX << 4) | ITEMGETINF_19_SHIFT)
+#define ITEMGETINF_1A ((ITEMGETINF_18_19_1A_INDEX << 4) | ITEMGETINF_1A_SHIFT)
+
+#define ITEMGETINF_1B 0x1B
+#define ITEMGETINF_1C 0x1C
+#define ITEMGETINF_1D 0x1D
+#define ITEMGETINF_1E 0x1E
+#define ITEMGETINF_1F 0x1F
+#define ITEMGETINF_20 0x20 // Unused
+#define ITEMGETINF_21 0x21 // Unused
+#define ITEMGETINF_22 0x22 // Unused
+#define ITEMGETINF_23 0x23
+#define ITEMGETINF_24 0x24
+#define ITEMGETINF_25 0x25
+#define ITEMGETINF_26 0x26
+#define ITEMGETINF_27 0x27 // Unused
+#define ITEMGETINF_28 0x28 // Unused
+#define ITEMGETINF_29 0x29 // Unused
+#define ITEMGETINF_2A 0x2A
+#define ITEMGETINF_2C 0x2C
+#define ITEMGETINF_2E 0x2E
+#define ITEMGETINF_2F 0x2F // Unused
+#define ITEMGETINF_30 0x30
+#define ITEMGETINF_31 0x31
+#define ITEMGETINF_32 0x32 // Unused
+#define ITEMGETINF_33 0x33 // Unused
+#define ITEMGETINF_34 0x34 // Unused
+#define ITEMGETINF_35 0x35 // Unused
+#define ITEMGETINF_36 0x36 // Unused
+#define ITEMGETINF_37 0x37 // Unused
+#define ITEMGETINF_38 0x38
+#define ITEMGETINF_39 0x39
+#define ITEMGETINF_3A 0x3A
+#define ITEMGETINF_3B 0x3B
+#define ITEMGETINF_3B 0x3B // Unused
+#define ITEMGETINF_3C 0x3C // Unused
+#define ITEMGETINF_3D 0x3D // Unused
+#define ITEMGETINF_3E 0x3E // Unused
+#define ITEMGETINF_3F 0x3F
+
+
+
+/*
+ * SaveContext.infTable
+ */
+
+#define INFTABLE_00 0x00
+#define INFTABLE_01 0x01
+#define INFTABLE_02 0x02 // Unused
+#define INFTABLE_03 0x03
+#define INFTABLE_04 0x04 // Unused
+#define INFTABLE_05 0x05
+#define INFTABLE_06 0x06 // Unused
+#define INFTABLE_07 0x07 // Unused
+#define INFTABLE_08 0x08 // Unused
+#define INFTABLE_09 0x09 // Unused
+#define INFTABLE_0A 0x0A // Unused
+#define INFTABLE_0B 0x0B // Unused
+#define INFTABLE_0C 0x0C
+#define INFTABLE_0D 0x0D // Unused
+#define INFTABLE_0E 0x0E
+#define INFTABLE_0F 0x0F // Unused
+#define INFTABLE_10 0x10
+#define INFTABLE_11 0x11 // Unused
+#define INFTABLE_12 0x12 // Unused
+#define INFTABLE_13 0x13 // Unused
+#define INFTABLE_14 0x14 // Unused
+#define INFTABLE_15 0x15
+#define INFTABLE_16 0x16 // Unused
+#define INFTABLE_17 0x17
+#define INFTABLE_18 0x18 // Unused
+#define INFTABLE_19 0x19
+#define INFTABLE_1A 0x1A // Unused
+#define INFTABLE_1B 0x1B // Unused
+#define INFTABLE_1C 0x1C // Unused
+#define INFTABLE_1D 0x1D // Unused
+#define INFTABLE_1E 0x1E
+#define INFTABLE_1F 0x1F // Unused
+#define INFTABLE_20 0x20 // Unused
+#define INFTABLE_21 0x21 // Unused
+#define INFTABLE_22 0x22
+#define INFTABLE_23 0x23 // Unused
+#define INFTABLE_24 0x24
+#define INFTABLE_25 0x25 // Unused
+#define INFTABLE_26 0x26
+#define INFTABLE_27 0x27 // Unused
+#define INFTABLE_28 0x28
+#define INFTABLE_29 0x29 // Unused
+#define INFTABLE_2A 0x2A
+#define INFTABLE_2B 0x2B
+#define INFTABLE_2C 0x2C // Unused
+#define INFTABLE_2D 0x2D // Unused
+#define INFTABLE_2E 0x2E
+#define INFTABLE_2F 0x2F
+#define INFTABLE_30 0x30
+#define INFTABLE_31 0x31 // Unused
+#define INFTABLE_32 0x32 // Unused
+#define INFTABLE_33 0x33 // Unused
+#define INFTABLE_34 0x34 // Unused
+#define INFTABLE_35 0x35 // Unused
+#define INFTABLE_36 0x36 // Unused
+#define INFTABLE_37 0x37 // Unused
+#define INFTABLE_38 0x38 // Unused
+#define INFTABLE_39 0x39 // Unused
+#define INFTABLE_3A 0x3A // Unused
+#define INFTABLE_3B 0x3B // Unused
+#define INFTABLE_3C 0x3C // Unused
+#define INFTABLE_3D 0x3D // Unused
+#define INFTABLE_3E 0x3E // Unused
+#define INFTABLE_3F 0x3F // Unused
+#define INFTABLE_40 0x40 // Unused
+#define INFTABLE_41 0x41
+#define INFTABLE_42 0x42 // Unused
+#define INFTABLE_43 0x43 // Unused
+#define INFTABLE_44 0x44 // Unused
+#define INFTABLE_45 0x45 // Unused
+#define INFTABLE_46 0x46 // Unused
+#define INFTABLE_47 0x47
+#define INFTABLE_48 0x48 // Unused
+#define INFTABLE_49 0x49 // Unused
+#define INFTABLE_4A 0x4A // Unused
+#define INFTABLE_4B 0x4B // Unused
+#define INFTABLE_4C 0x4C // Unused
+#define INFTABLE_4D 0x4D // Unused
+#define INFTABLE_4E 0x4E // Unused
+#define INFTABLE_4F 0x4F // Unused
+#define INFTABLE_50 0x50 // Unused
+#define INFTABLE_51 0x51
+#define INFTABLE_52 0x52 // Unused
+#define INFTABLE_53 0x53 // Unused
+#define INFTABLE_54 0x54 // Unused
+#define INFTABLE_55 0x55 // Unused
+#define INFTABLE_56 0x56 // Unused
+#define INFTABLE_57 0x57 // Unused
+#define INFTABLE_58 0x58 // Unused
+#define INFTABLE_59 0x59
+#define INFTABLE_5A 0x5A // Unused
+#define INFTABLE_5B 0x5B // Unused
+#define INFTABLE_5C 0x5C // Unused
+#define INFTABLE_5D 0x5D // Unused
+#define INFTABLE_5E 0x5E // Unused
+#define INFTABLE_5F 0x5F // Unused
+#define INFTABLE_60 0x60 // Unused
+#define INFTABLE_61 0x61
+#define INFTABLE_62 0x62 // Unused
+#define INFTABLE_63 0x63 // Unused
+#define INFTABLE_64 0x64 // Unused
+#define INFTABLE_65 0x65 // Unused
+#define INFTABLE_66 0x66
+#define INFTABLE_67 0x67 // Unused
+#define INFTABLE_68 0x68 // Unused
+#define INFTABLE_69 0x69 // Unused
+#define INFTABLE_6A 0x6A
+#define INFTABLE_6B 0x6B // Unused
+#define INFTABLE_6C 0x6C
+#define INFTABLE_6D 0x6D // Unused
+#define INFTABLE_6E 0x6E // Unused
+#define INFTABLE_6F 0x6F // Unused
+#define INFTABLE_70 0x70 // Unused
+#define INFTABLE_71 0x71
+#define INFTABLE_72 0x72 // Unused
+#define INFTABLE_73 0x73 // Unused
+#define INFTABLE_74 0x74 // Unused
+#define INFTABLE_75 0x75 // Unused
+#define INFTABLE_76 0x76
+#define INFTABLE_77 0x77
+#define INFTABLE_78 0x78 // Unused
+#define INFTABLE_79 0x79 // Unused
+#define INFTABLE_7A 0x7A // Unused
+#define INFTABLE_7B 0x7B // Unused
+#define INFTABLE_7C 0x7C // Unused
+#define INFTABLE_7D 0x7D // Unused
+#define INFTABLE_TALKED_TO_TALON_IN_RANCH_HOUSE 0x7E
+#define INFTABLE_7F 0x7F // Unused
+#define INFTABLE_80 0x80 // Unused
+#define INFTABLE_81 0x81 // Unused
+#define INFTABLE_82 0x82 // Unused
+#define INFTABLE_83 0x83 // Unused
+#define INFTABLE_84 0x84
+#define INFTABLE_85 0x85
+#define INFTABLE_86 0x86 // Unused
+#define INFTABLE_87 0x87 // Unused
+#define INFTABLE_88 0x88 // Unused
+#define INFTABLE_89 0x89 // Unused
+#define INFTABLE_8A 0x8A // Unused
+#define INFTABLE_8B 0x8B
+#define INFTABLE_8C 0x8C
+#define INFTABLE_8D 0x8D
+#define INFTABLE_8E 0x8E
+#define INFTABLE_8F 0x8F // Unused
+#define INFTABLE_90 0x90 // Unused
+#define INFTABLE_91 0x91 // Unused
+#define INFTABLE_92 0x92 // Unused
+#define INFTABLE_93 0x93 // Unused
+#define INFTABLE_94 0x94
+#define INFTABLE_95 0x95 // Unused
+#define INFTABLE_96 0x96 // Unused
+#define INFTABLE_97 0x97
+#define INFTABLE_98 0x9A // Unused
+#define INFTABLE_99 0x99 // Unused
+#define INFTABLE_9A 0x9A
+#define INFTABLE_9B 0x9B // Unused
+#define INFTABLE_9C 0x9C // Unused
+#define INFTABLE_9D 0x9D // Unused
+#define INFTABLE_9E 0x9E // Unused
+#define INFTABLE_9F 0x9F // Unused
+#define INFTABLE_A0 0xA0 // Unused
+#define INFTABLE_A1 0xA1 // Unused
+#define INFTABLE_A2 0xA2
+#define INFTABLE_AB 0xAB
+#define INFTABLE_AC 0xAC // Unused
+#define INFTABLE_AD 0xAD // Unused
+#define INFTABLE_AE 0xAE // Unused
+#define INFTABLE_AF 0xAF // Unused
+#define INFTABLE_B0 0xB0
+#define INFTABLE_B1 0xB1
+#define INFTABLE_B2 0xB2 // Unused
+#define INFTABLE_B3 0xB3 // Unused
+#define INFTABLE_B4 0xB4
+#define INFTABLE_B5 0xB5 // Unused
+#define INFTABLE_B6 0xB6
+#define INFTABLE_B7 0xB7
+#define INFTABLE_B8 0xB8
+#define INFTABLE_B9 0xB9
+#define INFTABLE_BA 0xBA // Unused
+#define INFTABLE_BB 0xBB // Unused
+#define INFTABLE_BC 0xBC
+#define INFTABLE_BD 0xBD // Unused
+#define INFTABLE_BE 0xBE // Unused
+#define INFTABLE_BF 0xBF // Unused
+#define INFTABLE_C0 0xC0
+#define INFTABLE_C1 0xC1
+#define INFTABLE_C2 0xC2
+#define INFTABLE_C3 0xC3
+#define INFTABLE_C4 0xC4
+#define INFTABLE_C5 0xC5
+#define INFTABLE_C6 0xC6
+#define INFTABLE_C7 0xC7
+#define INFTABLE_C8 0xC8
+#define INFTABLE_C9 0xC9
+#define INFTABLE_CA 0xCA
+#define INFTABLE_CB 0xCB
+#define INFTABLE_CC 0xCC
+#define INFTABLE_CD 0xCD
+#define INFTABLE_CE 0xCE
+#define INFTABLE_CF 0xCF // Unused
+#define INFTABLE_D0 0xD0
+#define INFTABLE_D1 0xD1 // Unused
+#define INFTABLE_D2 0xD2
+#define INFTABLE_D3 0xD3 // Unused
+#define INFTABLE_D4 0xD4
+#define INFTABLE_D5 0xD5 // Unused
+#define INFTABLE_D6 0xD6
+#define INFTABLE_D7 0xD7 // Unused
+#define INFTABLE_D8 0xD8
+#define INFTABLE_D9 0xD9
+#define INFTABLE_DA 0xDA // Unused
+#define INFTABLE_DB 0xDB // Unused
+#define INFTABLE_DC 0xDC // Unused
+#define INFTABLE_DD 0xDD // Unused
+#define INFTABLE_DE 0xDE // Unused
+#define INFTABLE_DF 0xDF // Unused
+#define INFTABLE_E0 0xE0
+#define INFTABLE_E1 0xE1 // Unused
+#define INFTABLE_E2 0xE2 // Unused
+#define INFTABLE_E3 0xE3
+#define INFTABLE_E4 0xE4 // Unused
+#define INFTABLE_E5 0xE5 // Unused
+#define INFTABLE_E6 0xE6
+#define INFTABLE_E7 0xE7 // Unused
+#define INFTABLE_E8 0xE8 // Unused
+#define INFTABLE_E9 0xE9 // Unused
+#define INFTABLE_EA 0xEA // Unused
+#define INFTABLE_EB 0xEB
+#define INFTABLE_EC 0xEC // Unused
+#define INFTABLE_ED 0xED // Unused
+#define INFTABLE_EE 0xEE // Unused
+#define INFTABLE_EF 0xEF // Unused
+#define INFTABLE_F0 0xF0
+#define INFTABLE_F1 0xF1 // Unused
+#define INFTABLE_F2 0xF2 // Unused
+#define INFTABLE_F3 0xF3 // Unused
+#define INFTABLE_F4 0xF4
+#define INFTABLE_F5 0xF5 // Unused
+#define INFTABLE_F6 0xF6 // Unused
+#define INFTABLE_F7 0xF7 // Unused
+#define INFTABLE_F8 0xF8
+#define INFTABLE_F9 0xF9 // Unused
+#define INFTABLE_FA 0xFA // Unused
+#define INFTABLE_FB 0xFB // Unused
+#define INFTABLE_FC 0xFC
+#define INFTABLE_FD 0xFD // Unused
+#define INFTABLE_FE 0xFE // Unused
+#define INFTABLE_FF 0xFF // Unused
+#define INFTABLE_100 0x100 // Unused
+#define INFTABLE_101 0x101 // Unused
+#define INFTABLE_102 0x102 // Unused
+#define INFTABLE_103 0x103 // Unused
+#define INFTABLE_104 0x104 // Unused
+#define INFTABLE_105 0x105 // Unused
+#define INFTABLE_106 0x106 // Unused
+#define INFTABLE_107 0x107 // Unused
+#define INFTABLE_108 0x108 // Unused
+#define INFTABLE_109 0x109
+#define INFTABLE_10A 0x10A
+#define INFTABLE_10B 0x10B
+#define INFTABLE_10C 0x10C
+#define INFTABLE_10D 0x10D
+#define INFTABLE_10E 0x10E
+#define INFTABLE_10F 0x10F
+#define INFTABLE_110 0x110 // Unused
+#define INFTABLE_111 0x111 // Unused
+#define INFTABLE_112 0x112 // Unused
+#define INFTABLE_113 0x113
+#define INFTABLE_114 0x114 // Unused
+#define INFTABLE_115 0x115 // Unused
+#define INFTABLE_116 0x116 // Unused
+#define INFTABLE_117 0x117 // Unused
+#define INFTABLE_118 0x118 // Unused
+#define INFTABLE_119 0x119 // Unused
+#define INFTABLE_11A 0x11A
+#define INFTABLE_11B 0x11B // Unused
+#define INFTABLE_11C 0x11C // Unused
+#define INFTABLE_11D 0x11D // Unused
+#define INFTABLE_11E 0x11E
+#define INFTABLE_11F 0x11F // Unused
+#define INFTABLE_120 0x120 // Unused
+#define INFTABLE_121 0x121 // Unused
+#define INFTABLE_122 0x122 // Unused
+#define INFTABLE_123 0x123 // Unused
+#define INFTABLE_124 0x124
+#define INFTABLE_125 0x125 // Unused
+#define INFTABLE_126 0x126 // Unused
+#define INFTABLE_127 0x127 // Unused
+#define INFTABLE_128 0x128 // Unused
+#define INFTABLE_129 0x129
+#define INFTABLE_12A 0x12A
+#define INFTABLE_12B 0x12B // Unused
+#define INFTABLE_12C 0x12C // Unused
+#define INFTABLE_12D 0x12D // Unused
+#define INFTABLE_12E 0x12E // Unused
+#define INFTABLE_12F 0x12F // Unused
+#define INFTABLE_130 0x130 // Unused
+#define INFTABLE_131 0x131 // Unused
+#define INFTABLE_132 0x132 // Unused
+#define INFTABLE_133 0x133 // Unused
+#define INFTABLE_134 0x134 // Unused
+#define INFTABLE_135 0x135 // Unused
+#define INFTABLE_136 0x136 // Unused
+#define INFTABLE_137 0x137 // Unused
+#define INFTABLE_138 0x138
+#define INFTABLE_139 0x139
+#define INFTABLE_13A 0x13A // Unused
+#define INFTABLE_13B 0x13B // Unused
+#define INFTABLE_13C 0x13C // Unused
+#define INFTABLE_13D 0x13D // Unused
+#define INFTABLE_13E 0x13E // Unused
+#define INFTABLE_13F 0x13F // Unused
+#define INFTABLE_140 0x140
+#define INFTABLE_141 0x141
+#define INFTABLE_142 0x142
+#define INFTABLE_143 0x143
+#define INFTABLE_144 0x144
+#define INFTABLE_145 0x145
+#define INFTABLE_146 0x146
+#define INFTABLE_147 0x147
+#define INFTABLE_148 0x148 // Unused
+#define INFTABLE_149 0x149 // Unused
+#define INFTABLE_14A 0x14A // Unused
+#define INFTABLE_14B 0x14B // Unused
+#define INFTABLE_14C 0x14C // Unused
+#define INFTABLE_14D 0x14D // Unused
+#define INFTABLE_14E 0x14E // Unused
+#define INFTABLE_14F 0x14F // Unused
+#define INFTABLE_150 0x150 // Unused
+#define INFTABLE_151 0x151 // Unused
+#define INFTABLE_152 0x152 // Unused
+#define INFTABLE_153 0x153 // Unused
+#define INFTABLE_154 0x154 // Unused
+#define INFTABLE_155 0x155 // Unused
+#define INFTABLE_156 0x156 // Unused
+#define INFTABLE_157 0x157 // Unused
+#define INFTABLE_158 0x158 // Unused
+#define INFTABLE_159 0x159 // Unused
+#define INFTABLE_15A 0x15A // Unused
+#define INFTABLE_15B 0x15B // Unused
+#define INFTABLE_15C 0x15C // Unused
+#define INFTABLE_15D 0x15D // Unused
+#define INFTABLE_15E 0x15E // Unused
+#define INFTABLE_15F 0x15F // Unused
+#define INFTABLE_160 0x160
+#define INFTABLE_161 0x161
+#define INFTABLE_162 0x162
+#define INFTABLE_163 0x163
+#define INFTABLE_164 0x164
+#define INFTABLE_165 0x165 // Unused
+#define INFTABLE_166 0x166
+#define INFTABLE_167 0x167 // Unused
+#define INFTABLE_168 0x168 // Unused
+#define INFTABLE_169 0x169 // Unused
+#define INFTABLE_16A 0x16A
+#define INFTABLE_16B 0x16B // Unused
+#define INFTABLE_16C 0x16C
+#define INFTABLE_16D 0x16D // Unused
+#define INFTABLE_16E 0x16E // Unused
+#define INFTABLE_16F 0x16F // Unused
+#define INFTABLE_170 0x170
+#define INFTABLE_171 0x171
+#define INFTABLE_172 0x172
+#define INFTABLE_173 0x173 // Unused
+#define INFTABLE_174 0x174 // Unused
+#define INFTABLE_175 0x175 // Unused
+#define INFTABLE_176 0x176
+#define INFTABLE_177 0x177 // Unused
+#define INFTABLE_178 0x178
+#define INFTABLE_179 0x179 // Unused
+#define INFTABLE_17A 0x17A // Unused
+#define INFTABLE_17B 0x17B // Unused
+#define INFTABLE_17C 0x17C
+#define INFTABLE_17F 0x17F
+#define INFTABLE_180 0x180 // Unused
+#define INFTABLE_181 0x181 // Unused
+#define INFTABLE_182 0x182 // Unused
+#define INFTABLE_183 0x183 // Unused
+#define INFTABLE_184 0x184 // Unused
+#define INFTABLE_185 0x185 // Unused
+#define INFTABLE_186 0x186 // Unused
+#define INFTABLE_187 0x187 // Unused
+#define INFTABLE_188 0x188 // Unused
+#define INFTABLE_189 0x189 // Unused
+#define INFTABLE_18A 0x18A // Unused
+#define INFTABLE_18B 0x18B // Unused
+#define INFTABLE_18C 0x18C // Unused
+#define INFTABLE_18D 0x18D // Unused
+#define INFTABLE_18E 0x18E // Unused
+#define INFTABLE_18F 0x18F // Unused
+#define INFTABLE_190 0x190
+#define INFTABLE_191 0x191
+#define INFTABLE_HAS_DEKU_STICK_UPGRADE 0x192
+#define INFTABLE_HAS_DEKU_NUT_UPGRADE 0x193
+#define INFTABLE_194 0x194 // Unused
+#define INFTABLE_195 0x195
+#define INFTABLE_196 0x196
+#define INFTABLE_197 0x197
+#define INFTABLE_198 0x198
+
+// 0x199-0x19F
+#define INFTABLE_199_19A_19B_19C_19D_19E_19F_INDEX 25
+#define INFTABLE_199_MASK (1 << 9)
+#define INFTABLE_19A_MASK (1 << 10)
+#define INFTABLE_19B_MASK (1 << 11)
+#define INFTABLE_19C_MASK (1 << 12)
+#define INFTABLE_19D_MASK (1 << 13)
+#define INFTABLE_19E_MASK (1 << 14)
+#define INFTABLE_19F_MASK (1 << 15)
+
+// 0x1A0-0x1AF
+#define INFTABLE_1AX_INDEX 26
+#define INFTABLE_1A0_SHIFT 0
+#define INFTABLE_1A1_SHIFT 1
+#define INFTABLE_1A2_SHIFT 2
+#define INFTABLE_1A3_SHIFT 3
+#define INFTABLE_1A4_SHIFT 4
+#define INFTABLE_1A5_SHIFT 5
+#define INFTABLE_1A6_SHIFT 6
+#define INFTABLE_1A7_SHIFT 7
+#define INFTABLE_1A8_SHIFT 8
+#define INFTABLE_1A9_SHIFT 9
+#define INFTABLE_1AB_SHIFT 11
+#define INFTABLE_1AD_SHIFT 13
+
+#define INFTABLE_1B0 0x1B0 // Unused
+#define INFTABLE_1B1 0x1B1 // Unused
+#define INFTABLE_1B2 0x1B2 // Unused
+#define INFTABLE_1B3 0x1B3 // Unused
+#define INFTABLE_1B4 0x1B4 // Unused
+#define INFTABLE_1B5 0x1B5 // Unused
+#define INFTABLE_1B6 0x1B6 // Unused
+#define INFTABLE_1B7 0x1B7 // Unused
+#define INFTABLE_1B8 0x1B8 // Unused
+#define INFTABLE_1B9 0x1B9 // Unused
+#define INFTABLE_1BA 0x1BA // Unused
+#define INFTABLE_1BB 0x1BB // Unused
+#define INFTABLE_1BC 0x1BC // Unused
+#define INFTABLE_1BD 0x1BD // Unused
+#define INFTABLE_1BE 0x1BE // Unused
+#define INFTABLE_1BF 0x1BF // Unused
+#define INFTABLE_1C0 0x1C0 // Unused
+#define INFTABLE_1C1 0x1C1 // Unused
+#define INFTABLE_1C2 0x1C2 // Unused
+#define INFTABLE_1C3 0x1C3 // Unused
+#define INFTABLE_1C4 0x1C4 // Unused
+#define INFTABLE_1C5 0x1C5 // Unused
+#define INFTABLE_1C6 0x1C6 // Unused
+#define INFTABLE_1C7 0x1C7 // Unused
+#define INFTABLE_1C8 0x1C8 // Unused
+#define INFTABLE_1C9 0x1C9 // Unused
+#define INFTABLE_1CA 0x1CA // Unused
+#define INFTABLE_1CB 0x1CB // Unused
+#define INFTABLE_1CC 0x1CC // Unused
+#define INFTABLE_1CD 0x1CD // Unused
+#define INFTABLE_1CE 0x1CE // Unused
+#define INFTABLE_1CF 0x1CF // Unused
+
+// 0x1D0-0x1DF
+#define INFTABLE_1DX_INDEX 29
+
 
 #endif

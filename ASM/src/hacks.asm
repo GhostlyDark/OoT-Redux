@@ -34,6 +34,8 @@ Gameplay_InitSkybox:
     j       after_scene_init
     nop
 
+.headersize(0)
+
 ;==================================================================================================
 ; File select hash
 ;==================================================================================================
@@ -578,4 +580,63 @@ Gameplay_InitSkybox:
     ;lui at, 0x3F00
     ;mtc1 at, f10
     jal     en_am_calculation_2
+    nop
+
+;==================================================================================================
+; Draw Chest Base and Lid
+;==================================================================================================
+
+.org 0xC0754C
+    j   draw_chest
+    nop
+
+; set chest_base front texture
+.org 0xFEB000 + 0x6F0 - 0x3296C0 + 0x3296D8
+.word   0xDE000000, 0x09000000
+
+.org 0xFEB000 + 0x6F0 - 0x3296C0 + 0x3297B8
+.word   0xDE000000, 0x09000000
+
+; set chest_base base texture
+.org 0xFEB000 + 0x6F0 - 0x3296C0 + 0x329758
+.word   0xDE000000, 0x09000010
+
+.org 0xFEB000 + 0x6F0 - 0x3296C0 + 0x329810
+.word   0xDE000000, 0x09000010
+
+; set chest_lid front texture
+.org 0xFEB000 + 0x10C0 - 0x32A090 + 0x32A0A8
+.word   0xDE000000, 0x09000000
+.org 0xFEB000 + 0x10C0 - 0x32A090 + 0x32A1C8
+.word   0xDE000000, 0x09000000
+
+; set chest_lid base texture
+.org 0xFEB000 + 0x10C0 - 0x32A090 + 0x32A158
+.word   0xDE000000, 0x09000010
+
+;==================================================================================================
+; Randomize Enemy HP
+;==================================================================================================
+
+; Hook at the end of Actor_SetWorldToHome to zeroize anything we use to store additional flag data
+;.orga 0xA96E5C ; In memory: 0x80020EFC
+;    j       Actor_SetWorldToHome_Hook
+
+; Hook Actor_UpdateAll when each actor is being initialized. At the call to Actor_SpawnEntry
+; Used to set the flag (z-rotation) of the actor to its position in the actor table.
+;.orga 0xA99D48 ; In memory: 0x80023DE8
+;    jal     Actor_UpdateAll_Hook
+
+; Hack Actor_SpawnEntry so we can override actors being spawned
+.orga 0xA9B524 ; In memory: 0x800255C4
+    j       Actor_SpawnEntry_Hack
+    nop
+
+;===================================================================================================
+; Cancel Volvagia flying form hitbox when her health is already at O
+;===================================================================================================
+; Replaces addiu   a2, $zero, 0x0004
+;          andi    t6, a1, 0x0002
+.orga 0xCEA41C
+    jal     volvagia_flying_hitbox
     nop

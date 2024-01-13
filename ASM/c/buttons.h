@@ -12,6 +12,7 @@ void handle_button_scaling();
 void handle_layout();
 void reset_layout();
 void handle_hud();
+void set_hide_hud(uint8_t value);
 void set_b_button();
 void handle_rupee_drain();
 void handle_weaker_swords();
