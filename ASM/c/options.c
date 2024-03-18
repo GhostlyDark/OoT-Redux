@@ -213,7 +213,7 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
     uint8_t height           = 32;
     
     // Subscreen
-    sprite_load(db, &stones_sprite, 0, 1);                // Fake Load
+    sprite_load(db, &stones_sprite, 0, 1);              // Fake Load
     sprite_draw(db, &stones_sprite, -10, -10, 0, 4, 4); // Fake Draw
     
     gDPSetPrimColor(db->p++, 0, 0, 0xA0, 0xA0, 0xA0, 0xFF);
@@ -277,7 +277,7 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
         
         case OPTION_HUD_LAYOUT:
             setting = SAVE_HUD_LAYOUT;    
-            text_print("Choose from six different",   tooltipLeft, top + 50);
+            text_print("Choose from seven different", tooltipLeft, top + 50);
             text_print("layouts to change the HUD",   tooltipLeft, top + 70);
             break;
         
@@ -459,7 +459,7 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
             break;
     }
     if (options_cursor >= OPTION_INFINITE_HP && options_cursor <= OPTION_INFINITE_AMMO)
-        text_print("current maximum limit", tooltipLeft, top + 70);
+        text_print("the current maximum limit", tooltipLeft, top + 70);
     
     text_flush(db);
     
