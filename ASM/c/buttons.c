@@ -172,25 +172,25 @@ void handle_layout() {
         return;
     
     if (z64_game.pause_ctxt.state == 6 && SAVE_HUD_LAYOUT > 0) {
-        if (SAVE_HUD_LAYOUT == 2) { // Nintendo
+        if (SAVE_HUD_LAYOUT == 3) { // Nintendo
             z64_c_left_x_set_item  = 0x343 + (0x208 * CFG_WS);
             z64_c_down_x_set_item  = 0x4FB + (0x208 * CFG_WS);
             z64_c_right_x_set_item = 0x1D1 + (0x208 * CFG_WS);
             z64_c_left_y_set_item  = 0x44C; z64_c_down_y_set_item = 0x492; z64_c_right_y_set_item = 0x352;
         }
-        else if (SAVE_HUD_LAYOUT == 3) { // Modern
+        else if (SAVE_HUD_LAYOUT == 4) { // Modern
             z64_c_left_x_set_item  = 0x217 + (0x208 * CFG_WS);
             z64_c_down_x_set_item  = 0x4FB + (0x208 * CFG_WS);
             z64_c_right_x_set_item = 0x2FD + (0x208 * CFG_WS);
             z64_c_left_y_set_item  = 0x352; z64_c_down_y_set_item = 0x492; z64_c_right_y_set_item = 0x44C;
         }
-        else if (SAVE_HUD_LAYOUT == 4) { // GameCube (Original)
+        else if (SAVE_HUD_LAYOUT == 5) { // GameCube (Original)
             z64_c_left_x_set_item  = 0x3C0 + (0x208 * CFG_WS);
             z64_c_down_x_set_item  = 0x4FB + (0x208 * CFG_WS);
             z64_c_right_x_set_item = 0x4FE + (0x208 * CFG_WS);
             z64_c_left_y_set_item  = 0x4C9; z64_c_down_y_set_item = 0x492; z64_c_right_y_set_item = 0x314;
         }
-        else if (SAVE_HUD_LAYOUT == 5) { // GameCube (Modern)
+        else if (SAVE_HUD_LAYOUT == 6) { // GameCube (Modern)
             z64_c_left_x_set_item  = 0x544 + (0x208 * CFG_WS);
             z64_c_down_x_set_item  = 0x4FB + (0x208 * CFG_WS);
             z64_c_right_x_set_item = 0x37A + (0x208 * CFG_WS);
@@ -207,8 +207,8 @@ void handle_layout() {
             b_x       = 7;   // 160 -> 167
         }
         else if (SAVE_HUD_LAYOUT == 2) { // Inverted A and B
-            a_x       = -32; // 186 -> 156
-            b_x       = 34;  // 160 -> 192
+            a_x       = -34; // 186 -> 152
+            b_x       = 34;  // 160 -> 194
         }
         else if (SAVE_HUD_LAYOUT == 3) { // Nintendo
             a_x       = 70;  // 186 -> 256
@@ -341,7 +341,7 @@ void reset_layout() {
 }
 
 void handle_hud() {
-    if (!CAN_DRAW_HUD || !CAN_CONTROL_LINK || z64_textbox != 0 || z64_change_scene == 0x20000000 || z64_change_scene == 0x20000001)
+    if (!CAN_DRAW_HUD || !CAN_CONTROL_LINK || z64_textbox != 0 || z64_change_scene == 0x20000000 || z64_change_scene == 0x20000001 || z64_change_scene == 1)
     return;
     
     if (SAVE_HIDE_HUD == 0)
