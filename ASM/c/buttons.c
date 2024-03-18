@@ -207,8 +207,8 @@ void handle_layout() {
             b_x       = 7;   // 160 -> 167
         }
         else if (SAVE_HUD_LAYOUT == 2) { // Inverted A and B
-            a_x       = -32; // 186 -> 156
-            b_x       = 34;  // 160 -> 192
+            a_x       = -34; // 186 -> 152
+            b_x       = 34;  // 160 -> 194
         }
         else if (SAVE_HUD_LAYOUT == 3) { // Nintendo
             a_x       = 70;  // 186 -> 256
