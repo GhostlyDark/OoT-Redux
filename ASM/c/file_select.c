@@ -98,8 +98,6 @@ void draw_file_select_hash(uint32_t fade_out_alpha, z64_menudata_t* menu_data) {
     gDPSetCombineMode(db->p++, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
     gDPSetPrimColor(db->p++, 0, 0, 0x00, 0x00, 0x00, fade_out_alpha);
 	
-	uint8_t width = 0;
-	if (CFG_WS)
-		width = 104;
+	uint8_t width = CFG_WS ? 104 : 0;
 	gSPTextureRectangle(db->p++, 0, 0, Z64_SCREEN_WIDTH+width<<2, Z64_SCREEN_HEIGHT<<2, 0, 0, 0, 1<<10, 1<<10);
 }

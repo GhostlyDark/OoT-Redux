@@ -10,7 +10,7 @@ uint16_t started_timer              = 0;
 extern uint16_t play_sfx;
 
 void handle_fps() {
-    if (!SAVE_30_FPS || z64_game.pause_ctxt.state != 0 || z64_file.game_mode != 0)
+    if (!OPTION_ACTIVE(1, SAVE_30_FPS, CFG_DEFAULT_30_FPS) || z64_file.game_mode != 0)
         return;
     
     if ( (z64_game.common.input[0].raw.pad.l && z64_game.common.input[0].pad_pressed.z) || (z64_game.common.input[0].raw.pad.z && z64_game.common.input[0].pad_pressed.l) ) {
@@ -20,9 +20,12 @@ void handle_fps() {
         else play_sfx = 0x4813;
     }
     
+    if (z64_game.pause_ctxt.state != 0)
+        return;
+    
     if (!fps_switch)
         fps_limit = 3;
-    else if (playing_ocarina || change_scene == 0x20 || talking_to_npc)
+    else if (playing_ocarina || (z64_link.state_flags_1 & PLAYER_STATE1_NO_CONTROL) || talking_to_npc)
         fps_limit = 2;
     else if (z64_file.game_mode == 1 || !CAN_CONTROL_LINK || hookshot_active == 0x100B || link_animation == 0x2708 || bottle_action == 0x00010005 || frogs > 1)
         fps_limit = 3;

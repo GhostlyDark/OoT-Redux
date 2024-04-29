@@ -43,8 +43,7 @@ int text_print(const char* s, int left, int top) {
 
 void text_flush_size(z64_disp_buf_t *db, int width, int height, int hoffset, int voffset) {
     for (int i = 0; i < text_bucket_count; i++) {
-        sprite_load(db, &font_sprite,
-                i * text_bucket_size, text_bucket_size);
+        sprite_load(db, &font_sprite, i * text_bucket_size, text_bucket_size);
 
         text_char_t *text_p = text_buf;
         while (text_p < text_end) {

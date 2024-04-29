@@ -19,6 +19,8 @@
 //#include "extern_ctxt.h"
 //#include "weather.h"
 
+int8_t last_scene = -1;
+
 void Gameplay_InitSkybox(z64_game_t* globalCtx, int16_t skyboxId);
 
 void c_init() {
@@ -40,10 +42,12 @@ void before_game_state_update() {
 
 void after_game_state_update() {
     get_health(z64_game.target_actor);
-    elite_enemies(&z64_game);
+    elite_enemies();
     //draw_dungeon_info(&(z64_ctxt.gfx->overlay));
     //draw_triforce_count(&(z64_ctxt.gfx->overlay));
     //give_ganon_boss_key();
+    draw_ammo_on_b_button();
+    handle_restore_mask();
 }
 
 void before_skybox_init(z64_game_t* game, int16_t skyboxId) {
@@ -52,6 +56,7 @@ void before_skybox_init(z64_game_t* game, int16_t skyboxId) {
 }
 
 void after_scene_init() {
+    last_scene = z64_game.scene_index;
     //check_ganon_entry();
     //clear_twinrova_vars();
     //models_reset();

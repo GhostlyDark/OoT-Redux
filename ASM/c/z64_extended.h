@@ -8,72 +8,50 @@ typedef void(*usebutton_t)(z64_game_t *game, z64_link_t *link, uint8_t item, uin
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
-typedef enum {
-    DPAD_NULL = 0x0,
-    DPAD_SWORD,
-    DPAD_SHIELD,
-    DPAD_TUNIC,
-    DPAD_BOOTS,
-    DPAD_IRON_BOOTS,
-    DPAD_HOVER_BOOTS,
-    DPAD_ARROWS,
-    DPAD_NUT,
-    DPAD_LENS,
-    DPAD_OCARINA,
-    DPAD_CHILD_TRADE,
-    DPAD_ADULT_TRADE,
-    DPAD_DINS_FIRE,
-    DPAD_FARORES_WIND,
-    DPAD_NAYRUS_LOVE,
-} dpad_action_t;
+/* Important CFGs */
+extern uint8_t CFG_WS;
+extern uint8_t CFG_OPTIONS_MENU;
 
-typedef enum {
-    LIMIT_STICK = 0x0,
-    LIMIT_NUT,
-    LIMIT_BOMB,
-    LIMIT_BOW,
-    LIMIT_FIRE_ARROW,
-    LIMIT_DINS_FIRE,
-    LIMIT_SLINGSHOT,
-    LIMIT_OCARINA,
-    LIMIT_BOMBCHU,
-    LIMIT_HOOKSHOT,
-    LIMIT_ICE_ARROW,
-    LIMIT_FARORES_WIND,
-    LIMIT_BOOMERANG,
-    LIMIT_LENS,
-    LIMIT_BEANS,
-    LIMIT_HAMMER,
-    LIMIT_LIGHT_ARROW,
-    LIMIT_NAYRUS_LOVE,
-    LIMIT_BOTTLE_1,
-    LIMIT_BOTTLE_2,
-    LIMIT_BOTTLE_3,
-    LIMIT_BOTTLE_4,
-    LIMIT_ADULT_TRADE,
-    LIMIT_CHILD_TRADE,
-    LIMIT_QUIVER,
-    LIMIT_KOKIRI_SWORD,
-    LIMIT_MASTER_SWORD,
-    LIMIT_GIANTS_KNIFE,
-    LIMIT_BOMB_BAG,
-    LIMIT_DEKU_SHIELD,
-    LIMIT_HYLIAN_SHIELD,
-    LIMIT_MIRROR_SHIELD,
-    LIMIT_STRENGTH,
-    LIMIT_KOKIRI_TUNIC,
-    LIMIT_GORON_TUNIC,
-    LIMIT_ZORA_TUNIC,
-    LIMIT_SCALE,
-    LIMIT_KOKIRI_BOOTS,
-    LIMIT_IRON_BOOTS,
-    LIMIT_HOVER_BOOTS,
-} limit_item_t;
+/* Default Options */
+extern uint8_t CFG_DEFAULT_30_FPS;
+extern uint8_t CFG_DEFAULT_ARROW_TOGGLE;
+extern uint8_t CFG_DEFAULT_DPAD;
+extern uint8_t CFG_DEFAULT_SHOW_DPAD;
+extern uint8_t CFG_DEFAULT_HIDE_HUD;
+extern uint8_t CFG_DEFAULT_HUD_LAYOUT;
+extern uint8_t CFG_DEFAULT_SHOW_HEALTH;
+extern uint8_t CFG_DEFAULT_CHEST_CONTENTS;
+extern uint8_t CFG_DEFAULT_A_BUTTON_SCALE;
+extern uint8_t CFG_DEFAULT_B_BUTTON_SCALE;
+extern uint8_t CFG_DEFAULT_C_LEFT_BUTTON_SCALE;
+extern uint8_t CFG_DEFAULT_C_DOWN_BUTTON_SCALE;
+extern uint8_t CFG_DEFAULT_C_RIGHT_BUTTON_SCALE;
+extern uint8_t CFG_DEFAULT_INVERSE_AIM;
+extern uint8_t CFG_DEFAULT_NO_IDLE_CAMERA;
+extern uint8_t CFG_DEFAULT_KEEP_MASK;
+extern uint8_t CFG_DEFAULT_TRISWIPE;
+extern uint8_t CFG_DEFAULT_SWAP_ITEM;
+extern uint8_t CFG_DEFAULT_UNEQUIP_ITEM;
+extern uint8_t CFG_DEFAULT_UNEQUIP_GEAR;
+extern uint8_t CFG_DEFAULT_ITEM_ON_B;
+extern uint8_t CFG_DEFAULT_MASK_ABILITIES;
+extern uint8_t CFG_DEFAULT_EXTRA_ABILITIES;
+extern uint8_t CFG_DEFAULT_DAMAGE_TAKEN;
+extern uint8_t CFG_DEFAULT_RANDOM_ENEMIES;
+extern uint8_t CFG_DEFAULT_CROUCH_STAB_FIX;
+extern uint8_t CFG_DEFAULT_WEAKER_SWORDS;
+extern uint8_t CFG_DEFAULT_RUPEE_DRAIN;
+extern uint8_t CFG_DEFAULT_FOG;
+extern uint8_t CFG_DEFAULT_LEVITATION;
+extern uint8_t CFG_DEFAULT_INFINITE_HP;
+extern uint8_t CFG_DEFAULT_INFINITE_MP;
+extern uint8_t CFG_DEFAULT_INFINITE_RUPEES;
+extern uint8_t CFG_DEFAULT_INFINITE_AMMO;
 
 typedef enum {
     OPTIONS_SIZE_CORE  = 17,
-    OPTIONS_SIZE_MAIN  = 27,
-    OPTIONS_SIZE_ALL   = 34,
+    OPTIONS_SIZE_MAIN  = 29,
+    OPTIONS_SIZE_ALL   = 35,
     
     OPTION_30_FPS = 0,
     OPTION_ARROW_TOGGLE,
@@ -93,15 +71,16 @@ typedef enum {
     OPTION_KEEP_MASK,
     OPTION_TRISWIPE,
     
-    OPTION_DAMAGE_TAKEN,
-    OPTION_RANDOM_ENEMIES,
+    OPTION_SWAP_ITEM,
     OPTION_UNEQUIP_ITEM,
     OPTION_UNEQUIP_GEAR,
     OPTION_ITEM_ON_B,
-    OPTION_DOWNGRADE_ITEM,
+    OPTION_MASK_ABILITIES,
+    OPTION_EXTRA_ABILITIES,
+    OPTION_DAMAGE_TAKEN,
+    OPTION_RANDOM_ENEMIES,
     OPTION_CROUCH_STAB_FIX,
     OPTION_WEAKER_SWORDS,
-    OPTION_EXTRA_ABILITIES,
     OPTION_RUPEE_DRAIN,
     
     OPTION_FOG,
@@ -111,7 +90,20 @@ typedef enum {
     OPTION_INFINITE_MP,
     OPTION_INFINITE_RUPEES,
     OPTION_INFINITE_AMMO,
-} option;
+} option_t;
+
+typedef enum {
+    /* 0x00 */ PLAYER_MASK_NONE,
+    /* 0x01 */ PLAYER_MASK_KEATON,
+    /* 0x02 */ PLAYER_MASK_SKULL,
+    /* 0x03 */ PLAYER_MASK_SPOOKY,
+    /* 0x04 */ PLAYER_MASK_BUNNY,
+    /* 0x05 */ PLAYER_MASK_GORON,
+    /* 0x06 */ PLAYER_MASK_ZORA,
+    /* 0x07 */ PLAYER_MASK_GERUDO,
+    /* 0x08 */ PLAYER_MASK_TRUTH,
+    /* 0x09 */ PLAYER_MASK_MAX
+} player_mask_t;
 
 typedef enum {
     /* 0x01 */ CHEST_BOMBS_5 = 1,
@@ -238,7 +230,11 @@ typedef enum {
     /* 0x7A */ CHEST_DEKU_NUT_UPGRADE_40,
     /* 0x7B */ CHEST_BULLET_BAG_50,
     /* 0x7C */ CHEST_ICE_TRAP,
-} ChestItemID;
+} chest_item_id_t;
+
+typedef enum {
+    /* 0x01 */ SCENE_GROTTO = 0x3E,
+} scene_id_t;
 
 typedef enum {
     A_BUTTON = -1,
@@ -289,12 +285,12 @@ typedef enum {
 /* DRAM addresses & data */
 #define z64_usability                   (*(z64_usability_t*)    0x8039F114)
 #define z64_capacity                    (*(z64_capacity_t*)     0x800F8CCC)
-#define z64_change_scene                (*(uint32_t*)           0x801DB09C)
+//#define z64_change_scene              (*(uint32_t*)           0x801DB09C)
 #define z64_has_minimap                 (*(uint16_t*)           0x8018884C) // 0x8011B9B3, 8017643C, 8018884C
 #define z64_dungeon_scene               (*(uint16_t*)           0x801D8BEA)
 #define z64_scene                       (*(uint16_t*)           0x801C8544)
 #define z64_camera_view                 (*(uint8_t*)            0x801DB0CD)
-#define z64_mask_equipped               (*(uint8_t*)            0x801DAB7F)
+//#define z64_mask_equipped             (*(uint8_t*)            0x801DAB7F)
 #define z64_throwing_nut                (*(uint8_t*)            0x80124696)
 #define z64_triswipe                    (*(uint8_t*)            0x8011B9ED)
 #define z64_x_axis_input                (*(int8_t*)             0x801C84C8)
@@ -308,6 +304,12 @@ typedef enum {
 #define z64_damage_taken_modifier_2     (*(uint32_t*)           0x8038E5D8)
 #define z64_damage_taken_modifier_3     (*(uint16_t*)           0x8038E5EA)
 #define z64_textbox                     (*(uint16_t*)           0x801D8870)
+#define z64_check_lava_floor            (*(uint16_t*)           0x8038EBE4)
+#define z64_check_lava_trail_1          (*(uint8_t*)            0x8007A6F7)
+#define z64_check_lava_trail_2          (*(uint8_t*)            0x8007A6FF)
+#define z64_check_wall_damage           (*(uint32_t*)           0x800347EC)
+#define z64_check_freeze                (*(uint16_t*)           0x8038E760)
+#define z64_check_shock                 (*(uint16_t*)           0x8038E7C8)
 
 /* DRAM addresses & data for HUD */
 #define z64_b_button_label_x            (*(uint16_t*)           0x801C7C3A)
@@ -319,10 +321,15 @@ typedef enum {
 #define z64_c_right_x_set_item          (*(uint16_t*)           0x8039EAFC)
 #define z64_c_right_y_set_item          (*(uint16_t*)           0x8039EB04)
 
-/* DRAM addresses & data for Lens of Truth on D-Pad */
+/* DRAM addresses & data for items and Lens of Truth on D-Pad */
 #define z64_dpad_lens_1                 (*(uint16_t*)           0x80072D40)
 #define z64_dpad_lens_2                 (*(uint16_t*)           0x80072D4C)
 #define z64_dpad_lens_3                 (*(uint16_t*)           0x80072D58)
+
+#define z64_dpad_item_b                 (*(uint16_t*)           0x8038A948)
+#define z64_dpad_item_1                 (*(uint16_t*)           0x8038A978)
+#define z64_dpad_item_2                 (*(uint16_t*)           0x8038A9A8)
+#define z64_dpad_item_3                 (*(uint16_t*)           0x8038A9D4)
 
 /* DRAM addresses & data for FPS */
 #define fps_limit                       (*(uint8_t*)            0x801C6FA1)
@@ -342,6 +349,11 @@ typedef enum {
 #define z64_outer_red_trail_g           (*(uint8_t*)            0x802738B5)
 #define z64_outer_red_trail_b           (*(uint8_t*)            0x802738B6)
 
+/* Options */
+#define OPTION_ACTIVE(menu, save, default)       ( (CFG_OPTIONS_MENU >= menu && save)          || (CFG_OPTIONS_MENU < menu && default)          )
+#define OPTION_VALUE(menu, value, save, default) ( (CFG_OPTIONS_MENU >= menu && save == value) || (CFG_OPTIONS_MENU < menu && default == value) )
+#define IS_MASK_COMPLETED(paid_back, sold)       (GET_EVENTCHKINF(paid_back) && GET_ITEMGETINF(sold) )
+
 /* Availability */
 #define HAS_MAGIC                       (z64_file.magic_acquired && z64_file.magic_capacity_set)
 #define CAN_CONTROL_LINK                (z64_game.pause_ctxt.state == 0 && (uint32_t)z64_ctxt.state_dtor == z64_state_ovl_tab[3].vram_dtor && z64_file.game_mode == 0 && (z64_event_state_1 & 0x20) == 0)
@@ -353,6 +365,13 @@ typedef enum {
 #define CAN_USE_DPAD                    ( (z64_link.state_flags_1 & BLOCK_DPAD) == 0 && (uint32_t)z64_ctxt.state_dtor == z64_state_ovl_tab[3].vram_dtor && z64_file.game_mode == 0 && (z64_event_state_1 & 0x20) == 0)
 #define CAN_DRAW_HUD                    ( ( (uint32_t)z64_ctxt.state_dtor==z64_state_ovl_tab[3].vram_dtor) && (z64_file.game_mode == 0) && ( (z64_event_state_1 & 0x20) == 0) )
 #define IS_SEMI_ALPHA                   (z64_game.pause_ctxt.state == 0 && alpha >= 0x46)
+#define CAN_USE_SWAP(index)             (IS_PAUSE_SCREEN_CURSOR && (z64_game.pause_ctxt.changing == 0 || z64_game.pause_ctxt.changing == 3) && z64_game.pause_ctxt.screen_idx == index)
+#define CAN_USE_MASK_SWAP               (CAN_USE_SWAP(0) && z64_game.pause_ctxt.item_cursor == Z64_SLOT_CHILD_TRADE && OPTION_ACTIVE(1, SAVE_SWAP_ITEM, CFG_DEFAULT_SWAP_ITEM) && GET_INFTABLE(INFTABLE_GIVEN_ZELDAS_LETTER) && \
+                                        z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_KEATON_MASK && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH) 
+#define CAN_USE_OCARINA_SWAP            (CAN_USE_SWAP(0) && z64_game.pause_ctxt.item_cursor  == Z64_SLOT_OCARINA  && OPTION_ACTIVE(2, SAVE_SWAP_ITEM, CFG_DEFAULT_SWAP_ITEM) && DOWNGRADE_OCARINA)
+#define CAN_USE_HOOKSHOT_SWAP           (CAN_USE_SWAP(0) && z64_game.pause_ctxt.item_cursor  == Z64_SLOT_HOOKSHOT && OPTION_ACTIVE(2, SAVE_SWAP_ITEM, CFG_DEFAULT_SWAP_ITEM) && DOWNGRADE_HOOKSHOT)
+#define CAN_USE_GIANTS_KNIFE_SWAP       (CAN_USE_SWAP(3) && z64_game.pause_ctxt.equip_cursor == 3                 && OPTION_ACTIVE(2, SAVE_SWAP_ITEM, CFG_DEFAULT_SWAP_ITEM) && DOWNGRADE_GIANTS_KNIFE)
+                                        
 
 /* D-Pad Usability for Items */
 #define BLOCK_ITEMS                     (0x00800000 | 0x00000800 | 0x00200000 | 0x08000000)
@@ -363,40 +382,43 @@ typedef enum {
 #define CAN_USE_LENS                    (z64_game.pause_ctxt.state == 0 && (!z64_game.restriction_flags.all || z64_game.scene_index == 0x0010) && ( (z64_link.state_flags_1 & BLOCK_ITEMS) == 0) )
 #define CAN_USE_FARORES_WIND            (z64_game.pause_ctxt.state == 0 && !z64_game.restriction_flags.farores_wind && ( (z64_link.state_flags_1 & BLOCK_ITEMS) == 0) )
 
-/* D-Pad SRAM locations */
-#define DPAD_ADULT_UP                   (z64_file.ammo[0x04])
-#define DPAD_CHILD_UP                   (z64_file.ammo[0x05])
-#define DPAD_ADULT_RIGHT                (z64_file.ammo[0x07])
-#define DPAD_CHILD_RIGHT                (z64_file.ammo[0x09])
-#define DPAD_ADULT_DOWN                 (z64_file.ammo[0x0A])
-#define DPAD_CHILD_DOWN                 (z64_file.ammo[0x0B])
-#define DPAD_ADULT_LEFT                 (z64_file.ammo[0x0C])
-#define DPAD_CHILD_LEFT                 (z64_file.ammo[0x0D])
+/* D-Pad SRAM locations & Button Mappings */
+#define DPAD_CHILD_SET1_UP              (z64_file.unk_E8C[0x0])
+#define DPAD_CHILD_SET1_RIGHT           (z64_file.unk_E8C[0x1])
+#define DPAD_CHILD_SET1_DOWN            (z64_file.unk_E8C[0x2])
+#define DPAD_CHILD_SET1_LEFT            (z64_file.unk_E8C[0x3])
+#define DPAD_CHILD_SET2_UP              (z64_file.unk_E8C[0x4])
+#define DPAD_CHILD_SET2_RIGHT           (z64_file.unk_E8C[0x5])
+#define DPAD_CHILD_SET2_DOWN            (z64_file.unk_E8C[0x6])
+#define DPAD_CHILD_SET2_LEFT            (z64_file.unk_E8C[0x7])
+#define DPAD_ADULT_SET1_UP              (z64_file.unk_E8C[0x8])
+#define DPAD_ADULT_SET1_RIGHT           (z64_file.unk_E8C[0x9])
+#define DPAD_ADULT_SET1_DOWN            (z64_file.unk_E8C[0xA])
+#define DPAD_ADULT_SET1_LEFT            (z64_file.unk_E8C[0xB])
+#define DPAD_ADULT_SET2_UP              (z64_file.unk_E8C[0xC])
+#define DPAD_ADULT_SET2_RIGHT           (z64_file.unk_E8C[0xD])
+#define DPAD_ADULT_SET2_DOWN            (z64_file.unk_E8C[0xE])
+#define DPAD_ADULT_SET2_LEFT            (z64_file.unk_E8C[0xF])
+#define DPAD_BUTTON_INDEX(index)        ( (z64_file.link_age ? 0 : 8) + (GET_DPAD_ALT ? 4 : 0) + index)
+#define DPAD_SET_BUTTON(index)          (z64_file.unk_E8C[index])
+#define DPAD_SET_BUTTON_INDEX(index)    (z64_file.unk_E8C[DPAD_BUTTON_INDEX(index)])
 
-/* D-Pad Button Mappings */
-#define DPAD_ADULT_SET1_UP              ( (DPAD_ADULT_UP    >> 4) & 0xF)
-#define DPAD_ADULT_SET2_UP              (DPAD_ADULT_UP    & 0xF)
-#define DPAD_CHILD_SET1_UP              ( (DPAD_CHILD_UP    >> 4) & 0xF)
-#define DPAD_CHILD_SET2_UP              (DPAD_CHILD_UP    & 0xF)
-#define DPAD_ADULT_SET1_RIGHT           ( (DPAD_ADULT_RIGHT >> 4) & 0xF)
-#define DPAD_ADULT_SET2_RIGHT           (DPAD_ADULT_RIGHT & 0xF)
-#define DPAD_CHILD_SET1_RIGHT           ( (DPAD_CHILD_RIGHT >> 4) & 0xF)
-#define DPAD_CHILD_SET2_RIGHT           (DPAD_CHILD_RIGHT & 0xF)
-#define DPAD_ADULT_SET1_DOWN            ( (DPAD_ADULT_DOWN  >> 4) & 0xF)
-#define DPAD_ADULT_SET2_DOWN            (DPAD_ADULT_DOWN  & 0xF)
-#define DPAD_CHILD_SET1_DOWN            ( (DPAD_CHILD_DOWN  >> 4) & 0xF)
-#define DPAD_CHILD_SET2_DOWN            (DPAD_CHILD_DOWN  & 0xF)
-#define DPAD_ADULT_SET1_LEFT            ( (DPAD_ADULT_LEFT  >> 4) & 0xF)
-#define DPAD_ADULT_SET2_LEFT            (DPAD_ADULT_LEFT  & 0xF)
-#define DPAD_CHILD_SET1_LEFT            ( (DPAD_CHILD_LEFT  >> 4) & 0xF)
-#define DPAD_CHILD_SET2_LEFT            (DPAD_CHILD_LEFT  & 0xF)
-
-/* Extra saving for Redux (8011B4C8) */
-
+/* Extra saving for Redux Options (8011B4C8) */
 #define DPAD_INIT_SETUP                 ( (z64_file.inf_table[0x15] & 0x0001) >> 0)
 #define DOWNGRADE_GIANTS_KNIFE          ( (z64_file.inf_table[0x15] & 0x0002) >> 1)
 #define DOWNGRADE_OCARINA               ( (z64_file.inf_table[0x15] & 0x0004) >> 2)
 #define DOWNGRADE_HOOKSHOT              ( (z64_file.inf_table[0x15] & 0x0008) >> 3)
+
+#define SAVE_MASK_ABILITIES             ( (z64_file.inf_table[0x13] & 0x0001) >> 0)
+
+#define SAVE_CROUCH_STAB_FIX            ( (z64_file.inf_table[0x14] & 0x0100) >> 8)
+#define SAVE_WEAKER_SWORDS              ( (z64_file.inf_table[0x14] & 0x0200) >> 9)
+#define SAVE_EXTRA_ABILITIES            ( (z64_file.inf_table[0x14] & 0x0400) >> 10)
+#define SAVE_LEVITATION                 ( (z64_file.inf_table[0x14] & 0x0800) >> 11)
+#define SAVE_INFINITE_HP                ( (z64_file.inf_table[0x14] & 0x1000) >> 12)
+#define SAVE_INFINITE_MP                ( (z64_file.inf_table[0x14] & 0x2000) >> 13)
+#define SAVE_INFINITE_RUPEES            ( (z64_file.inf_table[0x14] & 0x4000) >> 14)
+#define SAVE_INFINITE_AMMO              ( (z64_file.inf_table[0x14] & 0x8000) >> 15)
 
 #define SAVE_30_FPS                     ( (z64_file.inf_table[0x15] & 0x0010) >> 4)
 #define SAVE_ARROW_TOGGLE               ( (z64_file.inf_table[0x15] & 0x0020) >> 5)
@@ -409,15 +431,10 @@ typedef enum {
 #define SAVE_UNEQUIP_ITEM               ( (z64_file.inf_table[0x15] & 0x1000) >> 12)
 #define SAVE_UNEQUIP_GEAR               ( (z64_file.inf_table[0x15] & 0x2000) >> 13)
 #define SAVE_ITEM_ON_B                  ( (z64_file.inf_table[0x15] & 0x4000) >> 14)
-#define SAVE_DOWNGRADE_ITEM             ( (z64_file.inf_table[0x15] & 0x8000) >> 15)
-#define SAVE_CROUCH_STAB_FIX            ( (z64_file.inf_table[0x14] & 0x0100) >> 8)
-#define SAVE_WEAKER_SWORDS              ( (z64_file.inf_table[0x14] & 0x0200) >> 9)
-#define SAVE_EXTRA_ABILITIES            ( (z64_file.inf_table[0x14] & 0x0400) >> 10)
-#define SAVE_LEVITATION                 ( (z64_file.inf_table[0x14] & 0x0800) >> 11)
-#define SAVE_INFINITE_HP                ( (z64_file.inf_table[0x14] & 0x1000) >> 12)
-#define SAVE_INFINITE_MP                ( (z64_file.inf_table[0x14] & 0x2000) >> 13)
-#define SAVE_INFINITE_RUPEES            ( (z64_file.inf_table[0x14] & 0x4000) >> 14)
-#define SAVE_INFINITE_AMMO              ( (z64_file.inf_table[0x14] & 0x8000) >> 15)
+#define SAVE_SWAP_ITEM                  ( (z64_file.inf_table[0x15] & 0x8000) >> 15)
+
+#define SAVE_RUPEE_DRAIN                ( (z64_file.inf_table[0x18] & 0x000F) >> 0)  // Options: 15
+#define SAVE_FOG                        ( (z64_file.inf_table[0x18] & 0x00F0) >> 4)  // Options: 15
 
 #define SAVE_DPAD                       ( (z64_file.inf_table[0x1B] & 0x0003) >> 0)  // Options: 2
 #define SAVE_SHOW_DPAD                  ( (z64_file.inf_table[0x1B] & 0x000C) >> 2)  // Options: 3
@@ -426,12 +443,18 @@ typedef enum {
 #define SAVE_A_BUTTON_SCALE             ( (z64_file.inf_table[0x1B] & 0x0C00) >> 10) // Options: 2
 #define SAVE_B_BUTTON_SCALE             ( (z64_file.inf_table[0x1B] & 0x7000) >> 12) // Options: 7
 #define SAVE_RANDOM_ENEMIES             ( (z64_file.inf_table[0x1B] & 0x8000) >> 15) // Options: 1
+
 #define SAVE_C_LEFT_BUTTON_SCALE        ( (z64_file.inf_table[0x1C] & 0x0007) >> 0)  // Options: 7
 #define SAVE_C_DOWN_BUTTON_SCALE        ( (z64_file.inf_table[0x1C] & 0x0070) >> 4)  // Options: 7
 #define SAVE_C_RIGHT_BUTTON_SCALE       ( (z64_file.inf_table[0x1C] & 0x0700) >> 8)  // Options: 7
 #define SAVE_DAMAGE_TAKEN               ( (z64_file.inf_table[0x1C] & 0x7000) >> 12) // Options: 7
-#define SAVE_RUPEE_DRAIN                ( (z64_file.inf_table[0x18] & 0x000F) >> 0)  // Options: 15
-#define SAVE_FOG                        ( (z64_file.inf_table[0x18] & 0x00F0) >> 4)  // Options: 15
+
+/* Extra Saving for Redux */
+#define LAST_MASK                       ( z64_file.unk_06_[z64_file.link_age] )
+#define SET_DPAD_ALT_                   ( SET_INFTABLE(INFTABLE_02) )
+#define CLEAR_DPAD_ALT                  ( CLEAR_INFTABLE(INFTABLE_02) )
+#define GET_DPAD_ALT                    ( (OPTION_VALUE(1, 2, SAVE_DPAD, CFG_DEFAULT_DPAD) ) ? GET_INFTABLE(INFTABLE_02) : 0)
+#define TOGGLE_DPAD_ALT                 ( GET_INFTABLE(INFTABLE_02) ?  CLEAR_INFTABLE(INFTABLE_02) : SET_INFTABLE(INFTABLE_02) )
 
 /* Keeping track of values */
 #define A_BUTTON_SCALE                  (*(uint16_t*)           0x80074F76)
@@ -456,5 +479,39 @@ typedef enum {
 #define MP_FIRE_ARROW                   (*(uint8_t*)            0x803AAC00)
 #define MP_ICE_ARROW                    (*(uint8_t*)            0x803AAC01)
 #define MP_LIGHT_ARROW                  (*(uint8_t*)            0x803AAC02)
+
+/* Player States */
+#define PLAYER_STATE1_EXITING                  (1 << 0)
+#define PLAYER_STATE1_SWINGING_BOTTLE          (1 << 1)
+#define PLAYER_STATE1_2                        (1 << 2)
+#define PLAYER_STATE1_HOLDING_RANGED           (1 << 3)
+#define PLAYER_STATE1_HAS_TARGET               (1 << 4)
+#define PLAYER_STATE1_5                        (1 << 5)
+#define PLAYER_STATE1_TALKING_1                (1 << 6)
+#define PLAYER_STATE1_7                        (1 << 7)
+#define PLAYER_STATE1_START_CHANGING_HELD_ITEM (1 << 8)
+#define PLAYER_STATE1_AIMING                   (1 << 9)
+#define PLAYER_STATE1_OPENING_CHEST            (1 << 10)
+#define PLAYER_STATE1_HOLDING_ABOVE_HEAD       (1 << 11)
+#define PLAYER_STATE1_12                       (1 << 12)
+#define PLAYER_STATE1_HANGING                  (1 << 13)
+#define PLAYER_STATE1_FINISHED_CLIMBING_1      (1 << 14)
+#define PLAYER_STATE1_HOLDING_Z                (1 << 15)
+#define PLAYER_STATE1_TALKING_2                (1 << 16)
+#define PLAYER_STATE1_FIXED_MOVEMENT           (1 << 17)
+#define PLAYER_STATE1_JUMPING                  (1 << 18)
+#define PLAYER_STATE1_FINISHED_CLIMBING_2      (1 << 19)
+#define PLAYER_STATE1_FIRST_PERSON             (1 << 20)
+#define PLAYER_STATE1_CLIMBING                 (1 << 21)
+#define PLAYER_STATE1_SHIELDING                (1 << 22)
+#define PLAYER_STATE1_RIDING                   (1 << 23)
+#define PLAYER_STATE1_HOLDING_BOOMERANG        (1 << 24)
+#define PLAYER_STATE1_25                       (1 << 25)
+#define PLAYER_STATE1_DAMAGED                  (1 << 26)
+#define PLAYER_STATE1_SWIMMING                 (1 << 27)
+#define PLAYER_STATE1_PLAYING_OCARINA          (1 << 28)
+#define PLAYER_STATE1_NO_CONTROL               (1 << 29)
+#define PLAYER_STATE1_30                       (1 << 30)
+#define PLAYER_STATE1_31                       (1 << 31)
 
 #endif

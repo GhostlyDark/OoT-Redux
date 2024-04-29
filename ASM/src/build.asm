@@ -112,9 +112,11 @@ RANDO_CONTEXT:
 FONT_TEXTURE:
 .incbin("../resources/font.bin")
 DPAD_TEXTURE:
-.incbin("../resources/dpad.bin")
+.incbin("../resources/dpad32.bin")
 TRIFORCE_ICON_TEXTURE:
 ;.incbin("../resources/triforce_sprite.bin")
+L_BUTTON_PAUSE_SCREEN_TEXTURE:
+.incbin("../resources/l_pause_screen_button.bin")
 
 ;GILDED_CHEST_FRONT_TEXTURE:
 ;.incbin("../resources/gilded_chest_front.bin")

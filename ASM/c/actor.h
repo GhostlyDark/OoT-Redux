@@ -8,7 +8,12 @@ typedef void(*actor_after_spawn_func)(z64_actor_t* actor, uint8_t overridden);
 
 void get_health(z64_actor_t* actor);
 void draw_health(z64_disp_buf_t *db);
-void elite_enemies(z64_game_t *game);
+void restore_spawner_backup(z64_game_t *game);
+void remove_enemy_spawner();
+void remove_falling_rocks_spawner();
+void set_actor_backup(z64_actor_t *actor);
+//void set_redead_freeze();
+void elite_enemies();
 z64_actor_t *replace_enemy_type(z64_actor_t *spawned);
 
 z64_actor_t *Actor_SpawnEntry_Hack(void *actorCtx, ActorEntry *actorEntry, z64_game_t *globalCtx);
@@ -26,6 +31,18 @@ z64_actor_t *Actor_SpawnEntry_Hack(void *actorCtx, ActorEntry *actorEntry, z64_g
 #define HP_GANONDORF                (*(uint8_t*)            0x8020B5CF)
 #define HP_GANON                    (*(uint8_t*)            0x801FA2DF)
 
+typedef struct {
+    int8_t scene;
+    uint16_t id;
+    int16_t x;
+    int16_t y;
+    int16_t z;
+    uint16_t xr;
+    uint16_t yr;
+    uint16_t zr;
+    uint16_t var;
+} actor_backup_t;
+
 typedef enum {
     EN_TEST        = 0x0002,
     BOSS_DODONGO   = 0x0012, // 0x0027
@@ -36,19 +53,26 @@ typedef enum {
     EN_ZF          = 0x0025,
     EN_ST          = 0x0037,
     BOSS_GANONDROF = 0x0052,
+    EN_AM          = 0x0054,
     EN_FLOORMAS    = 0x008E,
     EN_RD          = 0x0090,
+    EN_SW          = 0x0095,
     BOSS_FD        = 0x0096,
     EN_FD          = 0x0099,
     BOSS_FD2       = 0x00A2,
+    EN_ENCOUNT1    = 0x00A7,
     EN_FW          = 0x00AB,
+    EN_ENCOUNT2    = 0x00B4,
     BOSS_VA        = 0x00BA,
     BOSS_MO        = 0x00C4,
     BOSS_TW        = 0x00DC,
+    EN_ANUBICE     = 0x00E0,
     BOSS_GANON     = 0x00E8,
     EN_IK          = 0x0113,
+    EN_FZ          = 0x0121,
     BOSS_GANON2    = 0x017A,
     EN_WF          = 0x01AF,
+    EN_CROW        = 0x01C0,
 } actor_id;
 
 typedef enum {
@@ -121,5 +145,12 @@ typedef enum {
     EN_WF_GRAY                  =  0,
     EN_WF_WHITE                 =  1,
 } En_Wf;
+
+typedef enum {
+    EN_ENCOUNT1_LEEVER          = 0,
+    EN_ENCOUNT1_RED_TEKTITE     = 0x800,
+    EN_ENCOUNT1_STALCHILD       = 0x1000,
+    EN_ENCOUNT1_WOLFOS          = 0x1800,
+} En_Encount1;
 
 #endif

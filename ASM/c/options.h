@@ -7,7 +7,6 @@
 #include <string.h>
 #include <stdio.h>
 
-void toggle_options_menu();
 void handle_options_menu();
 void handle_options_menu_input(pad_t pad_pressed);
 uint8_t write_option(uint8_t index, uint8_t shift, pad_t pad_pressed, uint16_t save);

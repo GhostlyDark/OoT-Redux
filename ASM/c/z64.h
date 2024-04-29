@@ -476,6 +476,26 @@ typedef enum
   Z64_SLOT_BOTTLE_4,
   Z64_SLOT_ADULT_TRADE,
   Z64_SLOT_CHILD_TRADE,
+  
+  // Extra
+  Z64_SLOT_QUIVER,
+  Z64_SLOT_KOKIRI_SWORD,
+  Z64_SLOT_MASTER_SWORD,
+  Z64_SLOT_GIANTS_KNIFE,
+  Z64_SLOT_BOMB_BAG,
+  Z64_SLOT_DEKU_SHIELD,
+  Z64_SLOT_HYLIAN_SHIELD,
+  Z64_SLOT_MIRROR_SHIELD,
+  Z64_SLOT_STRENGTH,
+  Z64_SLOT_KOKIRI_TUNIC,
+  Z64_SLOT_GORON_TUNIC,
+  Z64_SLOT_ZORA_TUNIC,
+  Z64_SLOT_SCALE,
+  Z64_SLOT_KOKIRI_BOOTS,
+  Z64_SLOT_IRON_BOOTS,
+  Z64_SLOT_HOVER_BOOTS,
+  
+  Z64_SLOT_NULL = 0xFF,
 } z64_slot_t;
 
 typedef enum
@@ -588,7 +608,7 @@ typedef struct
   uint8_t         magic_capacity;            /* 0x003C */
   int8_t          double_defense;            /* 0x003D */
   int8_t          bgs_flag;                  /* 0x003E */
-  char            unk_05_;                   /* 0x003F */
+  char            ocarina_game_round_num;    /* 0x003F */
   int8_t          child_button_items[4];     /* 0x0040 */
   int8_t          child_c_button_slots[3];   /* 0x0044 */
   union
@@ -730,15 +750,18 @@ typedef struct
     uint32_t      unk_00_;
     uint32_t      rooms_1;
     uint32_t      rooms_2;
-  }               scene_flags[101];          /* 0x00D4 */
-  char            unk_0A_[0x0284];           /* 0x0BE0 */
-  z64_xyzf_t      fw_pos;                    /* 0x0E64 */
-  z64_angle_t     fw_yaw;                    /* 0x0E70 */
-  char            unk_0B_[0x0008];           /* 0x0E72 */
-  uint16_t        fw_scene_index;            /* 0x0E7A */
-  uint32_t        fw_room_index;             /* 0x0E7C */
-  int32_t         fw_set;                    /* 0x0E80 */
-  char            unk_0C_[0x0018];           /* 0x0E84 */
+  }               scene_flags[124];          /* 0x00D4 */
+  struct {
+    z64_xyzf_t    pos;
+    int32_t       yaw;
+    int32_t       playerParams;
+    int32_t       entranceIndex;
+    int32_t       roomIndex;
+    int32_t       set;
+    int32_t       tempSwchFlags;
+    int32_t       tempCollectFlags;
+  }               FaroresWindData;           /* 0x0E64 */
+  uint8_t         unk_E8C[0x10];             /* 0x0E8C */
   uint8_t         gs_flags[56];              /* 0x0E9C */
   uint16_t        event_chk_inf[14];         /* 0x0ED4 */
   uint16_t        item_get_inf[4];           /* 0x0EF0 */
@@ -994,34 +1017,46 @@ typedef struct {
     /* 0x0E */ uint16_t   params;
 } ActorEntry; // size = 0x10
 
-typedef struct
-{
+typedef struct {
   z64_actor_t  common;                 /* 0x0000 */
-  char         unk_00[0x0004];         /* 0x013C */
+  
+  int8_t       current_tunic;          /* 0x013C */
+  int8_t       current_sword_item_id;  /* 0x013D */
+  int8_t       current_shield;         /* 0x013E */
+  int8_t       current_boots;          /* 0x013F */
   uint8_t      item_button;            /* 0x0140 */
   int8_t       item_action_param;      /* 0x0141 */
   uint8_t      held_item_id;           /* 0x0142 */
-  int8_t       boots;                  /* 0x0143 */
+  int8_t       previous_boots;         /* 0x0143 */
   int8_t       held_item_action_param; /* 0x0144 */
-  char         unk_00_[0x02DF];        /* 0x0145 */
+  char         unk_00_[0x0003];        /* 0x0145 */
+  uint8_t      model_group;            /* 0x0148 */
+  uint8_t      next_model_group;       /* 0x0149 */
+  int8_t       item_change_type;       /* 0x014A */
+  uint8_t      model_anim_type;        /* 0x014B */
+  uint8_t      left_hand_type;         /* 0x014C */
+  uint8_t      right_hand_type;        /* 0x014D */
+  uint8_t      sheath_type;            /* 0x014E */
+  uint8_t      current_mask;           /* 0x014F */
+  char         unk_01_[0x02D4];        /* 0x0150 */
   int8_t       incoming_item_id;       /* 0x0424 */
-  char         unk_01_[0x0003];        /* 0x0425 */
+  char         unk_02_[0x0003];        /* 0x0425 */
   z64_actor_t *incoming_item_actor;    /* 0x0428 */
-  char         unk_02_[0x0008];        /* 0x042C */
+  char         unk_03_[0x0008];        /* 0x042C */
   uint8_t      action;                 /* 0x0434 */
-  char         unk_03_[0x0237];        /* 0x0435 */
+  char         unk_04_[0x0237];        /* 0x0435 */
   uint32_t     state_flags_1;          /* 0x066C */
   uint32_t     state_flags_2;          /* 0x0670 */
-  char         unk_04_[0x0004];        /* 0x0674 */
+  char         unk_05_[0x0004];        /* 0x0674 */
   z64_actor_t *boomerang_actor;        /* 0x0678 */
   z64_actor_t *navi_actor;             /* 0x067C */
-  char         unk_05_[0x01A8];        /* 0x0680 */
+  char         unk_06_[0x01A8];        /* 0x0680 */
   float        linear_vel;             /* 0x0828 */
-  char         unk_06_[0x0002];        /* 0x082C */
+  char         unk_07_[0x0002];        /* 0x082C */
   uint16_t     target_yaw;             /* 0x082E */
-  char         unk_07_[0x0003];        /* 0x0830 */
+  char         unk_08_[0x0003];        /* 0x0830 */
   int8_t       sword_state;            /* 0x0833 */
-  char         unk_08_[0x0050];        /* 0x0834 */
+  char         unk_09_[0x0050];        /* 0x0834 */
   int16_t      drop_y;                 /* 0x0884 */
   int16_t      drop_distance;          /* 0x0886 */
                                        /* 0x0888 */
@@ -1320,11 +1355,13 @@ typedef enum {
 } CameraModeType;
 
 /* game context */
-typedef struct
-{
+typedef struct {
   z64_ctxt_t       common;                 /* 0x00000 */
   uint16_t         scene_index;            /* 0x000A4 */
-  char             unk_00_[0x001A];        /* 0x000A6 */
+  uint8_t          scene_config;           /* 0x000A6  */
+  char             unk_00_[0x09];          /* 0x000A7 */
+  void*            scene_segment;          /* 0x000B0 */
+  char             unk_001_[0x0C];         /* 0x000B4 */
   uint32_t         screen_top;             /* 0x000C0 */
   uint32_t         screen_bottom;          /* 0x000C4 */
   uint32_t         screen_left;            /* 0x000C8 */
@@ -1336,8 +1373,9 @@ typedef struct
   char             unk_02_[0x0190];        /* 0x000E0 */
   z64_actor_t     *camera_focus;           /* 0x00270 */
   char             unk_03_[0x00AE];        /* 0x00274 */
-  uint16_t         camera_mode;            /* 0x00322 */
-  char             unk_04_[0x001A];        /* 0x00324 */
+  uint16_t         camera_setting;         /* 0x00322 */
+  uint16_t         camera_mode;            /* 0x00324 */
+  char             unk_04_[0x0018];        /* 0x00326 */
   uint16_t         camera_flag_1;          /* 0x0033E */
   char             unk_05_[0x016C];        /* 0x00340 */
   int16_t          event_flag;             /* 0x004AC */
@@ -1348,11 +1386,10 @@ typedef struct
   char             unk_08_[0x0008];        /* 0x007B8 */
   z64_col_hdr_t   *col_hdr;                /* 0x007C0 */
   char             unk_09_[0x1460];        /* 0x007C4 */
-  char             actor_ctxt[0x0008];     /* 0x01C24 */
+  z64_actor_ctxt_t actor_ctxt;             /* 0x01C24 */
   uint8_t          n_actors_loaded;        /* 0x01C2C */
   char             unk_0A_[0x0003];        /* 0x01C2D */
-  struct
-  {
+  struct {
     uint32_t       length;
     z64_actor_t   *first;
   }                actor_list[12];         /* 0x01C30 */
@@ -1362,8 +1399,7 @@ typedef struct
   char             unk_0C_1_[0x000A];      /* 0x01CD0 */
   uint8_t          target_actor_type;      /* 0x01CDA */
   char             unk_0C_2_[0x0005];      /* 0x01CDB */
-  struct
-  {
+  struct {
     z64_xyzf_t     pos;
     float          unk;
     colorRGB8_t    color;
@@ -1400,8 +1436,7 @@ typedef struct
     uint16_t       minimap;
   }                hud_alpha_channels;    /* 0x10732 */
   char             unk_13_[0x000C];       /* 0x10746 */
-  struct
-  {
+  struct {
     uint8_t        unk_00_;
     uint8_t        b_button;
     uint8_t        unk_01_;
@@ -2119,7 +2154,7 @@ typedef struct
 
 
 /*
- * SaveContext.eventChkInf
+ * SaveContext.eventChkInf (0x8011B4A4)
  */
 
 #define EVENTCHKINF_00 0x00 // Unused
@@ -2261,11 +2296,21 @@ typedef struct
 #define EVENTCHKINF_7E 0x7E // Unused
 #define EVENTCHKINF_7F 0x7F // Unused
 #define EVENTCHKINF_80 0x80
+#define EVENTCHKINF_81 0x81 // Unused
 #define EVENTCHKINF_82 0x82
-#define EVENTCHKINF_8C 0x8C
-#define EVENTCHKINF_8D 0x8D
-#define EVENTCHKINF_8E 0x8E
-#define EVENTCHKINF_8F 0x8F
+#define EVENTCHKINF_83 0x83 // Unused
+#define EVENTCHKINF_84 0x84 // Unused
+#define EVENTCHKINF_85 0x85 // Unused
+#define EVENTCHKINF_86 0x86 // Unused
+#define EVENTCHKINF_87 0x87 // Unused
+#define EVENTCHKINF_88 0x88 // Unused
+#define EVENTCHKINF_89 0x89 // Unused
+#define EVENTCHKINF_8A 0x8A // Unused
+#define EVENTCHKINF_8B 0x8B // Unused
+#define EVENTCHKINF_PAID_BACK_KEATON_MASK 0x8C
+#define EVENTCHKINF_PAID_BACK_SKULL_MASK 0x8D
+#define EVENTCHKINF_PAID_BACK_SPOOKY_MASK 0x8E
+#define EVENTCHKINF_PAID_BACK_BUNNY_HOOD 0x8F
 
 // 0x90-0x93
 // carpenters freed from the gerudo
@@ -2374,9 +2419,11 @@ typedef struct
 
 
 /*
- * SaveContext.itemGetInf
+ * SaveContext.itemGetInf (0x8011B4C0)
  */
 
+#define ITEMGETINF_00 0x00 // Unused
+#define ITEMGETINF_01 0x01 // Unused
 #define ITEMGETINF_02 0x02
 #define ITEMGETINF_03 0x03
 #define ITEMGETINF_04 0x04
@@ -2426,7 +2473,7 @@ typedef struct
 #define ITEMGETINF_27 0x27 // Unused
 #define ITEMGETINF_28 0x28 // Unused
 #define ITEMGETINF_29 0x29 // Unused
-#define ITEMGETINF_2A 0x2A
+#define ITEMGETINF_MASK_OF_TRUTH_LOANED 0x2A
 #define ITEMGETINF_2C 0x2C
 #define ITEMGETINF_2E 0x2E
 #define ITEMGETINF_2F 0x2F // Unused
@@ -2438,20 +2485,20 @@ typedef struct
 #define ITEMGETINF_35 0x35 // Unused
 #define ITEMGETINF_36 0x36 // Unused
 #define ITEMGETINF_37 0x37 // Unused
-#define ITEMGETINF_38 0x38
-#define ITEMGETINF_39 0x39
-#define ITEMGETINF_3A 0x3A
-#define ITEMGETINF_3B 0x3B
+#define ITEMGETINF_SOLD_KEATON_MASK 0x38
+#define ITEMGETINF_SOLD_SKULL_MASK 0x39
+#define ITEMGETINF_SOLD_SPOOKY_MASK 0x3A
+#define ITEMGETINF_SOLD_BUNNY_HOOD 0x3B
 #define ITEMGETINF_3B 0x3B // Unused
 #define ITEMGETINF_3C 0x3C // Unused
 #define ITEMGETINF_3D 0x3D // Unused
 #define ITEMGETINF_3E 0x3E // Unused
-#define ITEMGETINF_3F 0x3F
+#define ITEMGETINF_OTHER_MASKS_AVAILABLE 0x3F
 
 
 
 /*
- * SaveContext.infTable
+ * SaveContext.infTable (0x8011B4D0)
  */
 
 #define INFTABLE_00 0x00
@@ -2572,8 +2619,8 @@ typedef struct
 #define INFTABLE_73 0x73 // Unused
 #define INFTABLE_74 0x74 // Unused
 #define INFTABLE_75 0x75 // Unused
-#define INFTABLE_76 0x76
-#define INFTABLE_77 0x77
+#define INFTABLE_GIVEN_ZELDAS_LETTER 0x76
+#define INFTABLE_GIVEN_KEATON_MASK 0x77
 #define INFTABLE_78 0x78 // Unused
 #define INFTABLE_79 0x79 // Unused
 #define INFTABLE_7A 0x7A // Unused
@@ -2617,6 +2664,14 @@ typedef struct
 #define INFTABLE_A0 0xA0 // Unused
 #define INFTABLE_A1 0xA1 // Unused
 #define INFTABLE_A2 0xA2
+#define INFTABLE_A3 0xA3 // Unused
+#define INFTABLE_A4 0xA4 // Unused
+#define INFTABLE_A5 0xA5 // Unused
+#define INFTABLE_A6 0xA6 // Unused
+#define INFTABLE_A7 0xA7 // Unused
+#define INFTABLE_A8 0xA8 // Unused
+#define INFTABLE_A9 0xA9 // Unused
+#define INFTABLE_AA 0xAA // Unused
 #define INFTABLE_AB 0xAB
 #define INFTABLE_AC 0xAC // Unused
 #define INFTABLE_AD 0xAD // Unused

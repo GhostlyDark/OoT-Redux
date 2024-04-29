@@ -23,7 +23,6 @@ void reset_fps_values();
 #define talking_to_npc                  (*(uint8_t*)            0x801DAA36)
 #define fishing                         (*(uint8_t*)            0x801C8C41)
 #define frogs                           (*(uint8_t*)            0x801C8835)
-#define change_scene                    (*(uint8_t*)            0x801DB09C)
 #define lens_of_truth_start             (*(uint8_t*)            0x80072747)
 #define lens_of_truth_interval          (*(uint8_t*)            0x80072E0B) // 0x801D8BC1
 

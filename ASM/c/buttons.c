@@ -1,8 +1,5 @@
 #include "buttons.h"
 
-extern uint8_t CFG_WS;
-extern uint8_t CFG_OPTIONS_MENU;
-
 extern colorRGB8_t CFG_TUNIC_MAGICIAN;
 extern colorRGB8_t CFG_TUNIC_GUARDIAN;
 extern colorRGB8_t CFG_TUNIC_HERO;
@@ -18,8 +15,9 @@ uint8_t block_r            = 0;
 uint8_t block_z            = 0;
 uint8_t pressed_r          = 0;
 uint8_t pressed_z          = 0;
-uint8_t pressed_x          = 0;
-uint8_t pressed_y          = 0;
+uint8_t pressed_stick      = 0;
+uint8_t pressed_dpad       = 0;
+uint8_t timer_holding_l    = 0;
 
 uint8_t rupee_drain_frames = 0;
 uint8_t rupee_drain_secs   = 0;
@@ -37,60 +35,116 @@ colorRGB8_t tunic_zora;
 void handle_l_button() {
     if (z64_game.pause_ctxt.state != 0)
         return;
-    if (!SAVE_30_FPS && SAVE_DPAD != 2 && !SAVE_EXTRA_ABILITIES)
+    if (!OPTION_ACTIVE(1, SAVE_30_FPS, CFG_DEFAULT_30_FPS) && !OPTION_VALUE(1, 2, SAVE_DPAD, CFG_DEFAULT_DPAD) && !OPTION_ACTIVE(2, SAVE_EXTRA_ABILITIES, CFG_DEFAULT_EXTRA_ABILITIES))
         return;
     
     uint8_t toggle = 0;
     
-    if (SAVE_DPAD == 2) {
+    if (OPTION_VALUE(1, 2, SAVE_DPAD, CFG_DEFAULT_DPAD)) {
         if (z64_game.common.input[0].raw.pad.r)
             pressed_r = 1;
+        if (z64_game.common.input[0].raw.pad.du || z64_game.common.input[0].raw.pad.dr || z64_game.common.input[0].raw.pad.dd || z64_game.common.input[0].raw.pad.dl)
+            pressed_dpad = 1;
     }
-    else pressed_r = 0;
-    if (SAVE_30_FPS) {
+    else pressed_r = pressed_dpad = 0;
+    if (OPTION_ACTIVE(1, SAVE_30_FPS, CFG_DEFAULT_30_FPS)) {
         if (z64_game.common.input[0].raw.pad.z)
             pressed_z = 1;
     }
     else pressed_z = 0;
-    if (SAVE_EXTRA_ABILITIES) {
-        if (z64_game.common.input[0].raw.x != 0)
-            pressed_x = 1;
-        if (z64_game.common.input[0].raw.y != 0)
-            pressed_y = 1;
+    if (OPTION_ACTIVE(2, SAVE_EXTRA_ABILITIES, CFG_DEFAULT_EXTRA_ABILITIES)) {
+        if (z64_game.common.input[0].raw.x != 0 || z64_game.common.input[0].raw.y != 0)
+            pressed_stick = 1;
     }
-    else pressed_x = pressed_y = 0;
+    else pressed_stick = 0;
     
     if (z64_game.common.input[0].pad_released.l)
-        if (!pressed_r && !pressed_z && !pressed_x && !pressed_y)
+        if (!pressed_r && !pressed_z && !pressed_stick && !pressed_dpad && timer_holding_l != 30 / fps_limit)
             toggle_minimap();
     if (!z64_game.common.input[0].raw.pad.l)
-        pressed_r = pressed_z = pressed_x = pressed_y = 0;
+        pressed_r = pressed_z = pressed_stick = pressed_dpad = 0;
     
     if (z64_game.common.input[0].pad_pressed.l) {
-        if (SAVE_DPAD == 2)
+        if (OPTION_VALUE(1, 2, SAVE_DPAD, CFG_DEFAULT_DPAD))
             if (!z64_game.common.input[0].raw.pad.r)
                 block_r = 1;
-        if (SAVE_30_FPS)
+        if (OPTION_ACTIVE(1, SAVE_30_FPS, CFG_DEFAULT_30_FPS))
             if (!z64_game.common.input[0].raw.pad.z)
                 block_z = 1;
     }
+    
+    if (z64_game.common.input[0].raw.pad.l && timer_holding_l < 30 / fps_limit)
+        timer_holding_l++;
     if (!z64_game.common.input[0].raw.pad.l)
-        block_r = block_z = 0;
+        block_r = block_z = timer_holding_l = 0;
     
     if (block_r)
         z64_game.common.input[0].raw.pad.r = z64_game.common.input[0].pad_pressed.r = 0;
     if (block_z)
         z64_game.common.input[0].raw.pad.z = z64_game.common.input[0].pad_pressed.z = 0;
     
-    z64_game.common.input[0].pad_pressed.l = 0;    
+    z64_game.common.input[0].pad_pressed.l = 0;
+}
+
+void handle_l_button_paused() {
+    if (z64_game.pause_ctxt.state != 6 || CFG_OPTIONS_MENU == 0)
+        return;
+    
+    uint8_t toggle = 0;
+    
+    if (OPTION_VALUE(1, 2, SAVE_DPAD, CFG_DEFAULT_DPAD)) {
+        if (z64_game.common.input[0].raw.pad.r)
+            pressed_r = 1;
+    }
+    else pressed_r = 0;
+    if (OPTION_ACTIVE(1, SAVE_30_FPS, CFG_DEFAULT_30_FPS)) {
+        if (z64_game.common.input[0].raw.pad.z)
+            pressed_z = 1;
+    }
+    else pressed_z = 0;
+    
+    if (z64_game.common.input[0].pad_released.l)
+        if (!pressed_r && !pressed_r && !pressed_z && timer_holding_l != 30 / fps_limit)
+            toggle_options_menu();
+    if (!z64_game.common.input[0].raw.pad.l)
+        pressed_r = pressed_z = 0;
+    
+    if (z64_game.common.input[0].pad_pressed.l) {
+        if (OPTION_VALUE(1, 2, SAVE_DPAD, CFG_DEFAULT_DPAD))
+            if (!z64_game.common.input[0].raw.pad.r)
+                block_r = 1;
+        if (OPTION_ACTIVE(1, SAVE_30_FPS, CFG_DEFAULT_30_FPS))
+            if (!z64_game.common.input[0].raw.pad.z)
+                block_z = 1;
+    }
+    
+    if (z64_game.common.input[0].raw.pad.l && timer_holding_l < 30 / fps_limit)
+        timer_holding_l++;
+    if (!z64_game.common.input[0].raw.pad.l)
+        block_r = block_z = timer_holding_l = 0;
+    
+    if (block_r)
+        z64_game.common.input[0].raw.pad.r = z64_game.common.input[0].pad_pressed.r = 0;
+    if (block_z)
+        z64_game.common.input[0].raw.pad.z = z64_game.common.input[0].pad_pressed.z = 0;
+    
+    z64_game.common.input[0].pad_pressed.l = 0;
+}
+
+void toggle_options_menu() {
+    play_sfx = 0x4813;
+    if (z64_game.pause_ctxt.unk_02_[1] == 0)
+        z64_game.pause_ctxt.unk_02_[1] = 3;
+    else {
+        z64_game.pause_ctxt.unk_02_[1] = 0;
+        play_sfx = 0x4814;
+    }
 }
 
 void toggle_minimap() {
     if ( (z64_game.scene_index >= 0x00 && z64_game.scene_index <= 0x09 ) || (z64_game.scene_index >= 0x51 && z64_game.scene_index <= 0x64) ) {
         z64_gameinfo.minimap_disabled ^= 1;
-        if (z64_gameinfo.minimap_disabled)
-            play_sfx = 0x4813;
-        else play_sfx = 0x4814;;
+        play_sfx = z64_gameinfo.minimap_disabled ? 0x4813 : 0x4814;
     }
 }
 
@@ -160,37 +214,38 @@ void set_scale_values(uint8_t option, uint8_t button, int8_t icon_size, int8_t c
 }
 
 void handle_button_scaling() {
-    if (SAVE_A_BUTTON_SCALE       > 0)   { A_BUTTON_SCALE = A_BUTTON_TEXT_SCALE = 0x3F80 - 0x40 * SAVE_A_BUTTON_SCALE; }
-    if (SAVE_B_BUTTON_SCALE       > 0)   { set_scale_values(SAVE_B_BUTTON_SCALE,       0,  1,  0); }
-    if (SAVE_C_LEFT_BUTTON_SCALE  > 0)   { set_scale_values(SAVE_C_LEFT_BUTTON_SCALE,  1, -3, -2); }
-    if (SAVE_C_DOWN_BUTTON_SCALE  > 0)   { set_scale_values(SAVE_C_DOWN_BUTTON_SCALE,  2, -3, -2); }
-    if (SAVE_C_RIGHT_BUTTON_SCALE > 0)   { set_scale_values(SAVE_C_RIGHT_BUTTON_SCALE, 3, -3, -2); }
+    if (OPTION_ACTIVE(1, SAVE_A_BUTTON_SCALE       > 0, CFG_DEFAULT_A_BUTTON_SCALE       > 0))   { A_BUTTON_SCALE = A_BUTTON_TEXT_SCALE = 0x3F80 - 0x40 * CFG_OPTIONS_MENU >= 1 ? SAVE_A_BUTTON_SCALE : CFG_DEFAULT_A_BUTTON_SCALE; }
+    if (OPTION_ACTIVE(1, SAVE_B_BUTTON_SCALE       > 0, CFG_DEFAULT_B_BUTTON_SCALE       > 0))   { set_scale_values(CFG_OPTIONS_MENU >= 1 ? SAVE_B_BUTTON_SCALE       : CFG_DEFAULT_B_BUTTON_SCALE,       0,  1,  0); }
+    if (OPTION_ACTIVE(1, SAVE_C_LEFT_BUTTON_SCALE  > 0, CFG_DEFAULT_C_LEFT_BUTTON_SCALE  > 0))   { set_scale_values(CFG_OPTIONS_MENU >= 1 ? SAVE_C_LEFT_BUTTON_SCALE  : CFG_DEFAULT_C_LEFT_BUTTON_SCALE,  1, -3, -2); }
+    if (OPTION_ACTIVE(1, SAVE_C_DOWN_BUTTON_SCALE  > 0, CFG_DEFAULT_C_DOWN_BUTTON_SCALE  > 0))   { set_scale_values(CFG_OPTIONS_MENU >= 1 ? SAVE_C_DOWN_BUTTON_SCALE  : CFG_DEFAULT_C_LEFT_BUTTON_SCALE,  2, -3, -2); }
+    if (OPTION_ACTIVE(1, SAVE_C_RIGHT_BUTTON_SCALE > 0, CFG_DEFAULT_C_RIGHT_BUTTON_SCALE > 0))   { set_scale_values(CFG_OPTIONS_MENU >= 1 ? SAVE_C_RIGHT_BUTTON_SCALE : CFG_DEFAULT_C_RIGHT_BUTTON_SCALE, 3, -3, -2); }
 }
 
 void handle_layout() {
-    if (SAVE_HUD_LAYOUT == 0 && SAVE_B_BUTTON_SCALE == 0 && SAVE_C_LEFT_BUTTON_SCALE == 0 && SAVE_C_DOWN_BUTTON_SCALE == 0 && SAVE_C_RIGHT_BUTTON_SCALE == 0)
+    if (OPTION_VALUE(1, 0, SAVE_HUD_LAYOUT, CFG_DEFAULT_HUD_LAYOUT) && OPTION_VALUE(1, 0, SAVE_B_BUTTON_SCALE,      CFG_DEFAULT_B_BUTTON_SCALE)      && OPTION_VALUE(1, 0, SAVE_C_LEFT_BUTTON_SCALE,  CFG_DEFAULT_C_LEFT_BUTTON_SCALE) \
+                                                                    && OPTION_VALUE(1, 0, SAVE_C_DOWN_BUTTON_SCALE, CFG_DEFAULT_C_DOWN_BUTTON_SCALE) && OPTION_VALUE(1, 0, SAVE_C_RIGHT_BUTTON_SCALE, CFG_DEFAULT_C_RIGHT_BUTTON_SCALE))
         return;
     
-    if (z64_game.pause_ctxt.state == 6 && SAVE_HUD_LAYOUT > 0) {
-        if (SAVE_HUD_LAYOUT == 3) { // Nintendo
+    if (z64_game.pause_ctxt.state == 6 && OPTION_ACTIVE(1, SAVE_HUD_LAYOUT > 0, CFG_DEFAULT_HUD_LAYOUT > 0)) {
+        if (OPTION_VALUE(1, 3, SAVE_HUD_LAYOUT, CFG_DEFAULT_HUD_LAYOUT)) { // Nintendo
             z64_c_left_x_set_item  = 0x343 + (0x208 * CFG_WS);
             z64_c_down_x_set_item  = 0x4FB + (0x208 * CFG_WS);
             z64_c_right_x_set_item = 0x1D1 + (0x208 * CFG_WS);
             z64_c_left_y_set_item  = 0x44C; z64_c_down_y_set_item = 0x492; z64_c_right_y_set_item = 0x352;
         }
-        else if (SAVE_HUD_LAYOUT == 4) { // Modern
+        else if (OPTION_VALUE(1, 4, SAVE_HUD_LAYOUT, CFG_DEFAULT_HUD_LAYOUT)) { // Modern
             z64_c_left_x_set_item  = 0x217 + (0x208 * CFG_WS);
             z64_c_down_x_set_item  = 0x4FB + (0x208 * CFG_WS);
             z64_c_right_x_set_item = 0x2FD + (0x208 * CFG_WS);
             z64_c_left_y_set_item  = 0x352; z64_c_down_y_set_item = 0x492; z64_c_right_y_set_item = 0x44C;
         }
-        else if (SAVE_HUD_LAYOUT == 5) { // GameCube (Original)
+        else if (OPTION_VALUE(1, 5, SAVE_HUD_LAYOUT, CFG_DEFAULT_HUD_LAYOUT)) { // GameCube (Original)
             z64_c_left_x_set_item  = 0x3C0 + (0x208 * CFG_WS);
             z64_c_down_x_set_item  = 0x4FB + (0x208 * CFG_WS);
             z64_c_right_x_set_item = 0x4FE + (0x208 * CFG_WS);
             z64_c_left_y_set_item  = 0x4C9; z64_c_down_y_set_item = 0x492; z64_c_right_y_set_item = 0x314;
         }
-        else if (SAVE_HUD_LAYOUT == 6) { // GameCube (Modern)
+        else if (OPTION_VALUE(1, 6, SAVE_HUD_LAYOUT, CFG_DEFAULT_HUD_LAYOUT)) { // GameCube (Modern)
             z64_c_left_x_set_item  = 0x544 + (0x208 * CFG_WS);
             z64_c_down_x_set_item  = 0x4FB + (0x208 * CFG_WS);
             z64_c_right_x_set_item = 0x37A + (0x208 * CFG_WS);
@@ -201,16 +256,16 @@ void handle_layout() {
     if (CAN_DRAW_HUD && ( (!CFG_WS && z64_gameinfo.a_button_x == 186) || (CFG_WS && z64_gameinfo.a_button_x == 290) ) & z64_gameinfo.a_button_y == 9 && z64_gameinfo.item_button_y[0] == 0x11 && z64_gameinfo.item_button_y[1] == 0x12 && z64_gameinfo.item_button_y[2] == 0x22 && z64_gameinfo.item_button_y[3] == 0x12 && z64_gameinfo.c_up_button_y == 0x10) {
         uint16_t a_x = 0, a_y = 0, b_x = 0, b_y = 0, c_left_x = 0, c_left_y = 0, c_down_x = 0, c_down_y = 0, c_right_x = 0, c_right_y = 0, c_up_x = 0, c_up_y = 0;
         
-        if (SAVE_HUD_LAYOUT == 1) { // Majora's Mask
+        if (OPTION_VALUE(1, 1, SAVE_HUD_LAYOUT, CFG_DEFAULT_HUD_LAYOUT)) { // Majora's Mask
             a_x       = 4;   // 186 -> 190
             a_y       = 14;  // 9   -> 23
             b_x       = 7;   // 160 -> 167
         }
-        else if (SAVE_HUD_LAYOUT == 2) { // Inverted A and B
+        else if (OPTION_VALUE(1, 2, SAVE_HUD_LAYOUT, CFG_DEFAULT_HUD_LAYOUT)) { // Inverted A and B
             a_x       = -34; // 186 -> 152
             b_x       = 34;  // 160 -> 194
         }
-        else if (SAVE_HUD_LAYOUT == 3) { // Nintendo
+        else if (OPTION_VALUE(1, 3, SAVE_HUD_LAYOUT, CFG_DEFAULT_HUD_LAYOUT)) { // Nintendo
             a_x       = 70;  // 186 -> 256
             a_y       = 23;  // 9   -> 32
             b_x       = 80;  // 160 -> 240
@@ -224,7 +279,7 @@ void handle_layout() {
             c_up_x    = 10;  // 254 -> 264
             c_up_y    = -10; // 16  -> 6
         }
-        else if (SAVE_HUD_LAYOUT == 4) { // Modern
+        else if (OPTION_VALUE(1, 4, SAVE_HUD_LAYOUT, CFG_DEFAULT_HUD_LAYOUT)) { // Modern
             a_x       = 46;  // 186 -> 234
             a_y       = 45;  // 9   -> 54
             b_x       = 104; // 160 -> 264
@@ -238,7 +293,7 @@ void handle_layout() {
             c_up_x    = 10;  // 254 -> 264        
             c_up_y    = -10; // 16  -> 6        
         }
-        else if (SAVE_HUD_LAYOUT == 5) { // GameCube (Original)
+        else if (OPTION_VALUE(1, 5, SAVE_HUD_LAYOUT, CFG_DEFAULT_HUD_LAYOUT)) { // GameCube (Original)
             a_x       = 55;  // 186 -> 241
             a_y       = 20;  // 9   -> 29
             b_x       = 65;  // 160 -> 225
@@ -251,7 +306,7 @@ void handle_layout() {
             c_right_y = 25;  // 18  -> 43
             c_up_x    = -20; // 254 -> 234
         }
-        else if (SAVE_HUD_LAYOUT == 6) { // GameCube (Modern)
+        else if (OPTION_VALUE(1, 6, SAVE_HUD_LAYOUT, CFG_DEFAULT_HUD_LAYOUT)) { // GameCube (Modern)
             a_x       = 55;  // 186 -> 241
             a_y       = 20;  // 9   -> 29
             b_x       = 65;  // 160 -> 225
@@ -265,25 +320,25 @@ void handle_layout() {
             c_up_x    = -20; // 254 -> 234
         }
         
-        if (SAVE_B_BUTTON_SCALE > 0) {
-            uint8_t val = SAVE_B_BUTTON_SCALE * 0.5;
+        if (OPTION_ACTIVE(1, SAVE_B_BUTTON_SCALE > 0, CFG_DEFAULT_B_BUTTON_SCALE > 0)) {
+            uint8_t val = CFG_OPTIONS_MENU >= 1 ? SAVE_B_BUTTON_SCALE : CFG_DEFAULT_B_BUTTON_SCALE * 0.5;
             b_x += val;
             b_y += val;
             z64_b_button_label_x -= val / 2;
             z64_b_button_label_y -= val / 1.3;
         }
-        if (SAVE_C_LEFT_BUTTON_SCALE > 0) {
-            uint8_t val = SAVE_C_LEFT_BUTTON_SCALE * 0.5;
+        if (OPTION_ACTIVE(1, SAVE_C_LEFT_BUTTON_SCALE > 0, CFG_DEFAULT_C_LEFT_BUTTON_SCALE > 0)) {
+            uint8_t val = CFG_OPTIONS_MENU >= 1 ? SAVE_C_LEFT_BUTTON_SCALE : CFG_DEFAULT_C_LEFT_BUTTON_SCALE * 0.5;
             c_left_x += val;
             c_left_y += val;
         }
-        if (SAVE_C_DOWN_BUTTON_SCALE > 0) {
-            uint8_t val = SAVE_C_DOWN_BUTTON_SCALE * 0.5;
+        if (OPTION_ACTIVE(1, SAVE_C_DOWN_BUTTON_SCALE > 0, CFG_DEFAULT_C_DOWN_BUTTON_SCALE > 0)) {
+            uint8_t val = CFG_OPTIONS_MENU >= 1 ? SAVE_C_DOWN_BUTTON_SCALE : CFG_DEFAULT_C_DOWN_BUTTON_SCALE * 0.5;
             c_down_x += val;
             c_down_y += val;
         }
-        if (SAVE_C_RIGHT_BUTTON_SCALE > 0) {
-            uint8_t val = SAVE_C_RIGHT_BUTTON_SCALE * 0.5;
+        if (OPTION_ACTIVE(1, SAVE_C_RIGHT_BUTTON_SCALE > 0, CFG_DEFAULT_C_RIGHT_BUTTON_SCALE > 0)) {
+            uint8_t val = CFG_OPTIONS_MENU >= 1 ? SAVE_C_RIGHT_BUTTON_SCALE : CFG_DEFAULT_C_RIGHT_BUTTON_SCALE * 0.5;
             c_right_x += val;
             c_right_y += val;
         }
@@ -332,7 +387,7 @@ void reset_layout() {
     z64_gameinfo.c_up_button_x    = 0xFE  + (0x68 * CFG_WS);
     z64_gameinfo.c_up_icon_x      = 0xF7  + (0x68 * CFG_WS);
     
-    if (z64_game.pause_ctxt.state == 6 && SAVE_HUD_LAYOUT <= 1) {
+    if (z64_game.pause_ctxt.state == 6 && OPTION_ACTIVE(1, SAVE_HUD_LAYOUT <= 1, CFG_DEFAULT_HUD_LAYOUT <= 1)) {
         z64_c_left_x_set_item  = 0x294 + (0x208 * CFG_WS);
         z64_c_down_x_set_item  = 0x384 + (0x218 * CFG_WS);
         z64_c_right_x_set_item = 0x474 + (0x208 * CFG_WS);
@@ -341,48 +396,19 @@ void reset_layout() {
 }
 
 void handle_hud() {
-    if (!CAN_DRAW_HUD || !CAN_CONTROL_LINK || z64_textbox != 0 || z64_change_scene == 0x20000000 || z64_change_scene == 0x20000001 || z64_change_scene == 1)
+    if (!CAN_DRAW_HUD || !CAN_CONTROL_LINK || z64_textbox != 0 || (z64_link.state_flags_1 & PLAYER_STATE1_NO_CONTROL) || (z64_link.state_flags_1 & PLAYER_STATE1_EXITING) )
     return;
     
-    if (SAVE_HIDE_HUD == 0)
+    if (OPTION_VALUE(1, 0, SAVE_HIDE_HUD, CFG_DEFAULT_HIDE_HUD))
         set_hide_hud(50);
-    else if (SAVE_HIDE_HUD == 1)
+    else if (OPTION_VALUE(1, 1, SAVE_HIDE_HUD, CFG_DEFAULT_HIDE_HUD))
         set_hide_hud(6);
-    else if (SAVE_HIDE_HUD == 2)
+    else if (OPTION_VALUE(1, 2, SAVE_HIDE_HUD, CFG_DEFAULT_HIDE_HUD))
         set_hide_hud(9);
-    else if (SAVE_HIDE_HUD == 3)
+    else if (OPTION_VALUE(1, 3, SAVE_HIDE_HUD, CFG_DEFAULT_HIDE_HUD))
         set_hide_hud(11);
-    else if (SAVE_HIDE_HUD == 4)
+    else if (OPTION_VALUE(1, 4, SAVE_HIDE_HUD, CFG_DEFAULT_HIDE_HUD))
         set_hide_hud(1);
-    
-    /*if (SAVE_HIDE_HUD == 0) {
-        if (z64_file.prev_hud_visibility_mode == 1)
-            z64_file.prev_hud_visibility_mode = 50;
-    }
-    else if (SAVE_HIDE_HUD == 1) {
-        if (z64_file.prev_hud_visibility_mode == 50)
-            z64_file.prev_hud_visibility_mode = 6;
-        if (z64_file.next_hud_visibility_mode == 50)
-            z64_file.next_hud_visibility_mode = 6;
-    }
-    else if (SAVE_HIDE_HUD == 2) {
-        if (z64_file.prev_hud_visibility_mode == 6)
-            z64_file.prev_hud_visibility_mode = 9;
-        if (z64_file.next_hud_visibility_mode == 50)
-            z64_file.next_hud_visibility_mode = 9;
-    }
-    else if (SAVE_HIDE_HUD == 3) {
-        if (z64_file.prev_hud_visibility_mode == 9)
-            z64_file.prev_hud_visibility_mode = 11;
-        if (z64_file.next_hud_visibility_mode == 50)
-            z64_file.next_hud_visibility_mode = 11;
-    }
-    else if (SAVE_HIDE_HUD == 4) {
-        if (z64_file.prev_hud_visibility_mode == 11)
-            z64_file.prev_hud_visibility_mode = 1;
-        if (z64_file.next_hud_visibility_mode == 50)
-            z64_file.next_hud_visibility_mode = 1;
-    }*/
 }
 
 void set_hide_hud(uint8_t value) {
@@ -393,7 +419,8 @@ void set_hide_hud(uint8_t value) {
 }
 
 void set_b_button(pad_t pad_pressed) {
-    if (!SAVE_ITEM_ON_B || !z64_game.common.input[0].pad_pressed.a || z64_game.pause_ctxt.screen_idx != 0 || z64_game.pause_ctxt.unk_02_[1] != 0 || z64_game.pause_ctxt.cursor_pos == 0x0A || z64_game.pause_ctxt.cursor_pos == 0x0B || z64_game.pause_ctxt.item_cursor <= Z64_SLOT_STICK || z64_game.pause_ctxt.item_cursor >= Z64_SLOT_CHILD_TRADE)
+    if (!OPTION_ACTIVE(2, SAVE_ITEM_ON_B, CFG_DEFAULT_ITEM_ON_B) || !z64_game.common.input[0].pad_pressed.a || z64_game.pause_ctxt.screen_idx != 0 || z64_game.pause_ctxt.unk_02_[1] != 0 || \
+        z64_game.pause_ctxt.cursor_pos == 0x0A || z64_game.pause_ctxt.cursor_pos == 0x0B || z64_game.pause_ctxt.item_cursor <= Z64_SLOT_STICK || z64_game.pause_ctxt.item_cursor >= Z64_SLOT_CHILD_TRADE)
         return;
     
     z64_item_t item = 0xFF;
@@ -416,7 +443,7 @@ void set_b_button(pad_t pad_pressed) {
 }
 
 void handle_rupee_drain() {
-    if (SAVE_RUPEE_DRAIN == 0)
+    if (OPTION_VALUE(2, 0, SAVE_RUPEE_DRAIN, CFG_DEFAULT_RUPEE_DRAIN))
         return;
     
     if (z64_file.energy > 1) {
@@ -427,19 +454,15 @@ void handle_rupee_drain() {
             rupee_drain_secs++;
         }
     
-        if (rupee_drain_secs >= SAVE_RUPEE_DRAIN) {
+        if (rupee_drain_secs >= ( (CFG_OPTIONS_MENU >= 2) ? SAVE_RUPEE_DRAIN : CFG_DEFAULT_RUPEE_DRAIN) ) {
             rupee_drain_secs = 0;
         
             if (z64_file.rupees > 0)
                 z64_file.rupees--;
             else {
-                if (z64_file.energy > 7)
-                    z64_file.energy -= 4;
-                else z64_file.energy = 1;
+                z64_file.energy -= z64_file.energy > 7 ? 4 : 1;
                 z64_LinkInvincibility(&z64_link, 0x14);
-                if (z64_file.link_age)
-                    play_sfx = 0x6825;
-                else play_sfx = 0x6805;
+                play_sfx = z64_file.link_age ? 0x6825 : 0x6805;
             }
         }
     }
@@ -447,7 +470,7 @@ void handle_rupee_drain() {
 }
 
 void handle_power_crouch_stab_fix() {
-    if (!SAVE_CROUCH_STAB_FIX || z64_file.equip_sword == 0)
+    if (!OPTION_ACTIVE(2, SAVE_CROUCH_STAB_FIX, CFG_DEFAULT_CROUCH_STAB_FIX) || z64_file.equip_sword == 0)
         return;
     
     if (z64_file.equip_sword == 1)
@@ -461,7 +484,7 @@ void handle_power_crouch_stab_fix() {
 }
 
 void handle_weaker_swords() {
-    if (SAVE_WEAKER_SWORDS)
+    if (OPTION_ACTIVE(2, SAVE_WEAKER_SWORDS, CFG_DEFAULT_WEAKER_SWORDS))
         if (z64_sword_damage_1 > 1 && z64_file.equip_sword > 0)
             z64_sword_damage_2 = z64_sword_damage_1 - 1;
 }
@@ -480,7 +503,7 @@ void handle_abilities_tunic_colors() {
         tunic_zora.b   = TUNIC_ZORA_B;
     }
     
-    if (z64_file.forest_medallion && SAVE_EXTRA_ABILITIES) {
+    if (z64_file.forest_medallion && OPTION_ACTIVE(2, SAVE_EXTRA_ABILITIES, CFG_DEFAULT_EXTRA_ABILITIES)) {
         TUNIC_KOKIRI_R = CFG_TUNIC_MAGICIAN.r;
         TUNIC_KOKIRI_G = CFG_TUNIC_MAGICIAN.g;
         TUNIC_KOKIRI_B = CFG_TUNIC_MAGICIAN.b;
@@ -491,7 +514,7 @@ void handle_abilities_tunic_colors() {
         TUNIC_KOKIRI_B = tunic_kokiri.b;
     }
         
-    if (z64_file.fire_medallion && SAVE_EXTRA_ABILITIES) {
+    if (z64_file.fire_medallion && OPTION_ACTIVE(2, SAVE_EXTRA_ABILITIES, CFG_DEFAULT_EXTRA_ABILITIES)) {
         TUNIC_GORON_R = CFG_TUNIC_GUARDIAN.r;
         TUNIC_GORON_G = CFG_TUNIC_GUARDIAN.g;
         TUNIC_GORON_B = CFG_TUNIC_GUARDIAN.b;
@@ -502,7 +525,7 @@ void handle_abilities_tunic_colors() {
         TUNIC_GORON_B = tunic_goron.b;
     }
         
-    if (z64_file.water_medallion && SAVE_EXTRA_ABILITIES) {
+    if (z64_file.water_medallion && OPTION_ACTIVE(2, SAVE_EXTRA_ABILITIES, CFG_DEFAULT_EXTRA_ABILITIES)) {
         TUNIC_ZORA_R = CFG_TUNIC_HERO.r;
         TUNIC_ZORA_G = CFG_TUNIC_HERO.g;
         TUNIC_ZORA_B = CFG_TUNIC_HERO.b;
@@ -515,7 +538,7 @@ void handle_abilities_tunic_colors() {
     
     if (z64_file.equip_tunic == 0)
         z64_tunic_color = 3;
-    if (z64_file.shadow_medallion && SAVE_EXTRA_ABILITIES) {
+    if (z64_file.shadow_medallion && OPTION_ACTIVE(2, SAVE_EXTRA_ABILITIES, CFG_DEFAULT_EXTRA_ABILITIES)) {
         TUNIC_UNUSED_R = CFG_TUNIC_SHADOW.r;
         TUNIC_UNUSED_G = CFG_TUNIC_SHADOW.g;
         TUNIC_UNUSED_B = CFG_TUNIC_SHADOW.b;
@@ -528,7 +551,7 @@ void handle_abilities_tunic_colors() {
 }
 
 void handle_abilities() {
-    if (!SAVE_EXTRA_ABILITIES)
+    if (!OPTION_ACTIVE(2, SAVE_EXTRA_ABILITIES, CFG_DEFAULT_EXTRA_ABILITIES))
         return;
     
     if (z64_file.light_medallion && (z64_file.equip_boots == 1 || (z64_file.spirit_medallion && z64_file.equip_boots == 3) ) && z64_game.common.input[0].raw.pad.l) {
@@ -583,9 +606,7 @@ void handle_abilities() {
             if (restore_secs >= 3) {
                 restore_secs = 0;
                 z64_file.energy += 4;
-                if (z64_file.magic >= 4)
-                    z64_file.magic -= 4;
-                else z64_file.magic = 0;
+                z64_file.magic -= z64_file.magic >= 4 ? 4 : 0;
                 play_sfx = 0x480B;
             }
         }
@@ -609,9 +630,8 @@ void handle_abilities() {
                 
             if (magic_secs >= 1) {
                 magic_secs = 0;
-                if (z64_file.magic >= 2 - z64_file.zoras_sapphire)
-                    z64_file.magic -= 2 - z64_file.zoras_sapphire;
-                else z64_file.magic = 0;
+                uint8_t drain = 2 - z64_file.zoras_sapphire;
+                z64_file.magic -= z64_file.magic >= drain ? drain : 0;
             }
                 
             z64_move_speed = z64_max_move_speed + 0x50 + (z64_file.gorons_ruby * 0x50);
@@ -624,10 +644,10 @@ void handle_infinite() {
     if (z64_game.pause_ctxt.unk_02_[1] != 0)
         return;
     
-    if (SAVE_INFINITE_HP)
+    if (OPTION_ACTIVE(3, SAVE_INFINITE_HP, CFG_DEFAULT_INFINITE_HP))
         z64_file.energy = z64_file.energy_capacity;
     
-    if (SAVE_INFINITE_MP) {
+    if (OPTION_ACTIVE(3, SAVE_INFINITE_MP, CFG_DEFAULT_INFINITE_MP)) {
         if (HAS_MAGIC) {
             if (z64_file.magic_capacity)
                 z64_file.magic = 0x60;
@@ -635,17 +655,15 @@ void handle_infinite() {
         }
     }
     
-    if (SAVE_INFINITE_AMMO) {
-        z64_file.ammo[0x00] = z64_capacity.stick_upgrade[z64_file.stick_upgrade];
-        z64_file.ammo[0x01] = z64_capacity.nut_upgrade[z64_file.nut_upgrade];
-        z64_file.ammo[0x02] = z64_capacity.bomb_bag[z64_file.bomb_bag];
-        z64_file.ammo[0x03] = z64_capacity.quiver[z64_file.quiver];
-        z64_file.ammo[0x06] = z64_capacity.bullet_bag[z64_file.bullet_bag];
-        
-        if (z64_file.items[Z64_SLOT_BOMBCHU] == Z64_ITEM_BOMBCHU)
-            z64_file.ammo[0x08] = 50;
+    if (OPTION_ACTIVE(3, SAVE_INFINITE_AMMO, CFG_DEFAULT_INFINITE_AMMO)) {
+        z64_file.ammo[Z64_SLOT_STICK]     = z64_capacity.stick_upgrade[z64_file.stick_upgrade];
+        z64_file.ammo[Z64_SLOT_NUT]       = z64_capacity.nut_upgrade[z64_file.nut_upgrade];
+        z64_file.ammo[Z64_SLOT_BOMB]      = z64_capacity.bomb_bag[z64_file.bomb_bag];
+        z64_file.ammo[Z64_SLOT_BOW]       = z64_capacity.quiver[z64_file.quiver];
+        z64_file.ammo[Z64_SLOT_SLINGSHOT] = z64_capacity.bullet_bag[z64_file.bullet_bag];
+        z64_file.ammo[Z64_SLOT_BOMBCHU]   = 50;
     }
     
-    if (SAVE_INFINITE_RUPEES)
+    if (OPTION_ACTIVE(3, SAVE_INFINITE_RUPEES, CFG_DEFAULT_INFINITE_RUPEES))
         z64_file.rupees = z64_capacity.wallet[z64_file.wallet];
 }

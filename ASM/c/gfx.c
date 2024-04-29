@@ -6,6 +6,7 @@
 extern uint8_t FONT_TEXTURE[];
 extern uint8_t DPAD_TEXTURE[];
 extern uint8_t TRIFORCE_ICON_TEXTURE[];
+extern uint8_t L_BUTTON_PAUSE_SCREEN_TEXTURE[];
 extern uint8_t CFG_WS;
 
 Gfx setup_db[] =
@@ -57,18 +58,25 @@ sprite_t font_sprite = {
 
 sprite_t dpad_sprite = {
     NULL, 32, 32, 1,
-    G_IM_FMT_IA, G_IM_SIZ_16b, 2
+    G_IM_FMT_RGBA, G_IM_SIZ_32b, 4
+  //G_IM_FMT_IA, G_IM_SIZ_16b, 2
 };  
 
 sprite_t triforce_sprite = {
     NULL, 16, 16, 16,
     G_IM_FMT_IA, G_IM_SIZ_8b, 1
-};  
+};
+
+sprite_t l_button_pause_screen_sprite = {
+    NULL, 24, 32, 1,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
 
 sprite_t song_note_sprite = {
     NULL, 16, 24, 1,
     G_IM_FMT_IA, G_IM_SIZ_8b, 1
 };
+
 sprite_t key_rupee_clock_sprite = {
     NULL, 16, 16, 3,
     G_IM_FMT_IA, G_IM_SIZ_8b, 1
@@ -119,6 +127,15 @@ sprite_t title_sprite = {
     G_IM_FMT_IA, G_IM_SIZ_8b, 1
 };
 
+sprite_t title_text_sprite = {
+    NULL, 128, 16, 9,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
+
+sprite_t name_panel_sprite = {
+    NULL, 72, 24, 2,
+    G_IM_FMT_IA, G_IM_SIZ_8b, 1
+};
 
 int sprite_bytes_per_tile(sprite_t *sprite) {
     return sprite->tile_w * sprite->tile_h * sprite->bytes_per_texel;
@@ -128,33 +145,21 @@ int sprite_bytes(sprite_t *sprite) {
     return sprite->tile_count * sprite_bytes_per_tile(sprite);
 }
 
-void sprite_load(z64_disp_buf_t *db, sprite_t *sprite,
-        int start_tile, int tile_count) {
-    int width = sprite->tile_w;
+void sprite_load(z64_disp_buf_t *db, sprite_t *sprite, int start_tile, int tile_count) {
+    int width  = sprite->tile_w;
     int height = sprite->tile_h * tile_count;
-    gDPLoadTextureTile(db->p++,
-            sprite->buf + (start_tile * sprite_bytes_per_tile(sprite)),
-            sprite->im_fmt, sprite->im_siz,
-            width, height,
-            0, 0,
-            width - 1, height - 1,
-            0,
-            G_TX_WRAP, G_TX_WRAP,
-            G_TX_NOMASK, G_TX_NOMASK,
-            G_TX_NOLOD, G_TX_NOLOD);
+    gDPLoadTextureTile(db->p++, sprite->buf + (start_tile * sprite_bytes_per_tile(sprite)), sprite->im_fmt, sprite->im_siz, width, height, 0, 0, width - 1, height - 1, 0, G_TX_WRAP, G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 }
 
-void sprite_draw(z64_disp_buf_t *db, sprite_t *sprite, int tile_index,
-        int left, int top, int width, int height) {
-    int width_factor = (1<<10) * sprite->tile_w / width;
+void sprite_draw(z64_disp_buf_t *db, sprite_t *sprite, int tile_index, int left, int top, int width, int height) {
+    int width_factor  = (1<<10) * sprite->tile_w / width;
     int height_factor = (1<<10) * sprite->tile_h / height;
+    gSPTextureRectangle(db->p++, left<<2, top<<2, (left + width)<<2, (top + height)<<2, 0, 0, (tile_index * sprite->tile_h)<<5, width_factor, height_factor);
+}
 
-    gSPTextureRectangle(db->p++,
-            left<<2, top<<2,
-            (left + width)<<2, (top + height)<<2,
-            0,
-            0, (tile_index * sprite->tile_h)<<5,
-            width_factor, height_factor);
+void sprite_load_and_draw(z64_disp_buf_t *db, sprite_t *sprite, int index, int16_t x, int16_t y, uint8_t w, uint8_t h) {
+    sprite_load(db, sprite, index, 1);
+    sprite_draw(db, sprite, 0, x, y, w, h);
 }
 
 void gfx_init() {
@@ -202,6 +207,7 @@ void gfx_init() {
     quest_items_sprite.buf = icon_item_24_static.buf;
     dpad_sprite.buf = DPAD_TEXTURE;
     triforce_sprite.buf = TRIFORCE_ICON_TEXTURE;
+    l_button_pause_screen_sprite.buf = L_BUTTON_PAUSE_SCREEN_TEXTURE;
     song_note_sprite.buf = icon_item_static.buf + 0x00088040;
     key_rupee_clock_sprite.buf = parameter_static.buf + 0x00001E00;
     item_digit_sprite.buf = parameter_static.buf + 0x000035C0;
@@ -213,6 +219,8 @@ void gfx_init() {
     subscreen_sprite.buf = subscreen_static.buf;
     item_name_sprite.buf = item_name_static.buf + 0x38400;
     title_sprite.buf = title_static.buf + 0x2D700;
+    title_text_sprite.buf = title_static.buf + 0x2DF00;
+    name_panel_sprite.buf = icon_item_static.buf + 0x867C0;
     
     int font_bytes = sprite_bytes(&font_sprite);
     font_sprite.buf = heap_alloc(font_bytes);

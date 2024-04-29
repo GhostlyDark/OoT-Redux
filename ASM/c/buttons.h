@@ -5,6 +5,8 @@
 #include "z64_extended.h"
 
 void handle_l_button();
+void handle_l_button_paused();
+void toggle_options_menu();
 void toggle_minimap();
 uint16_t get_scale_value(uint8_t scale);
 void set_scale_values(uint8_t option, uint8_t button, int8_t icon_size, int8_t c_size);

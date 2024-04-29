@@ -5,35 +5,23 @@
 #include "dpad_paused.h"
 #include "fps.h"
 
-extern uint8_t CFG_WS;
-extern uint8_t CFG_OPTIONS_MENU;
-
 extern uint16_t play_sfx;
+extern uint8_t checked_lens;
+extern uint8_t block_r;
+extern uint8_t block_z;
+extern uint8_t pressed_r;
+extern uint8_t pressed_z;
 
-uint8_t options_menu      = 0;
 uint8_t moved_axis_option = 0;
 uint8_t options_frames    = 0;
 uint8_t holding_stick     = 0;
 
 char medallion_item[9][17]                 = { "Light Medallion", "Forest Medallion", "Fire Medallion", "Water Medallion", "Shadow Medallion", "Spirit Medallion", "Kokiri's Emerald", "Goron's Ruby", "Zora's Sapphire" };
 char medallion_ability[9][16]              = { "Long Jump",       "Magician Tunic",   "Guardian Tunic", "Hero Tunic",      "Shadow Tunic",     "Hover Dash Jump",  "Dash",             "Faster Dash",  "Cheaper Dash"    };
-char options[OPTIONS_SIZE_ALL][17]         = { "30 FPS", "Arrow Toggle", "D-Pad Config", "D-Pad Layout", "Hide HUD", "HUD Layout", "Show Health", "Chest Contents", "A Button Scale", "B Button Scale", "C-Left Scale", "C-Down Scale", "C-Right Scale", "Inverse Aim", "No Idle Camera", "Keep Mask", "Tri-Swipe", "Damage Taken", "Random Enemies", "Unequip Item", "Unequip Gear", "Item on B", "Downgrade Item", "Crouch Stab Fix", "Weaker Swords", "Extra Abilities", "Rupee Drain", "Fog", "Inventory Editor", "Levitation", "Infinite Health", "Infinite Magic", "Infinite Rupees", "Infinite Ammo" };
-uint8_t options_max[OPTIONS_SIZE_ALL]      = { 0,        0,              2,              3,              4,          6,            0,             0,                2,                7,                7,              7,              7,               0,             0,                0,           0,           7,              0,                0,              0,              0,           0,                0,                 0,               0,                 15,            15,    0,                  0,             0,                0,                0,                 0               };
-int8_t  options_recenter[OPTIONS_SIZE_ALL] = { 40,       15,             15,             15,             30,         22,           17,            8,                6,                6,                11,             11,             10,              17,            5,                25,          25,          15,             8,                15,             15,             27,          5,                0,                 10,              0,                 20,            50,    -5,                 20,            0,                5,                0,                 10              };
+char options[OPTIONS_SIZE_ALL][17]         = { "30 FPS", "Arrow Toggle", "D-Pad Config", "D-Pad Layout", "Hide HUD", "HUD Layout", "Show Health", "Chest Contents", "A Button Scale", "B Button Scale", "C-Left Scale", "C-Down Scale", "C-Right Scale", "Inverse Aim", "No Idle Camera", "Keep Mask", "Tri-Swipe", "Swap Item", "Unequip Item", "Unequip Gear", "Item on B", "Mask Abilities", "Extra Abilities", "Damage Taken", "Random Enemies", "Crouch Stab Fix", "Weaker Swords", "Rupee Drain", "Fog", "Inventory Editor", "Levitation", "Infinite Health", "Infinite Magic", "Infinite Rupees", "Infinite Ammo" };
+uint8_t options_max[OPTIONS_SIZE_ALL]      = { 0,        0,              2,              3,              4,          6,            0,             0,                2,                7,                7,              7,              7,               0,             0,                0,           0,           0,           0,              0,              0,           0,                0,                 7,              0,                0,                 0,               15,            15,    0,                  0,             0,                0,                0,                 0               };
+int8_t  options_recenter[OPTIONS_SIZE_ALL] = { 40,       15,             15,             15,             30,         22,           17,            8,                6,                6,                11,             11,             10,              17,            5,                25,          25,          25,          15,             15,             27,          5,                0,                 15,             8,                0,                 10,              20,            50,    -5,                 20,            0,                5,                0,                 10              };
 uint8_t options_cursor                     = 0;
-
-void toggle_options_menu() {
-    if (z64_game.pause_ctxt.state != 6 || !z64_game.common.input[0].pad_pressed.l)
-        return;
-    
-    play_sfx = 0x4813;
-    if (z64_game.pause_ctxt.unk_02_[1] == 0)
-        z64_game.pause_ctxt.unk_02_[1] = 3;
-    else {
-        z64_game.pause_ctxt.unk_02_[1] = 0;
-        play_sfx = 0x4814;
-    }
-}
 
 void handle_options_menu() {
     if (z64_game.pause_ctxt.state != 6 || z64_game.pause_ctxt.unk_02_[1] != 3)
@@ -90,14 +78,15 @@ void handle_options_menu_input(pad_t pad_pressed) {
         case OPTION_NO_IDLE_CAMERA:     z64_file.inf_table[0x15] ^= 1 << 9;  return;
         case OPTION_KEEP_MASK:          z64_file.inf_table[0x15] ^= 1 << 10; return;
         case OPTION_TRISWIPE:           z64_file.inf_table[0x15] ^= 1 << 11; return;
+        case OPTION_SWAP_ITEM:          z64_file.inf_table[0x15] ^= 1 << 15; return;
         case OPTION_UNEQUIP_ITEM:       z64_file.inf_table[0x15] ^= 1 << 12; return;
         case OPTION_UNEQUIP_GEAR:       z64_file.inf_table[0x15] ^= 1 << 13; return;
         case OPTION_ITEM_ON_B:          z64_file.inf_table[0x15] ^= 1 << 14; return;
+        case OPTION_MASK_ABILITIES:     z64_file.inf_table[0x13] ^= 1 << 0;  return;
+        case OPTION_EXTRA_ABILITIES:    z64_file.inf_table[0x14] ^= 1 << 10; return;
         case OPTION_RANDOM_ENEMIES:     z64_file.inf_table[0x1B] ^= 1 << 15; return;
-        case OPTION_DOWNGRADE_ITEM:     z64_file.inf_table[0x15] ^= 1 << 15; return;
         case OPTION_CROUCH_STAB_FIX:    z64_file.inf_table[0x14] ^= 1 << 8;  return;
         case OPTION_WEAKER_SWORDS:      z64_file.inf_table[0x14] ^= 1 << 9;  return;
-        case OPTION_EXTRA_ABILITIES:    z64_file.inf_table[0x14] ^= 1 << 10; return;
         case OPTION_LEVITATION:         z64_file.inf_table[0x14] ^= 1 << 11; return;
         case OPTION_INFINITE_HP:        z64_file.inf_table[0x14] ^= 1 << 12; return;
         case OPTION_INFINITE_MP:        z64_file.inf_table[0x14] ^= 1 << 13; return;
@@ -112,9 +101,6 @@ void handle_options_menu_input(pad_t pad_pressed) {
         
         case OPTION_DPAD:
             write_option(0x1B, 0,  pad_pressed, SAVE_DPAD);
-            if (SAVE_DPAD == 0)
-                { z64_dpad_lens_1 = 0x504E; z64_dpad_lens_2 = 0x504F; z64_dpad_lens_3 = 0x5458; }
-            else check_lens();
             return;
         
         case OPTION_SHOW_DPAD:
@@ -198,8 +184,6 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
     if (z64_game.pause_ctxt.state != 6 || z64_game.pause_ctxt.unk_02_[1] != 3)
         return 0;
     
-    gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
-    
     uint8_t x = 40;
     if (CFG_WS)
         x += 52;
@@ -212,48 +196,36 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
     uint8_t width            = 80;
     uint8_t height           = 32;
     
-    // Subscreen
-    sprite_load(db, &stones_sprite, 0, 1);              // Fake Load
-    sprite_draw(db, &stones_sprite, -10, -10, 0, 4, 4); // Fake Draw
-    
     gDPSetPrimColor(db->p++, 0, 0, 0xA0, 0xA0, 0xA0, 0xFF);
-    sprite_load(db, &subscreen_sprite, 4,  1);
-    sprite_draw(db, &subscreen_sprite, 0, x,         y, width, height);
-    sprite_load(db, &subscreen_sprite, 66, 1);
-    sprite_draw(db, &subscreen_sprite, 0, x + width, y, width, height);
-    sprite_load(db, &subscreen_sprite, 5,  1);
-    sprite_draw(db, &subscreen_sprite, 0, x + 160,   y, width, height);
+    sprite_load_and_draw(db, &subscreen_sprite, 4,  x,         y, width, height);
+    sprite_load_and_draw(db, &subscreen_sprite, 66, x + width, y, width, height);
+    sprite_load_and_draw(db, &subscreen_sprite, 5,  x + 160,   y, width, height);
     
     for (uint8_t i=0; i<3; i++)
-        for (uint8_t j=1; j<=4; j++) {
-            sprite_load(db, &subscreen_sprite, (i + 3) + (15 * j),  1);
-            sprite_draw(db, &subscreen_sprite, 0, x + (width * i), y + (height * j), width, height);
-        }
+        for (uint8_t j=1; j<=4; j++)
+            sprite_load_and_draw(db, &subscreen_sprite, (i + 3) + (15 * j), x + (width * i), y + (height * j), width, height);
     
     gDPSetPrimColor(db->p++, 0, 0, 0xD0, 0xD0, 0xD0, 0xFF);
-    sprite_load(db, &button_sprite, 2, 1);
-    sprite_draw(db, &button_sprite, 0, left - 35,  top - 10, 32, 32);
-    sprite_load(db, &button_sprite, 4, 1);
-    sprite_draw(db, &button_sprite, 0, left + 120, top - 10, 32, 32);
+    sprite_load_and_draw(db, &button_sprite, 2, left - 35,  top - 10, 32, 32);
+    sprite_load_and_draw(db, &button_sprite, 4, left + 120, top - 10, 32, 32);
     
     gDPSetPrimColor(db->p++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
-    sprite_load(db, &title_sprite, 9, 1);
-    sprite_draw(db, &title_sprite, 0, x + 96, y + 3, 128, 16);
+    sprite_load_and_draw(db, &title_sprite, 9, x + 96, y + 3, 128, 16);
     
     // Options Text
     switch (options_cursor) {
         case OPTION_30_FPS:
             setting = SAVE_30_FPS;
-            text_print("Allows 30 FPS, press L and",  tooltipLeft, top + 50);
-            text_print("Z to toggle between 30 FPS",  tooltipLeft, top + 70);
-            text_print("and 20 FPS mode",             tooltipLeft, top + 90);
+            text_print("Allows 30 FPS, press L and", tooltipLeft, top + 50);
+            text_print("Z to toggle between 30 FPS", tooltipLeft, top + 70);
+            text_print("and 20 FPS mode",            tooltipLeft, top + 90);
             break;
         
         case OPTION_DPAD:
             setting = SAVE_DPAD;
-            text_print("0. Disabled",                 tooltipLeft, top + 50);
-            text_print("1. Enabled",                  tooltipLeft, top + 70);
-            text_print("2. Dual Set",                 tooltipLeft, top + 90);
+            text_print("0. Disabled",                tooltipLeft, top + 50);
+            text_print("1. Enabled",                 tooltipLeft, top + 70);
+            text_print("2. Dual Set",                tooltipLeft, top + 90);
             break;
             
         case OPTION_ARROW_TOGGLE:
@@ -271,176 +243,183 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
         
         case OPTION_HIDE_HUD:
             setting = SAVE_HIDE_HUD;
-            text_print("Choose from four different",  tooltipLeft, top + 50);
-            text_print("options to hide the HUD",     tooltipLeft, top + 70);
+            text_print("Choose from four different", tooltipLeft, top + 50);
+            text_print("options to hide the HUD",    tooltipLeft, top + 70);
             break;
         
         case OPTION_HUD_LAYOUT:
-            setting = SAVE_HUD_LAYOUT;    
-            text_print("Choose from seven different", tooltipLeft, top + 50);
-            text_print("layouts to change the HUD",   tooltipLeft, top + 70);
+            setting = SAVE_HUD_LAYOUT;
+            text_print("Choose from seven",          tooltipLeft, top + 50);
+            text_print("different layouts to ",      tooltipLeft, top + 70);
+            text_print("change the HUD",             tooltipLeft, top + 90);
             break;
         
         case OPTION_SHOW_HEALTH:
-            setting = SAVE_SHOW_HEALTH;    
-            text_print("Show the amount of health",  tooltipLeft, top + 50);
-            text_print("enemies have left in the",   tooltipLeft, top + 70);
-            text_print("HUD",                        tooltipLeft, top + 90);           
+            setting = SAVE_SHOW_HEALTH;
+            text_print("Show the amount of health", tooltipLeft, top + 50);
+            text_print("enemies have left in the",  tooltipLeft, top + 70);
+            text_print("HUD",                       tooltipLeft, top + 90);           
             break;
         
         case OPTION_CHEST_CONTENTS:
-            setting = SAVE_CHEST_CONTENTS;    
-            text_print("Adjusts the appearance of",  tooltipLeft, top + 50);
-            text_print("the chest according to",     tooltipLeft, top + 70);
-            text_print("the contents it contains",   tooltipLeft, top + 90);           
+            setting = SAVE_CHEST_CONTENTS;
+            text_print("Adjusts the appearance of", tooltipLeft, top + 50);
+            text_print("the chest according to",    tooltipLeft, top + 70);
+            text_print("the contents it contains",  tooltipLeft, top + 90);           
             break;
         
         case OPTION_A_BUTTON_SCALE:
-            setting = SAVE_A_BUTTON_SCALE;    
-            text_print("Set the scale for the",       tooltipLeft, top + 50);
-            text_print("A button",                    tooltipLeft, top + 70);
+            setting = SAVE_A_BUTTON_SCALE;
+            text_print("Set the scale for the",      tooltipLeft, top + 50);
+            text_print("A button",                   tooltipLeft, top + 70);
             break;
         
         case OPTION_B_BUTTON_SCALE:
-            setting = SAVE_B_BUTTON_SCALE;    
-            text_print("Set the scale for the",       tooltipLeft, top + 50);
-            text_print("B button",                    tooltipLeft, top + 70);
+            setting = SAVE_B_BUTTON_SCALE;
+            text_print("Set the scale for the",      tooltipLeft, top + 50);
+            text_print("B button",                   tooltipLeft, top + 70);
             break;
             
         case OPTION_C_LEFT_BUTTON_SCALE:
-            setting = SAVE_C_LEFT_BUTTON_SCALE;    
-            text_print("Set the scale for the",       tooltipLeft, top + 50);
-            text_print("C-Left button",               tooltipLeft, top + 70);
+            setting = SAVE_C_LEFT_BUTTON_SCALE;
+            text_print("Set the scale for the",      tooltipLeft, top + 50);
+            text_print("C-Left button",              tooltipLeft, top + 70);
             break;
             
         case OPTION_C_DOWN_BUTTON_SCALE:
-            setting = SAVE_C_DOWN_BUTTON_SCALE;    
-            text_print("Set the scale for the",       tooltipLeft, top + 50);
-            text_print("C-Down button",               tooltipLeft, top + 70);
+            setting = SAVE_C_DOWN_BUTTON_SCALE;
+            text_print("Set the scale for the",      tooltipLeft, top + 50);
+            text_print("C-Down button",              tooltipLeft, top + 70);
             break;
             
         case OPTION_C_RIGHT_BUTTON_SCALE:
-            setting = SAVE_C_RIGHT_BUTTON_SCALE;    
-            text_print("Set the scale for the",       tooltipLeft, top + 50);
-            text_print("C-Right button",              tooltipLeft, top + 70);
+            setting = SAVE_C_RIGHT_BUTTON_SCALE;
+            text_print("Set the scale for the",      tooltipLeft, top + 50);
+            text_print("C-Right button",             tooltipLeft, top + 70);
             break;
         
         case OPTION_INVERSE_AIM:
-            setting = SAVE_INVERSE_AIM;    
-            text_print("Inverse y-axis for analog",   tooltipLeft, top + 50);
-            text_print("controls when aiming in",     tooltipLeft, top + 70);
-            text_print("first-person view",           tooltipLeft, top + 90);
+            setting = SAVE_INVERSE_AIM;
+            text_print("Inverse y-axis for analog",  tooltipLeft, top + 50);
+            text_print("controls when aiming in",    tooltipLeft, top + 70);
+            text_print("first-person view",          tooltipLeft, top + 90);
             break;
         
         case OPTION_NO_IDLE_CAMERA:
-            setting = SAVE_NO_IDLE_CAMERA;    
-            text_print("The camera no longer moves",  tooltipLeft, top + 50);
-            text_print("behind Link during idle",     tooltipLeft, top + 70);
-            text_print("stance",                      tooltipLeft, top + 90);
+            setting = SAVE_NO_IDLE_CAMERA;
+            text_print("The camera no longer moves", tooltipLeft, top + 50);
+            text_print("behind Link during idle",    tooltipLeft, top + 70);
+            text_print("stance",                     tooltipLeft, top + 90);
             break;
         
         case OPTION_KEEP_MASK:
-            setting = SAVE_KEEP_MASK;    
-            text_print("Mask remains equipped upon",  tooltipLeft, top + 50);
-            text_print("entering another area",       tooltipLeft, top + 70);
+            setting = SAVE_KEEP_MASK;
+            text_print("Mask remains equipped upon", tooltipLeft, top + 50);
+            text_print("entering another area",      tooltipLeft, top + 70);
             break;
         
         case OPTION_TRISWIPE:
-            setting = SAVE_TRISWIPE;    
-            text_print("Replaces the transition",     tooltipLeft, top + 50);
-            text_print("effect with a twirling",      tooltipLeft, top + 70);
-            text_print("Triforce animation",          tooltipLeft, top + 90);
+            setting = SAVE_TRISWIPE;
+            text_print("Replaces the transition",    tooltipLeft, top + 50);
+            text_print("effect with a twirling",     tooltipLeft, top + 70);
+            text_print("Triforce animation",         tooltipLeft, top + 90);
             break;
-        
-        case OPTION_DAMAGE_TAKEN:
-            if (SAVE_DAMAGE_TAKEN > 0)
-                setting = 1 << (SAVE_DAMAGE_TAKEN-1);
-            text_print("Multiplies taken damage",     tooltipLeft, top + 50);
-            text_print("by the factor shown below",   tooltipLeft, top + 70);
-            text_print("0 = Off",                     tooltipLeft, top + 90);
+            
+        case OPTION_SWAP_ITEM:
+            setting = SAVE_SWAP_ITEM;
+            text_print("Cycle with C-Up between",    tooltipLeft, top + 50);
+            text_print("obtained items you own",     tooltipLeft, top + 70);
             break;
-        
-        case OPTION_RANDOM_ENEMIES:
-            setting = SAVE_RANDOM_ENEMIES;
-            text_print("Multiplies the health and",   tooltipLeft, top + 50);
-            text_print("changes the subtype for",     tooltipLeft, top + 70);
-            text_print("regular enemies randomly",    tooltipLeft, top + 90);
-            break;
-        
+            
         case OPTION_UNEQUIP_ITEM:
-            setting = SAVE_UNEQUIP_ITEM;    
-            text_print("Unassign items using the",    tooltipLeft, top + 50);
-            text_print("respective C button",         tooltipLeft, top + 70);
+            setting = SAVE_UNEQUIP_ITEM;
+            text_print("Unassign items using the",   tooltipLeft, top + 50);
+            text_print("respective C button",        tooltipLeft, top + 70);
             break;
         
         case OPTION_UNEQUIP_GEAR:
             setting = SAVE_UNEQUIP_GEAR;
-            text_print("Unassign equipment by",       tooltipLeft, top + 50);
-            text_print("pressing A",                  tooltipLeft, top + 70);
+            text_print("Unassign equipment by",      tooltipLeft, top + 50);
+            text_print("pressing A",                 tooltipLeft, top + 70);
             break;
         
         case OPTION_ITEM_ON_B:
-            setting = SAVE_ITEM_ON_B;    
-            text_print("Assign items to the B",       tooltipLeft, top + 50);
-            text_print("button by pressing A",        tooltipLeft, top + 70);
+            setting = SAVE_ITEM_ON_B;
+            text_print("Assign items to the B",      tooltipLeft, top + 50);
+            text_print("button by pressing A",       tooltipLeft, top + 70);
             break;
         
-        case OPTION_DOWNGRADE_ITEM:
-            setting = SAVE_DOWNGRADE_ITEM;    
-            text_print("Change between previously",   tooltipLeft, top + 50);
-            text_print("obtained items by pressing",  tooltipLeft, top + 70);
-            text_print("the C-Up button",             tooltipLeft, top + 90);
+        case OPTION_MASK_ABILITIES:
+            setting = SAVE_MASK_ABILITIES;
+            text_print("Equiping masks grant Link",  tooltipLeft, top + 50);
+            text_print("with abilities such as",     tooltipLeft, top + 70);
+            text_print("faster running or swimming", tooltipLeft, top + 90);
+            break;
+        
+        case OPTION_EXTRA_ABILITIES:
+            setting = SAVE_EXTRA_ABILITIES;
+            text_print("Obtain Spiritual Stones",    tooltipLeft, top + 50);
+            text_print("and Medallions to earn new", tooltipLeft, top + 70);
+            text_print("abilities",                  tooltipLeft, top + 90);
+            break;
+            
+        case OPTION_DAMAGE_TAKEN:
+            if (SAVE_DAMAGE_TAKEN > 0)
+                setting = 1 << (SAVE_DAMAGE_TAKEN-1);
+            text_print("Multiplies taken damage",    tooltipLeft, top + 50);
+            text_print("by the factor shown below",  tooltipLeft, top + 70);
+            text_print("0 = Off",                    tooltipLeft, top + 90);
+            break;
+        
+        case OPTION_RANDOM_ENEMIES:
+            setting = SAVE_RANDOM_ENEMIES;
+            text_print("Multiplies the health and",  tooltipLeft, top + 50);
+            text_print("changes the subtype for",    tooltipLeft, top + 70);
+            text_print("regular enemies randomly",   tooltipLeft, top + 90);
             break;
         
         case OPTION_CROUCH_STAB_FIX:
-            setting = SAVE_CROUCH_STAB_FIX;    
-            text_print("The Crouch Stab move no",     tooltipLeft, top + 50);
-            text_print("longer keeps the last",       tooltipLeft, top + 70);
-            text_print("dealt damage",                tooltipLeft, top + 90);
+            setting = SAVE_CROUCH_STAB_FIX;
+            text_print("The Crouch Stab move no",    tooltipLeft, top + 50);
+            text_print("longer keeps the last",      tooltipLeft, top + 70);
+            text_print("dealt damage",               tooltipLeft, top + 90);
             break;
         
         case OPTION_WEAKER_SWORDS:
             setting = SAVE_WEAKER_SWORDS;
-            text_print("Sword slashes now deal one",  tooltipLeft, top + 50);
-            text_print("less point of damage",        tooltipLeft, top + 70);
-            break;
-        
-        case OPTION_EXTRA_ABILITIES:
-            setting = SAVE_EXTRA_ABILITIES; 
-            text_print("Obtain Spiritual Stones",     tooltipLeft, top + 50);
-            text_print("and Medallions to earn new",  tooltipLeft, top + 70);
-            text_print("abilities",                   tooltipLeft, top + 90);
+            text_print("Sword slashes now deal one", tooltipLeft, top + 50);
+            text_print("less point of damage",       tooltipLeft, top + 70);
             break;
         
         case OPTION_RUPEE_DRAIN:
-            setting = SAVE_RUPEE_DRAIN;        
-            text_print("First drains rupees, then",   tooltipLeft, top + 50);
-            text_print("health based on set",         tooltipLeft, top + 70);
-            text_print("seconds",                     tooltipLeft, top + 90);
+            setting = SAVE_RUPEE_DRAIN;
+            text_print("First drains rupees, then",  tooltipLeft, top + 50);
+            text_print("health based on set",        tooltipLeft, top + 70);
+            text_print("seconds",                    tooltipLeft, top + 90);
             break;
         
         case OPTION_FOG:
-            setting = SAVE_FOG;        
-            text_print("Adjust the level of fog",     tooltipLeft, top + 50);
-            text_print("applied, with higher",        tooltipLeft, top + 70);
-            text_print("values decreasing the fog",   tooltipLeft, top + 90);
+            setting = SAVE_FOG;
+            text_print("Adjust the level of fog",    tooltipLeft, top + 50);
+            text_print("applied, with higher",       tooltipLeft, top + 70);
+            text_print("values decreasing the fog",  tooltipLeft, top + 90);
             break;
         
         case OPTION_INVENTORY_EDITOR:
-            text_print("Open the Inventory Editor",   tooltipLeft, top + 50);
-            text_print("subscreen and adjust all",    tooltipLeft, top + 70);
-            text_print("of your items",               tooltipLeft, top + 90);
+            text_print("Open the Inventory Editor",  tooltipLeft, top + 50);
+            text_print("subscreen and adjust all",   tooltipLeft, top + 70);
+            text_print("of your items",              tooltipLeft, top + 90);
             break;
         
         case OPTION_LEVITATION:
             setting = SAVE_LEVITATION;
-            text_print("Hold the L button to",        tooltipLeft, top + 50);
-            text_print("levitate",                    tooltipLeft, top + 70);
+            text_print("Hold the L button to",       tooltipLeft, top + 50);
+            text_print("levitate",                   tooltipLeft, top + 70);
             break;
         
         case OPTION_INFINITE_HP:
-            setting = SAVE_INFINITE_HP;    
-            text_print("Your Health is kept at",      tooltipLeft, top + 50);
+            setting = SAVE_INFINITE_HP;
+            text_print("Your Health is kept at",     tooltipLeft, top + 50);
             break;
         
         case OPTION_INFINITE_MP:
@@ -449,7 +428,7 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
             break;
         
         case OPTION_INFINITE_RUPEES:
-            setting = SAVE_INFINITE_RUPEES;    
+            setting = SAVE_INFINITE_RUPEES;
             text_print("Your Rupees are kept at",     tooltipLeft, top + 50);
             break;
         
@@ -469,17 +448,14 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
     else gDPSetPrimColor(db->p++, 0, 0, 0x00, 0xFF, 0x00, 0xFF);
     
     if (options_cursor != OPTION_INVENTORY_EDITOR) {
-        sprite_load(db, &stones_sprite, 0, 1);                // Fake Load
-        sprite_draw(db, &stones_sprite, -10, -10, 0, 4, 4); // Fake Draw
+        sprite_load_and_draw(db, &stones_sprite, 0, -10, -10, 4, 4); // Fake Texture
         
         uint8_t adjust = 8;
         if (setting >= 10) {
-            sprite_load(db, &ammo_digit_sprite, (setting / 10), 1);
-            sprite_draw(db, &ammo_digit_sprite, 0, left + 48, top + 20, 16, 16);
+            sprite_load_and_draw(db, &ammo_digit_sprite, (setting / 10), left + 48, top + 20, 16, 16);
             adjust = 0;
         }
-        sprite_load(db, &ammo_digit_sprite, (setting % 10), 1);
-        sprite_draw(db, &ammo_digit_sprite, 0, left + 64 - adjust, top + 20, 16, 16);
+        sprite_load_and_draw(db, &ammo_digit_sprite, (setting % 10), left + 64 - adjust, top + 20, 16, 16);
     }
     
     text_print(options[options_cursor],  left + options_recenter[options_cursor], top);
@@ -489,7 +465,7 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
 }
 
 uint8_t draw_abilities_info(z64_disp_buf_t *db) {
-    if (!SAVE_EXTRA_ABILITIES || !IS_PAUSE_SCREEN_CURSOR || z64_game.pause_ctxt.screen_idx != 2 || !z64_game.common.input[0].raw.pad.a)
+    if (!OPTION_ACTIVE(2, SAVE_EXTRA_ABILITIES, CFG_DEFAULT_EXTRA_ABILITIES) || !IS_PAUSE_SCREEN_CURSOR || z64_game.pause_ctxt.screen_idx != 2 || !z64_game.common.input[0].raw.pad.a)
         return 0;
     
     uint8_t show;

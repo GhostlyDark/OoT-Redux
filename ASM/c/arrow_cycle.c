@@ -1,8 +1,6 @@
 #include "arrow_cycle.h"
 #include "actor.h"
 
-extern uint8_t CFG_OPTIONS_MENU;
-
 extern uint16_t play_sfx;
 
 typedef struct {
@@ -137,7 +135,7 @@ z64_actor_t* arrow_cycle_find_arrow(z64_link_t* player, z64_game_t* ctxt) {
 }
 
 void arrow_cycle_handle(z64_link_t* player, z64_game_t* ctxt) {
-    if (CFG_OPTIONS_MENU < 1 || !SAVE_ARROW_TOGGLE)
+    if (!OPTION_ACTIVE(1, SAVE_ARROW_TOGGLE, CFG_DEFAULT_ARROW_TOGGLE))
         return;
     
     if (g_arrow_cycle_state.frameDelay >= 1) {

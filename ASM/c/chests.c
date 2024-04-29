@@ -87,7 +87,7 @@ void set_chest_texture(z64_gfx_t *gfx, uint8_t chest_type, uint8_t chest_item, G
     void* baseTexture = (void*)BROWN_BASE_TEXTURE;
     uint8_t id        = chest_item;
 
-    if (SAVE_CHEST_CONTENTS) {
+    if (OPTION_ACTIVE(1, SAVE_CHEST_CONTENTS, CFG_DEFAULT_CHEST_CONTENTS)) {
         if (IS_LARGE_CHEST) {
             if (id == CHEST_DUNGEON_MAP || id == CHEST_COMPASS) {
                 frontTexture = &LEATHER_CHEST_FRONT_TEXTURE;
