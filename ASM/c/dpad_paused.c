@@ -32,7 +32,7 @@ void handle_dpad_slots(pad_t pad_pressed) {
     
     if (z64_game.pause_ctxt.screen_idx == 3) {
         uint8_t cursor = z64_game.pause_ctxt.equip_cursor + Z64_SLOT_QUIVER;
-        if (cursor == Z64_SLOT_GORON_TUNIC || cursor == Z64_SLOT_ZORA_TUNIC || cursor == Z64_SLOT_IRON_BOOTS || cursor == Z64_SLOT_HOVER_BOOTS)
+        if (cursor >= ITEM_SWORD_KOKIRI && cursor <= Z64_SLOT_HOVER_BOOTS)
             set_dpad_action(pad_pressed, cursor);
     }
     else if (z64_game.pause_ctxt.screen_idx == 0) {

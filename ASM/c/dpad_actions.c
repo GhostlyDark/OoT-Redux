@@ -94,15 +94,7 @@ void change_equipment() {
     play_sfx = 0x835;
 }
 
-void run_dpad_actions(pad_t pad_pressed) {
-    if (z64_game.common.input[0].raw.pad.l && SAVE_DPAD == 2) {
-        if (pad_pressed.du)   toggle_sword();
-        if (pad_pressed.dr)   toggle_boots();
-        if (pad_pressed.dd)   toggle_shield();
-        if (pad_pressed.dl)   toggle_tunic();
-        return;
-    }
-                          
+void run_dpad_actions(pad_t pad_pressed) {                    
     const uint8_t dpad_array[4] = { pad_pressed.du, pad_pressed.dr, pad_pressed.dd, pad_pressed.dl };                          
     for (uint8_t i=0; i<4; i++)
         if (dpad_array[i])
@@ -110,19 +102,10 @@ void run_dpad_actions(pad_t pad_pressed) {
 }
 
 void draw_dpad_actions(z64_disp_buf_t *db, uint8_t alpha) {
-    if (z64_game.common.input[0].raw.pad.l && SAVE_DPAD == 2) {
-        draw_sword_icon( db, gPositions[0][0], gPositions[0][1], alpha);
-        draw_boots_icon( db, gPositions[1][0], gPositions[1][1], alpha);
-        draw_shield_icon(db, gPositions[2][0], gPositions[2][1], alpha);
-        draw_tunic_icon( db, gPositions[3][0], gPositions[3][1], alpha);
-        
-        if (OPTION_ACTIVE(1, SAVE_30_FPS, CFG_DEFAULT_30_FPS)) { // FPS Counter Top-Left
-            gDPSetPrimColor(db->p++, 0, 0, fps_switch ? 0 : 255, fps_switch ? 255 : 0, 0, 255);
-            sprite_load_and_draw(db, &ammo_digit_sprite, compare_frames / 10, dpad_x - 11 - dpad_offset, dpad_y - 8 - dpad_offset, 8, 8);
-            sprite_load_and_draw(db, &ammo_digit_sprite, compare_frames % 10, dpad_x - 4  - dpad_offset, dpad_y - 8 - dpad_offset, 8, 8);
-        }
-        
-        return;
+    if (z64_game.common.input[0].raw.pad.l && OPTION_ACTIVE(1, SAVE_30_FPS, CFG_DEFAULT_30_FPS) ) { // FPS Counter Top-Left
+        gDPSetPrimColor(db->p++, 0, 0, fps_switch ? 0 : 255, fps_switch ? 255 : 0, 0, 255);
+        sprite_load_and_draw(db, &ammo_digit_sprite, compare_frames / 10, dpad_x - 11 - dpad_offset, dpad_y - 8 - dpad_offset, 8, 8);
+        sprite_load_and_draw(db, &ammo_digit_sprite, compare_frames % 10, dpad_x - 4  - dpad_offset, dpad_y - 8 - dpad_offset, 8, 8);
     }
                                        
     for (uint8_t i=0; i<4; i++)
@@ -137,10 +120,18 @@ uint8_t * check_dpad_actions() {
 }
 
 void run_action(uint8_t action) {
-    if (action == Z64_SLOT_GORON_TUNIC)
+    if (action >= Z64_SLOT_KOKIRI_SWORD && action <= Z64_SLOT_GIANTS_KNIFE)
+        toggle_sword();
+    else if (action >= Z64_SLOT_DEKU_SHIELD && action <= Z64_SLOT_MIRROR_SHIELD)
+        toggle_shield();
+    else if (action == Z64_SLOT_KOKIRI_TUNIC)
+        toggle_tunic();
+    else if (action == Z64_SLOT_GORON_TUNIC)
         swap_goron_tunic();
     else if (action == Z64_SLOT_ZORA_TUNIC)
         swap_zora_tunic();
+    else if (action == Z64_SLOT_KOKIRI_BOOTS)
+        toggle_boots();
     else if (action == Z64_SLOT_IRON_BOOTS)
         swap_iron_boots();
     else if (action == Z64_SLOT_HOVER_BOOTS)
@@ -166,10 +157,18 @@ void run_action(uint8_t action) {
 }
 
 void draw_action(z64_disp_buf_t *db, z64_slot_t action, int8_t icon_x, int8_t icon_y, int8_t icon_big_x, int8_t icon_big_y, uint8_t alpha) {
-    if (action == Z64_SLOT_GORON_TUNIC)
+    if (action >= Z64_SLOT_KOKIRI_SWORD && action <= Z64_SLOT_GIANTS_KNIFE)
+        draw_sword_icon( db, icon_x, icon_y, alpha);
+    else if (action >= Z64_SLOT_DEKU_SHIELD && action <= Z64_SLOT_MIRROR_SHIELD)  
+        draw_shield_icon(db, icon_x, icon_y, alpha);
+    else if (action == Z64_SLOT_KOKIRI_TUNIC)
+        draw_tunic_icon( db, icon_x, icon_y, alpha);
+    else if (action == Z64_SLOT_GORON_TUNIC)
         draw_equipment_icon(db, icon_x, icon_y, icon_big_x, icon_big_y, alpha, 66, z64_file.goron_tunic, z64_file.equip_tunic == 2);
     else if (action == Z64_SLOT_ZORA_TUNIC)
         draw_equipment_icon(db, icon_x, icon_y, icon_big_x, icon_big_y, alpha, 67, z64_file.zora_tunic,  z64_file.equip_tunic == 3);
+    else if (action == Z64_SLOT_KOKIRI_BOOTS)
+        draw_boots_icon( db, icon_x, icon_y, alpha);
     else if (action == Z64_SLOT_IRON_BOOTS)
         draw_equipment_icon(db, icon_x, icon_y, icon_big_x, icon_big_y, alpha, 69, z64_file.iron_boots,  z64_file.equip_boots == 2);
     else if (action == Z64_SLOT_HOVER_BOOTS)
@@ -187,7 +186,7 @@ void draw_action(z64_disp_buf_t *db, z64_slot_t action, int8_t icon_x, int8_t ic
             draw_item_icon(db, icon_x, icon_y, Z64_SLOT_FARORES_WIND, Z64_ITEM_FARORES_WIND, CAN_USE_FARORES_WIND, alpha);
         else if (z64_file.items[action] != Z64_ITEM_NULL)
             draw_item_icon(db, icon_x, icon_y, action, z64_file.items[action], CAN_USE_ITEMS, alpha);
-        draw_ammo(db, z64_file.items[action], dpad_x + icon_x + dpad_offset, dpad_y + icon_y + dpad_offset + 8, 4, -1, alpha);
+        draw_ammo(db, z64_file.items[action], dpad_x + icon_x + dpad_offset, dpad_y + icon_y + dpad_offset + 8, 4, -1, (!CAN_USE_ITEMS && IS_SEMI_ALPHA) ? 0x46 : alpha);
     }
 }
 
@@ -234,7 +233,9 @@ void draw_ammo(z64_disp_buf_t* db, uint8_t item, uint16_t x, uint16_t y, uint8_t
 }
 
 void check_action(uint8_t button, z64_slot_t action) {
-    if (action == Z64_SLOT_IRON_BOOTS && z64_file.iron_boots)
+    if ( (action >= Z64_SLOT_KOKIRI_SWORD && action <= Z64_SLOT_GIANTS_KNIFE) || (action >= Z64_SLOT_DEKU_SHIELD && action == Z64_SLOT_MIRROR_SHIELD) || action == Z64_SLOT_KOKIRI_TUNIC || action == Z64_SLOT_KOKIRI_BOOTS)
+        DPAD_ACTIVE[button] = 1;
+    else if (action == Z64_SLOT_IRON_BOOTS && z64_file.iron_boots)
         DPAD_ACTIVE[button] = 1;
     else if (action == Z64_SLOT_HOVER_BOOTS && z64_file.hover_boots)
         DPAD_ACTIVE[button] = 1;
