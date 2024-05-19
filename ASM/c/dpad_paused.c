@@ -32,17 +32,14 @@ void handle_dpad_slots(pad_t pad_pressed) {
     
     if (z64_game.pause_ctxt.screen_idx == 3) {
         uint8_t cursor = z64_game.pause_ctxt.equip_cursor + Z64_SLOT_QUIVER;
-        if (cursor >= ITEM_SWORD_KOKIRI && cursor <= Z64_SLOT_HOVER_BOOTS)
+        if (cursor >= Z64_SLOT_KOKIRI_SWORD && cursor <= Z64_SLOT_HOVER_BOOTS && cursor != Z64_SLOT_BOMB_BAG && cursor != Z64_SLOT_STRENGTH && cursor != Z64_SLOT_SCALE)
             set_dpad_action(pad_pressed, cursor);
+        
     }
     else if (z64_game.pause_ctxt.screen_idx == 0) {
         uint8_t cursor = z64_game.pause_ctxt.item_cursor;
-        /*if (cursor == Z64_SLOT_FIRE_ARROW || cursor == Z64_SLOT_ICE_ARROW || cursor == Z64_SLOT_LIGHT_ARROW || (cursor >= Z64_SLOT_BOTTLE_1 && cursor <= Z64_SLOT_BOTTLE_4) )
-            return;*/
         if (cursor == Z64_SLOT_NUT || cursor == Z64_SLOT_DINS_FIRE || cursor == Z64_SLOT_OCARINA || cursor == Z64_SLOT_FARORES_WIND || cursor == Z64_SLOT_LENS  || cursor == Z64_SLOT_NAYRUS_LOVE || cursor == Z64_SLOT_ADULT_TRADE || cursor == Z64_SLOT_CHILD_TRADE)
             set_dpad_action(pad_pressed, cursor);
-        
-        
     }
 }
 
