@@ -303,9 +303,11 @@ void draw_dpad_icons(z64_disp_buf_t *db) {
             dpad_y += 10;
         else if (z64_file.magic_acquired)
             dpad_y += 14;
-        if (z64_game.pause_ctxt.state == 0)
-            if (z64_file.timer_1_state > 0 || z64_file.timer_2_state > 0)
-                dpad_y += 18;
+        if (z64_game.pause_ctxt.state == 0 && (z64_file.timer_1_state != 0 || z64_file.timer_2_state != 0) ) {
+            dpad_y += 18;
+            if (!z64_file.magic_acquired)
+                dpad_y += 14;
+        }
     }
     
     uint8_t alpha = 255;

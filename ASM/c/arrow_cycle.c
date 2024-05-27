@@ -138,6 +138,9 @@ void arrow_cycle_handle(z64_link_t* player, z64_game_t* ctxt) {
     if (!OPTION_ACTIVE(1, SAVE_ARROW_TOGGLE, CFG_DEFAULT_ARROW_TOGGLE))
         return;
     
+    if (z64_link.state_flags_1 & PLAYER_STATE1_DAMAGED)
+        return;
+    
     if (g_arrow_cycle_state.frameDelay >= 1) {
         handle_frame_delay(player, ctxt, g_arrow_cycle_state.arrow);
         g_arrow_cycle_state.arrow      = NULL;
