@@ -101,7 +101,7 @@ void handle_dpad() {
             original_damage = z64_damage_taken_modifier_3;
         else if (OPTION_ACTIVE(2, SAVE_DAMAGE_TAKEN == 0, CFG_DEFAULT_DAMAGE_TAKEN == 0))
              z64_damage_taken_modifier_3 = original_damage;
-        else z64_damage_taken_modifier_3 = 0x2C43 - 0x40 * CFG_OPTIONS_MENU >= 2 ? SAVE_DAMAGE_TAKEN : CFG_DEFAULT_DAMAGE_TAKEN;
+        else z64_damage_taken_modifier_3 = 0x2C43 - 0x40 * (CFG_OPTIONS_MENU >= 2 ? SAVE_DAMAGE_TAKEN : CFG_DEFAULT_DAMAGE_TAKEN);
         
         if (OPTION_ACTIVE(3, SAVE_LEVITATION, CFG_DEFAULT_LEVITATION) && z64_game.common.input[0].raw.pad.l)
             z64_link_a_action = 0x40CB;
