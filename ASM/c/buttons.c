@@ -470,23 +470,40 @@ void handle_rupee_drain() {
 }
 
 void handle_power_crouch_stab_fix() {
-    if (!OPTION_ACTIVE(2, SAVE_CROUCH_STAB_FIX, CFG_DEFAULT_CROUCH_STAB_FIX) || z64_file.equip_sword == 0)
+    if (!OPTION_ACTIVE(2, SAVE_CROUCH_STAB_FIX, CFG_DEFAULT_CROUCH_STAB_FIX) || !(z64_link.state_flags_1 & PLAYER_STATE1_SHIELDING))
         return;
     
-    if (z64_file.equip_sword == 1)
-        z64_sword_damage_1 = z64_sword_damage_2 = 1;
-    else if (z64_file.equip_sword == 2)
-        z64_sword_damage_1 = z64_sword_damage_2 = 2;
-    else if (z64_file.equip_sword == 3 && !z64_file.broken_giants_knife)
-        z64_sword_damage_1 = z64_sword_damage_2 = 4;
-    else if (z64_file.equip_sword == 3 && z64_file.broken_giants_knife)
-        z64_sword_damage_1 = z64_sword_damage_2 = 1;
+    if (z64_link.item_action_param == PLAYER_AP_SWORD_KOKIRI || (z64_link.item_action_param == PLAYER_AP_SWORD_BGS && z64_file.broken_giants_knife) )
+        z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_KOKIRI;
+    else if (z64_link.item_action_param == PLAYER_AP_SWORD_MASTER)
+        z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_MASTER;
+    else if (z64_link.item_action_param == PLAYER_AP_SWORD_BGS)
+        z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_GIANT;
+    else if (z64_link.item_action_param == PLAYER_AP_STICK)
+        z64_damage_flag_1 = z64_damage_flag_2 = DMG_DEKU_STICK;
+    else if (z64_link.item_action_param == PLAYER_AP_HAMMER)
+        z64_damage_flag_1 = z64_damage_flag_2 = DMG_HAMMER_SWING;
 }
 
 void handle_weaker_swords() {
-    if (OPTION_ACTIVE(2, SAVE_WEAKER_SWORDS, CFG_DEFAULT_WEAKER_SWORDS))
-        if (z64_sword_damage_1 > 1 && z64_file.equip_sword > 0)
-            z64_sword_damage_2 = z64_sword_damage_1 - 1;
+    if (OPTION_ACTIVE(2, SAVE_WEAKER_SWORDS, CFG_DEFAULT_WEAKER_SWORDS)) {
+        if (z64_link.item_action_param == PLAYER_AP_SWORD_MASTER) {
+            if (z64_damage_flag_1 == DMG_SLASH_MASTER)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_KOKIRI;
+            else if (z64_damage_flag_1 == DMG_JUMP_MASTER)
+               z64_damage_flag_1 = z64_damage_flag_2 = DMG_JUMP_KOKIRI;
+           else if (z64_damage_flag_1 == DMG_SPIN_MASTER)
+               z64_damage_flag_1 = z64_damage_flag_2 = DMG_SPIN_KOKIRI; 
+        }
+        else if (z64_link.item_action_param == PLAYER_AP_SWORD_BGS && !z64_file.broken_giants_knife) {
+            if (z64_damage_flag_1 == DMG_SLASH_GIANT)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_MASTER;
+            else if (z64_damage_flag_1 == DMG_JUMP_GIANT)
+               z64_damage_flag_1 = z64_damage_flag_2 = DMG_JUMP_MASTER;
+           else if (z64_damage_flag_1 == DMG_SPIN_GIANT)
+               z64_damage_flag_1 = z64_damage_flag_2 = DMG_SPIN_MASTER; 
+        }
+    }
 }
 
 void handle_abilities_tunic_colors() {
@@ -588,10 +605,13 @@ void handle_abilities() {
         z64_damage_taken_modifier_2 = 0;
     }
         
-    if (z64_file.water_medallion && z64_file.equip_tunic == 3 && z64_sword_damage_1 > 0 && z64_file.equip_sword > 0) {
-        if (SAVE_WEAKER_SWORDS)
-            z64_sword_damage_2 = z64_sword_damage_1;
-        else z64_sword_damage_2 = z64_sword_damage_1 + 1;
+    if (z64_file.water_medallion && z64_file.equip_tunic == 3) {
+        if (z64_link.item_action_param == PLAYER_AP_SWORD_KOKIRI || z64_link.item_action_param == PLAYER_AP_SWORD_MASTER || (z64_link.item_action_param == PLAYER_AP_SWORD_BGS && !z64_file.broken_giants_knife) ) {
+            if (z64_damage_flag_1 == DMG_SLASH_KOKIRI)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_MASTER;
+            else if (z64_damage_flag_1 == DMG_SLASH_MASTER)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_GIANT;
+        }
     }
         
     if (z64_file.shadow_medallion && z64_file.equip_tunic == 0) {
