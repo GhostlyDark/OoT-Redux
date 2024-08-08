@@ -470,38 +470,76 @@ void handle_rupee_drain() {
 }
 
 void handle_power_crouch_stab_fix() {
-    if (!OPTION_ACTIVE(2, SAVE_CROUCH_STAB_FIX, CFG_DEFAULT_CROUCH_STAB_FIX) || !(z64_link.state_flags_1 & PLAYER_STATE1_SHIELDING))
+    if (!OPTION_ACTIVE(2, SAVE_CROUCH_STAB_FIX, CFG_DEFAULT_CROUCH_STAB_FIX))
         return;
     
-    if (z64_link.item_action_param == PLAYER_AP_SWORD_KOKIRI || (z64_link.item_action_param == PLAYER_AP_SWORD_BGS && z64_file.broken_giants_knife) )
-        z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_KOKIRI;
-    else if (z64_link.item_action_param == PLAYER_AP_SWORD_MASTER)
-        z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_MASTER;
-    else if (z64_link.item_action_param == PLAYER_AP_SWORD_BGS)
-        z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_GIANT;
-    else if (z64_link.item_action_param == PLAYER_AP_STICK)
-        z64_damage_flag_1 = z64_damage_flag_2 = DMG_DEKU_STICK;
-    else if (z64_link.item_action_param == PLAYER_AP_HAMMER)
-        z64_damage_flag_1 = z64_damage_flag_2 = DMG_HAMMER_SWING;
+    if ( !(z64_link.state_flags_1 & PLAYER_STATE1_HOLDING_Z) && (z64_link.state_flags_1 & PLAYER_STATE1_SHIELDING) && (z64_link.state_flags_2 & PLAYER_STATE2_PULLING_ITEM) ) {
+        if (z64_link.item_action_param == PLAYER_AP_SWORD_KOKIRI || (z64_link.item_action_param == PLAYER_AP_SWORD_BGS && z64_file.broken_giants_knife) )
+            z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_KOKIRI;
+        else if (z64_link.item_action_param == PLAYER_AP_SWORD_MASTER)
+            z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_MASTER;
+        else if (z64_link.item_action_param == PLAYER_AP_SWORD_BGS)
+            z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_GIANT;
+        else if (z64_link.item_action_param == PLAYER_AP_STICK)
+            z64_damage_flag_1 = z64_damage_flag_2 = DMG_DEKU_STICK;
+        else if (z64_link.item_action_param == PLAYER_AP_HAMMER)
+            z64_damage_flag_1 = z64_damage_flag_2 = DMG_HAMMER_SWING;
+    }
 }
 
 void handle_weaker_swords() {
-    if (OPTION_ACTIVE(2, SAVE_WEAKER_SWORDS, CFG_DEFAULT_WEAKER_SWORDS)) {
+    if (!(z64_link.state_flags_2 & PLAYER_STATE2_PULLING_ITEM))
+        return;
+    
+    uint8_t weaker   = OPTION_ACTIVE(2, SAVE_WEAKER_SWORDS, CFG_DEFAULT_WEAKER_SWORDS);
+    uint8_t stronger = OPTION_ACTIVE(2, SAVE_EXTRA_ABILITIES, CFG_DEFAULT_EXTRA_ABILITIES) && z64_file.water_medallion && z64_file.equip_tunic == 3;
+    uint8_t is_ganon = z64_game.scene_index == 0x4F;
+    
+    if (stronger) {
+        if (z64_link.item_action_param == PLAYER_AP_SWORD_KOKIRI && z64_damage_flag_1 == DMG_SLASH_KOKIRI)
+            z64_damage_flag_1 = z64_damage_flag_2 = DMG_JUMP_KOKIRI;
+        else if (z64_link.item_action_param == PLAYER_AP_SWORD_MASTER && z64_damage_flag_1 == DMG_SLASH_MASTER)
+            z64_damage_flag_1 = z64_damage_flag_2 = DMG_JUMP_MASTER;
+        else if (z64_link.item_action_param == PLAYER_AP_SWORD_BGS && z64_damage_flag_1 == DMG_SLASH_GIANT)
+            z64_damage_flag_1 = z64_damage_flag_2 = DMG_JUMP_GIANT;
+    }
+    
+    if (weaker) {
+        if (z64_link.item_action_param == PLAYER_AP_SWORD_KOKIRI || (z64_link.item_action_param == PLAYER_AP_SWORD_BGS && z64_file.broken_giants_knife) ) {
+            if (!stronger && z64_damage_flag_1 == DMG_JUMP_KOKIRI)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_KOKIRI;
+        }
+        
         if (z64_link.item_action_param == PLAYER_AP_SWORD_MASTER) {
-            if (z64_damage_flag_1 == DMG_SLASH_MASTER)
+            if (!stronger && z64_damage_flag_1 == DMG_SLASH_MASTER && !is_ganon)
                 z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_KOKIRI;
             else if (z64_damage_flag_1 == DMG_JUMP_MASTER)
-               z64_damage_flag_1 = z64_damage_flag_2 = DMG_JUMP_KOKIRI;
-           else if (z64_damage_flag_1 == DMG_SPIN_MASTER)
-               z64_damage_flag_1 = z64_damage_flag_2 = DMG_SPIN_KOKIRI; 
-        }
-        else if (z64_link.item_action_param == PLAYER_AP_SWORD_BGS && !z64_file.broken_giants_knife) {
-            if (z64_damage_flag_1 == DMG_SLASH_GIANT)
                 z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_MASTER;
-            else if (z64_damage_flag_1 == DMG_JUMP_GIANT)
-               z64_damage_flag_1 = z64_damage_flag_2 = DMG_JUMP_MASTER;
-           else if (z64_damage_flag_1 == DMG_SPIN_GIANT)
-               z64_damage_flag_1 = z64_damage_flag_2 = DMG_SPIN_MASTER; 
+            else if (z64_damage_flag_1 == DMG_SPIN_MASTER && !is_ganon)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SPIN_KOKIRI;
+        }
+        
+        else if (z64_link.item_action_param == PLAYER_AP_SWORD_BGS && !z64_file.broken_giants_knife) {
+            if (!stronger && z64_damage_flag_1 == DMG_SLASH_GIANT && !is_ganon)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_MASTER;
+            else if (z64_damage_flag_1 == DMG_JUMP_GIANT && !is_ganon)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_GIANT;
+            else if (z64_damage_flag_1 == DMG_SPIN_GIANT && !is_ganon)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SPIN_MASTER;
+        }
+        
+        else if (z64_link.item_action_param == PLAYER_AP_STICK) {
+            if (z64_damage_flag_1 == DMG_DEKU_STICK)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_KOKIRI;
+            else if (z64_damage_flag_1 == DMG_JUMP_MASTER)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_JUMP_KOKIRI;
+        }
+    
+        else if (z64_link.item_action_param == PLAYER_AP_HAMMER && z64_game.scene_index != 0x15) {
+            if (z64_damage_flag_1 == DMG_HAMMER_SWING)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_KOKIRI;
+            else if (z64_damage_flag_1 == DMG_HAMMER_JUMP)
+                z64_damage_flag_1 = z64_damage_flag_2 = DMG_JUMP_KOKIRI;
         }
     }
 }
@@ -603,15 +641,6 @@ void handle_abilities() {
     else {
         z64_damage_taken_modifier_1 = 0x62C00;
         z64_damage_taken_modifier_2 = 0;
-    }
-        
-    if (z64_file.water_medallion && z64_file.equip_tunic == 3) {
-        if (z64_link.item_action_param == PLAYER_AP_SWORD_KOKIRI || z64_link.item_action_param == PLAYER_AP_SWORD_MASTER || (z64_link.item_action_param == PLAYER_AP_SWORD_BGS && !z64_file.broken_giants_knife) ) {
-            if (z64_damage_flag_1 == DMG_SLASH_KOKIRI)
-                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_MASTER;
-            else if (z64_damage_flag_1 == DMG_SLASH_MASTER)
-                z64_damage_flag_1 = z64_damage_flag_2 = DMG_SLASH_GIANT;
-        }
     }
         
     if (z64_file.shadow_medallion && z64_file.equip_tunic == 0) {

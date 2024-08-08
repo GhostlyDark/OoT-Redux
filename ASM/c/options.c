@@ -387,8 +387,9 @@ uint8_t draw_settings_menu(z64_disp_buf_t *db) {
         
         case OPTION_WEAKER_SWORDS:
             setting = SAVE_WEAKER_SWORDS;
-            text_print("Sword slashes now deal one", tooltipLeft, top + 50);
-            text_print("less point of damage",       tooltipLeft, top + 70);
+            text_print("Melee weapon attacks are",   tooltipLeft, top + 50);
+            text_print("weaker and deal less",       tooltipLeft, top + 70);
+            text_print("points of damage",           tooltipLeft, top + 90);
             break;
         
         case OPTION_RUPEE_DRAIN:
