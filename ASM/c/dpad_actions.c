@@ -173,15 +173,15 @@ void run_equipment_action(z64_game_t* game, z64_link_t* link, u8 action) {
         toggle_shield(game, link);
     else if (action == Z64_SLOT_KOKIRI_TUNIC)
         toggle_tunic(game, link);
-    else if (action == Z64_SLOT_GORON_TUNIC)
+    else if (action == Z64_SLOT_GORON_TUNIC && z64_file.goron_tunic)
         swap_tunic(game, link, 6, 2);
-    else if (action == Z64_SLOT_ZORA_TUNIC)
+    else if (action == Z64_SLOT_ZORA_TUNIC && z64_file.zora_tunic)
         swap_tunic(game, link, 5, 3);
     else if (action == Z64_SLOT_KOKIRI_BOOTS)
         toggle_boots(game, link);
-    else if (action == Z64_SLOT_IRON_BOOTS)
+    else if (action == Z64_SLOT_IRON_BOOTS && z64_file.iron_boots)
         swap_boots(game, link, 2, 2);
-    else if (action == Z64_SLOT_HOVER_BOOTS)
+    else if (action == Z64_SLOT_HOVER_BOOTS && z64_file.hover_boots)
         swap_boots(game, link, 1, 3);
 }
 

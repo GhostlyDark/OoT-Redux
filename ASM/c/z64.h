@@ -618,15 +618,15 @@ typedef struct {
   int16_t         n64dd_flag;                /* 0x002C */
   int16_t         energy_capacity;           /* 0x002E */
   int16_t         energy;                    /* 0x0030 */
-  uint8_t         magic_capacity_set;        /* 0x0032 */
+  uint8_t         magic_level;               /* 0x0032 */
   uint8_t         magic;                     /* 0x0033 */
   uint16_t        rupees;                    /* 0x0034 */
   uint16_t        bgs_hits_left;             /* 0x0036 */
   uint16_t        navi_timer;                /* 0x0038 */
   uint8_t         magic_acquired;            /* 0x003A */
   char            unk_03_;                   /* 0x003B */
-  uint8_t         magic_capacity;            /* 0x003C */
-  int8_t          double_defense;            /* 0x003D */
+  uint8_t         double_magic_acquired;     /* 0x003C */
+  int8_t          double_defense_acquired;   /* 0x003D */
   uint8_t         bgs_flag;                  /* 0x003E */
   char            ocarina_game_round_num;    /* 0x003F */
   uint8_t         child_button_items[4];     /* 0x0040 */
@@ -2349,7 +2349,7 @@ typedef struct
 #define EVENTCHKINF_51 0x51
 #define EVENTCHKINF_52 0x52
 #define EVENTCHKINF_53 0x53 // Unused
-#define EVENTCHKINF_SHADOW_ATTACKS_KAKARIKO 0x54
+#define EVENTCHKINF_SHADOW_ATTACKS_KAKARIKO_2 0x54
 #define EVENTCHKINF_LEARNED_PRELUDE_OF_LIGHT_CS 0x55
 #define EVENTCHKINF_56 0x56 // Unused
 #define EVENTCHKINF_57 0x57 // Unused
@@ -2446,7 +2446,7 @@ typedef struct
 #define EVENTCHKINF_A7 0xA7
 #define EVENTCHKINF_A8 0xA8
 #define EVENTCHKINF_A9 0xA9
-#define EVENTCHKINF_AA 0xAA
+#define EVENTCHKINF_SHADOW_ATTACKS_KAKARIKO_1 0xAA
 #define EVENTCHKINF_AC 0xAC
 #define EVENTCHKINF_AD 0xAD
 #define EVENTCHKINF_AE 0xAE // Unused
@@ -2596,7 +2596,7 @@ typedef struct
 
 
 /*
- * SaveContext.infTable (0x8011B4D0)
+ * SaveContext.infTable (0x8011B4DA)
  */
 
 #define INFTABLE_00 0x00

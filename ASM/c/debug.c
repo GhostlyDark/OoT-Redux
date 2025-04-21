@@ -1,6 +1,6 @@
 #include "debug.h"
 
-extern bool CFG_CUSTOM_MAPS;
+extern bool CFG_CUSTOM_MAPS, CFG_SILVER_SWORD;
 
 extern u16 play_sfx;
 
@@ -29,7 +29,7 @@ static warp_t overworld_warps[] = {
     { 0x11E, "Lost Woods"                  },
     { 0xFC,  "Sacred Forest Meadow"        },
     { 0x157, "Lon Lon Ranch"               },
-    { 0x1FD, "Hyrule Field (Market)"       },
+    { 0xCD,  "Hyrule Field (Market)"       },
     { 0x181, "Hyrule Field (River)"        },
     { 0x189, "Hyrule Field (Lake)"         },
     { 0xB1,  "Market"                      },
@@ -50,7 +50,7 @@ static warp_t overworld_warps[] = {
     { 0x102, "Lake Hylia"                  },
     { 0x45F, "Fishing Pond"                },
     { 0x117, "Gerudo Valley"               },
-    { 0x129, "Gerudo Fortress"             },
+    { 0x129, "Gerudo's Fortress"           },
     { 0x130, "Haunted Wastelands"          },
     { 0x123, "Desert Colossus"             },
     { 0x7A,  "Castle Courtyard"            },
@@ -63,7 +63,7 @@ static warp_t bosses_warps[] = {
     { 0x40F, "Gohma's Lair"                },
     { 0x40B, "King Dodongo's Lair"         },
     { 0x301, "Barinade's Lair"             },
-    { 0xC,   "Phantom Ganon' Lair"         },
+    { 0xC,   "Phantom Ganon's Lair"        },
     { 0x305, "Volvagia's Lair"             },
     { 0x417, "Morpha's Lair"               },
     { 0x413, "Bongo Bongo's Lair"          },
@@ -229,7 +229,7 @@ static room_t shadow_temple_rooms[] = {
 };
 
 static room_t spirit_temple_rooms[] = {
-    { {  868,  -50,    2    }, 16384, "Entrance"                      }, // 0
+    { {  0,    -150,   730  }, 32768, "Entrance"                      }, // 0
     { { -768,  -50,   -1    }, 49152, "Main Corridor"                 }, // 1
     { { -685,   30,   -600  }, 22528, "Main Corridor: East"           }, // 2
     { { -1445,  30,   -600  }, 43008, "Main Corridor: West"           }, // 3
@@ -374,9 +374,9 @@ static progression_t progressions[] = {
     { "Cleansed Lake Hylia",      EVENT,                      EVENTCHKINF_CLEANSED_LAKE_HYLIA          },
     { "Unfrozen King Zora",       INFTABLE,                   INFTABLE_UNFROZEN_KING_ZORA              },
     { "Restored Lake Hylia",      EVENT,                      EVENTCHKINF_RESTORED_LAKE_HYLIA          },
-    { "Shadow Attacks Kakariko",  EVENT,                      EVENTCHKINF_SHADOW_ATTACKS_KAKARIKO      },
+    { "Shadow Attacks Kakariko",  SHADOW,                     EVENTCHKINF_SHADOW_ATTACKS_KAKARIKO_1    },
     { "Fast Windmill",            EVENT,                      EVENTCHKINF_FAST_WINDMILL                },
-    { "Drained Well",             EVENT,                      EVENTCHKINF_DRAINED_WELL                 },
+    { "Drained Well",             WELL,                       EVENTCHKINF_DRAINED_WELL                 },
     { "Sheik Reveal",             EVENT,                      EVENTCHKINF_SHEIK_REVEAL_CS              },
     { "Rainbow Bridge",           EVENT,                      EVENTCHKINF_CREATED_RAINBOW_BRIDGE       },
     { "Killed Gohma",             SCENE_DEKU_TREE_BOSS,       1,                                       },
@@ -388,7 +388,7 @@ static progression_t progressions[] = {
     { "Killed Bongo Bongo",       SCENE_SHADOW_TEMPLE_BOSS,   1                                        },
     { "Killed Nabooru",           NABOORU,                    5                                        },
     { "Killed Twinrova",          SCENE_SPIRIT_TEMPLE_BOSS,   3                                        },
-    { "Completed Mask Quest",     MASK,                       0,                                       },
+    { "Completed Mask Quest",     MASK,                       ITEMGETINF_OTHER_MASKS_AVAILABLE,        },
     { "Got Bottle Cucco Lady",    ITEM,                       ITEMGETINF_BOTTLE_CUCCO_LADY             },
     { "Got Pocket Egg",           ITEM,                       ITEMGETINF_POCKET_EGG                    },
     { "Got Cojiro",               ITEM,                       ITEMGETINF_COJIRO                        },
@@ -529,32 +529,33 @@ void handle_map_select() {
                 if (pad_pressed.a) {
                     switch (current_menu_indexes.upgrade_index) {
                         case 0: // Magic
-                            switch (z64_file.magic_capacity_set) {
+                            switch (z64_file.magic_level) {
                                 case 0:
-                                    z64_file.magic_capacity_set = z64_file.magic_acquired = 1;
-                                    z64_file.magic_capacity     = 0;
-                                    z64_file.magic_meter_size   = z64_file.magic          = 0x30;
-                                    break;
-                                
                                 case 1:
-                                    z64_file.magic_capacity_set = 2;
-                                    z64_file.magic_acquired     = z64_file.magic_capacity = 1;
-                                    z64_file.magic_meter_size   = z64_file.magic          = 0x60;
+                                    z64_file.magic_level++;
                                     break;
-                                
                                 default:
-                                    z64_file.magic_capacity_set = z64_file.magic_acquired = z64_file.magic_capacity = z64_file.magic_meter_size =  z64_file.magic = 0;
+                                    z64_file.magic_level = 0;
                                     break;
                             }
+                            z64_file.magic_meter_size      = z64_file.magic = z64_file.magic_level * 0x30;
+                            z64_file.magic_acquired        = z64_file.magic_level > 0;
+                            z64_file.double_magic_acquired = z64_file.magic_level > 1;
                             break;
                         
                         case 1: // Double Defense
-                            z64_file.double_defense ^= 1;
-                            z64_file.defense_hearts  = z64_file.double_defense ? 20 : 0;
+                            z64_file.double_defense_acquired ^= 1;
+                            z64_file.defense_hearts           = z64_file.double_defense_acquired ? 20 : 0;
                             break;
                             
                         case 2: // Biggoron Sword
                             z64_file.bgs_flag ^= 1;
+                            if (z64_file.equip_sword == 3) {
+                                if (z64_file.equip_sword == 3 && (z64_file.broken_giants_knife || (CFG_SILVER_SWORD && !z64_file.bgs_flag) ) )
+                                    z64_file.button_items[0] = 0x55;
+                                else z64_file.button_items[0] = z64_file.equip_sword == 0 ? Z64_ITEM_NONE : z64_file.equip_sword + 0x3A;
+                                Interface_LoadItemIcon1(&z64_game, 0);
+                            }
                             break;
                     }
                 }
@@ -616,6 +617,26 @@ void handle_map_select() {
                                     CLEAR_ITEMGETINF(item_flags[i]);
                                 for (u8 i=0; i<sizeof(event_flags)/sizeof(event_flags[0]); i++)
                                     CLEAR_EVENTCHKINF(event_flags[i]);
+                            }
+                            break;
+                        case WELL:
+                            if (!GET_EVENTCHKINF(progression.flag)) {
+                                SET_EVENTCHKINF(progression.flag);
+                                z64_file.scene_flags[SCENE_WINDMILL_AND_DAMPES_GRAVE].swch |= (1 << 2);
+                            }
+                            else {
+                                CLEAR_EVENTCHKINF(progression.flag);
+                                z64_file.scene_flags[SCENE_WINDMILL_AND_DAMPES_GRAVE].swch &= ~(1 << 2);
+                            }
+                            break;
+                        case SHADOW:
+                            if (!GET_EVENTCHKINF(EVENTCHKINF_SHADOW_ATTACKS_KAKARIKO_1)) {
+                                SET_EVENTCHKINF(EVENTCHKINF_SHADOW_ATTACKS_KAKARIKO_1);
+                                SET_EVENTCHKINF(EVENTCHKINF_SHADOW_ATTACKS_KAKARIKO_2);
+                            }
+                            else {
+                                CLEAR_EVENTCHKINF(EVENTCHKINF_SHADOW_ATTACKS_KAKARIKO_1);
+                                CLEAR_EVENTCHKINF(EVENTCHKINF_SHADOW_ATTACKS_KAKARIKO_2);
                             }
                             break;
                         default:
@@ -749,10 +770,10 @@ void draw_items(void* items, u8 index, u16 elements, u8 type) {
             
                 switch (curr) {
                     case 0:
-                        save = z64_file.magic_capacity_set;
+                        save = z64_file.magic_level;
                         break;
                     case 1:
-                        save = z64_file.double_defense;
+                        save = z64_file.double_defense_acquired;
                         break;
                     case 2:
                         save = z64_file.bgs_flag;
@@ -768,9 +789,12 @@ void draw_items(void* items, u8 index, u16 elements, u8 type) {
             
                 switch (progressions[curr].type) {
                     case EVENT:
+                    case WELL:
+                    case SHADOW:
                         save = GET_EVENTCHKINF(progressions[curr].flag) ? 1 : 0;
                         break;
                     case ITEM:
+                    case MASK:
                         save = GET_ITEMGETINF( progressions[curr].flag) ? 1 : 0;
                         break;
                     case INFTABLE:
@@ -781,9 +805,6 @@ void draw_items(void* items, u8 index, u16 elements, u8 type) {
                         break;
                     case NABOORU:
                         save = (GET_EVENTCHKINF(EVENTCHKINF_DEFEATED_NABOORU_KNUCKLE) && GET_EVENTCHKINF(EVENTCHKINF_STARTED_NABOORU_KNUCKLE) && GET_EVENTCHKINF(EVENTCHKINF_DEFEATED_NABOORU_KNUCKLE_CS) && (z64_file.scene_flags[SCENE_SPIRIT_TEMPLE_BOSS].swch &= (1 << progressions[curr].flag))) ? 1 : 0;
-                        break;
-                    case MASK:
-                        save = GET_ITEMGETINF(ITEMGETINF_OTHER_MASKS_AVAILABLE) ? 1 : 0;
                         break;
                     default:
                         save = z64_file.scene_flags[progressions[curr].type].clear & (1 << progressions[curr].flag) ? 1 : 0;

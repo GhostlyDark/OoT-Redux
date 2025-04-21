@@ -451,10 +451,9 @@ typedef enum {
 #define IS_MASK_COMPLETED(paid_back, sold)       (GET_EVENTCHKINF(paid_back) && GET_ITEMGETINF(sold) )
 
 /* Availability */
-#define HAS_MAGIC                       (z64_file.magic_acquired && z64_file.magic_capacity_set)
+#define HAS_MAGIC                       (z64_file.magic_acquired && z64_file.magic_level > 0)
 #define CAN_CONTROL_LINK                (z64_game.pause_ctxt.state == PAUSE_STATE_OFF && (u32)z64_ctxt.state_dtor == z64_state_ovl_tab[3].vram_dtor && z64_file.game_mode == 0 && (z64_event_state_1 & 0x20) == 0)
-#define IS_PAUSE_SCREEN_CURSOR          (z64_game.pause_ctxt.state == PAUSE_STATE_MAIN && z64_game.pause_ctxt.debugState == 0 && z64_game.pause_ctxt.cursorSpecialPos != 0xA && z64_game.pause_ctxt.cursorSpecialPos != 0xB)
-#define TYCOON_WALLET                   (z64_file.event_chk_inf[13] & (1 << 13) )
+#define IS_PAUSE_SCREEN_CURSOR          (z64_game.pause_ctxt.debugState == 0 && z64_game.pause_ctxt.cursorSpecialPos != 0xA && z64_game.pause_ctxt.cursorSpecialPos != 0xB)
 
 /* D-Pad & Controls Availability */
 #define BLOCK_DPAD                      (PLAYER_STATE1_EXITING | PLAYER_STATE1_SWINGING_BOTTLE | PLAYER_STATE1_DEATH | PLAYER_STATE1_OPENING_CHEST | PLAYER_STATE1_PLAYING_OCARINA | PLAYER_STATE1_NO_CONTROL)
@@ -465,7 +464,7 @@ typedef enum {
                                         z64_file.items[Z64_SLOT_CHILD_TRADE] >= Z64_ITEM_KEATON_MASK && z64_file.items[Z64_SLOT_CHILD_TRADE] <= Z64_ITEM_MASK_OF_TRUTH) 
 #define CAN_USE_OCARINA_SWAP            (CAN_USE_SWAP(0) && z64_game.pause_ctxt.cursorPoint[PAUSE_ITEM]  == Z64_SLOT_OCARINA  && OPTION_ACTIVE(2, SAVE_SWAP_ITEM, CFG_DEFAULT_SWAP_ITEM) && DOWNGRADE_OCARINA)
 #define CAN_USE_HOOKSHOT_SWAP           (CAN_USE_SWAP(0) && z64_game.pause_ctxt.cursorPoint[PAUSE_ITEM]  == Z64_SLOT_HOOKSHOT && OPTION_ACTIVE(2, SAVE_SWAP_ITEM, CFG_DEFAULT_SWAP_ITEM) && DOWNGRADE_HOOKSHOT)
-#define CAN_USE_GIANTS_KNIFE_SWAP       (CAN_USE_SWAP(3) && z64_game.pause_ctxt.cursorPoint[PAUSE_EQUIP] == 3 && OPTION_ACTIVE(2, SAVE_SWAP_ITEM, CFG_DEFAULT_SWAP_ITEM) && DOWNGRADE_GIANTS_KNIFE)
+#define CAN_USE_GIANTS_KNIFE_SWAP       (CAN_USE_SWAP(3) && z64_game.pause_ctxt.cursorPoint[PAUSE_EQUIP] == 3                 && OPTION_ACTIVE(2, SAVE_SWAP_ITEM, CFG_DEFAULT_SWAP_ITEM) && DOWNGRADE_GIANTS_KNIFE)
 
 /* D-Pad SRAM locations & Button Mappings */
 #define DPAD_BUTTON_INDEX(index)        ( (z64_file.link_age ? 0 : 8) + (GET_DPAD_ALT ? 4 : 0) + index)

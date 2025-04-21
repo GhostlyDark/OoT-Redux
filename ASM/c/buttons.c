@@ -395,8 +395,8 @@ void reset_layout() {
 }
 
 void set_b_button(pad_t pad_pressed) {
-    if (!OPTION_ACTIVE(2, SAVE_ITEM_ON_B, CFG_DEFAULT_ITEM_ON_B) || !z64_game.common.input[0].pad_pressed.a || z64_game.pause_ctxt.pageIndex != SUBSCREEN_ITEM || z64_game.pause_ctxt.debugState != 0 || \
-        z64_game.pause_ctxt.cursorSpecialPos == 0x0A || z64_game.pause_ctxt.cursorSpecialPos == 0x0B || z64_game.pause_ctxt.cursorPoint[PAUSE_ITEM] <= Z64_SLOT_STICK || z64_game.pause_ctxt.cursorPoint[PAUSE_ITEM] >= Z64_SLOT_CHILD_TRADE)
+    if (!OPTION_ACTIVE(2, SAVE_ITEM_ON_B, CFG_DEFAULT_ITEM_ON_B) || !z64_game.common.input[0].pad_pressed.a || z64_game.pause_ctxt.pageIndex != SUBSCREEN_ITEM || !IS_PAUSE_SCREEN_CURSOR || z64_game.pause_ctxt.state != PAUSE_STATE_MAIN || \
+        z64_game.pause_ctxt.cursorPoint[PAUSE_ITEM] <= Z64_SLOT_STICK || z64_game.pause_ctxt.cursorPoint[PAUSE_ITEM] >= Z64_SLOT_CHILD_TRADE)
         return;
     
     z64_item_t item = 0xFF;
@@ -592,7 +592,7 @@ void handle_abilities() {
     }
     
     if (z64_file.forest_medallion && z64_file.equip_tunic == 1 && HAS_MAGIC) {
-        if ( (z64_file.magic < 0x30 && !z64_file.magic_capacity) || (z64_file.magic < 0x60 && z64_file.magic_capacity) ) {
+        if (z64_file.magic < z64_file.magic_level * 0x30) {
             if (z64_damage_frames == 12 && restore_health == 0)
                 restore_health = 1;
             else if (z64_damage_frames == 0)
@@ -603,10 +603,8 @@ void handle_abilities() {
                 z64_file.magic += 4;
                 play_sfx = 0x480B;
                 
-                if (z64_file.magic > 0x60 && z64_file.magic_capacity)
-                    z64_file.magic = 0x60;
-                else if (z64_file.magic > 0x30)
-                    z64_file.magic = 0x30;
+                if (z64_file.magic > z64_file.magic_level * 0x30)
+                    z64_file.magic = z64_file.magic_level * 0x30;
             }
         }
     }
@@ -673,13 +671,8 @@ void handle_infinite() {
     if (OPTION_ACTIVE(3, SAVE_INFINITE_HP, CFG_DEFAULT_INFINITE_HP))
         z64_file.energy = z64_file.energy_capacity;
     
-    if (OPTION_ACTIVE(3, SAVE_INFINITE_MP, CFG_DEFAULT_INFINITE_MP)) {
-        if (HAS_MAGIC) {
-            if (z64_file.magic_capacity)
-                z64_file.magic = 0x60;
-            else z64_file.magic = 0x30;
-        }
-    }
+    if (OPTION_ACTIVE(3, SAVE_INFINITE_MP, CFG_DEFAULT_INFINITE_MP) && HAS_MAGIC)
+        z64_file.magic = z64_file.magic_level * 0x30;
     
     if (OPTION_ACTIVE(3, SAVE_INFINITE_AMMO, CFG_DEFAULT_INFINITE_AMMO)) {
         z64_file.ammo[Z64_SLOT_STICK]     = z64_capacity.stick_upgrade[z64_file.stick_upgrade];

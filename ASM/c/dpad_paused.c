@@ -12,7 +12,7 @@ u8 had_longshot        = 0;
 const static u16 sold_mask_check[7] = { ITEMGETINF_SOLD_KEATON_MASK, ITEMGETINF_SOLD_SKULL_MASK, ITEMGETINF_SOLD_SPOOKY_MASK, ITEMGETINF_OTHER_MASKS_AVAILABLE, ITEMGETINF_OTHER_MASKS_AVAILABLE, ITEMGETINF_OTHER_MASKS_AVAILABLE, ITEMGETINF_MASK_OF_TRUTH_LOANED };
 
 void handle_dpad_paused() {
-    if (!IS_PAUSE_SCREEN_CURSOR)
+    if (!IS_PAUSE_SCREEN_CURSOR || z64_game.pause_ctxt.state != PAUSE_STATE_MAIN)
         return;
     
     if (CFG_PREVENT_GROTTO_SAVING && z64_game.scene_index == SCENE_GROTTOS)
@@ -74,6 +74,9 @@ u8 run_set_dpad_action(z64_slot_t slot, u8 button) {
 }
 
 void handle_unequipping(pad_t pad_pressed) {
+    if (z64_game.pause_ctxt.state != PAUSE_STATE_MAIN)
+        return;
+    
     if (z64_game.pause_ctxt.pageIndex == SUBSCREEN_EQUIPMENT && pad_pressed.a) {
         if (OPTION_ACTIVE(2, SAVE_UNEQUIP_GEAR, CFG_DEFAULT_UNEQUIP_GEAR)) { // Unequip gear
             if (z64_game.pause_ctxt.cursorPoint[PAUSE_EQUIP]     == z64_file.equip_sword && (z64_file.button_items[0] == (Z64_ITEM_KOKIRI_SWORD + z64_game.pause_ctxt.cursorPoint[PAUSE_EQUIP] - 1) || z64_file.button_items[0] == Z64_ITEM_GIANTS_KNIFE) )
@@ -206,8 +209,7 @@ void handle_downgrading(pad_t pad_pressed) {
     if (z64_file.bgs_flag)
         z64_file.inf_table[0x15] |= 1 << 1;;
     if (z64_file.giants_knife)
-        if ( (z64_file.broken_giants_knife && z64_file.bgs_hits_left > 0) ||  (!z64_file.broken_giants_knife && z64_file.bgs_hits_left == 0) )
-            z64_file.broken_giants_knife ^= 1;
+        z64_file.broken_giants_knife = z64_file.bgs_hits_left <= 0;
     
     if (!pad_pressed.cu)
         return;

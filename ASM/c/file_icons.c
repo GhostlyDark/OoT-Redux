@@ -254,7 +254,7 @@ typedef uint8_t digits_t[3];
 
 typedef struct {
     uint8_t wallet;
-    uint8_t double_defense;
+    uint8_t double_defense_acquired;
     digits_t digits[NUM_COUNTER];
 } counter_tile_info_t;
 
@@ -362,7 +362,7 @@ static void populate_counts(const z64_file_t* file, counter_tile_info_t* counts)
     make_digits(counts->digits[SLOT_TRIFORCE], num_triforce_pieces > 0 ? num_triforce_pieces : -1);
 
     // Hearts
-    counts->double_defense = (uint8_t)file->double_defense;
+    counts->double_defense_acquired = (uint8_t)file->double_defense_acquired;
     make_digits(counts->digits[SLOT_HEARTS], file->energy_capacity / 0x10);
 
     // Deaths
@@ -520,7 +520,7 @@ static void draw_counts(z64_disp_buf_t* db, const counter_tile_info_t* info, uin
 
     // Heart
     sprite_load(db, &quest_items_sprite, 12, 1);
-    if (!info->double_defense) {
+    if (!info->double_defense_acquired) {
         sprite_draw(db, &quest_items_sprite, 0, get_left(data[SLOT_HEARTS].pos), get_top(data[SLOT_HEARTS].pos), COUNTER_ICON_SIZE, COUNTER_ICON_SIZE);
     }
     else {
@@ -721,7 +721,7 @@ static void populate_adult_trade(const z64_file_t* file, variable_tile_t* tile) 
 
 
 static void populate_magic(const z64_file_t* file, variable_tile_t* tile) {
-    if (file->magic_capacity) {
+    if (file->magic_level) {
         tile->tile_index = 19;
         tile->enabled = 1;
     }

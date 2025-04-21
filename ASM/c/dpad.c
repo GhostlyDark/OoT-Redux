@@ -4,6 +4,7 @@ extern bool CFG_TYCOON_WALLET;
 extern bool FAST_BUNNY_HOOD_ENABLED;
 extern s8   last_scene;
 
+extern u8 CFG_SILVER_SWORD;
 extern u8 CFG_DEFAULT_ADULT_DPAD_UP;
 extern u8 CFG_DEFAULT_ADULT_DPAD_RIGHT;
 extern u8 CFG_DEFAULT_ADULT_DPAD_DOWN;
@@ -72,7 +73,7 @@ void handle_dpad() {
     handle_l_button();
     handle_l_button_paused();
     handle_infinite();   
-    interface_enable_swimming();
+  //interface_enable_swimming();
 
     if (z64_game.pause_ctxt.debugState != 0) {
         z64_x_axis_input = z64_y_axis_input = 0;
@@ -117,7 +118,7 @@ void handle_dpad() {
         if (OPTION_ACTIVE(3, SAVE_LEVITATION, CFG_DEFAULT_LEVITATION) && z64_game.common.input[0].raw.pad.l)
             z64_link.common.vel_1.y = 6.34375f;
         
-        if (CFG_TYCOON_WALLET && z64_file.gs_tokens >= 40 && z64_file.wallet == 2 && TYCOON_WALLET)
+        if (z64_file.gs_tokens >= 40 && z64_file.wallet == 2 && (z64_file.event_chk_inf[13] & (1 << 13)) && CFG_TYCOON_WALLET)
             z64_file.wallet = 3;
         
         run_default_options_setup();
@@ -223,20 +224,21 @@ void draw_dpad() {
         draw_ammo(db, z64_file.button_items[0], z64_gameinfo.item_ammo_x[0], z64_gameinfo.item_ammo_y[0], 8, -2, z64_game.alpha_channels.b_button, true);
     
     if (z64_game.pause_ctxt.state != PAUSE_STATE_OFF) {
-        if (CFG_OPTIONS_MENU > 0 && z64_game.pause_ctxt.state == PAUSE_STATE_MAIN) {
-            gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
-            sprite_load_and_draw(db, &stones_sprite, 0, -10, -10, 4, 4); // Fake Texture
-            draw_settings_label(db);
+        if (z64_game.pause_ctxt.state == PAUSE_STATE_MAIN) {
+            if (CAN_USE_MASK_SWAP)
+                draw_swap_item_icons(db, z64_file.items[Z64_SLOT_CHILD_TRADE], get_next_mask());
+            else if (CAN_USE_OCARINA_SWAP)
+                draw_swap_item_icons(db, z64_file.items[Z64_SLOT_OCARINA], z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA ? Z64_ITEM_OCARINA_OF_TIME : Z64_ITEM_FAIRY_OCARINA);
+            else if (CAN_USE_HOOKSHOT_SWAP)
+                draw_swap_item_icons(db, z64_file.items[Z64_SLOT_HOOKSHOT], z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_HOOKSHOT ? Z64_ITEM_LONGSHOT : Z64_ITEM_HOOKSHOT);
+            else if (CAN_USE_GIANTS_KNIFE_SWAP)
+                draw_swap_item_icons(db, z64_file.bgs_flag ? Z64_ITEM_BIGGORON_SWORD : (CFG_SILVER_SWORD ? Z64_ITEM_GIANTS_KNIFE : Z64_ITEM_BROKEN_GORONS_SWORD) , z64_file.bgs_flag ? (CFG_SILVER_SWORD ? Z64_ITEM_GIANTS_KNIFE : Z64_ITEM_BROKEN_GORONS_SWORD) : Z64_ITEM_BIGGORON_SWORD);
+            else if (CFG_OPTIONS_MENU > 0) {
+                gDPSetCombineMode(db->p++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
+                sprite_load_and_draw(db, &stones_sprite, 0, -10, -10, 4, 4); // Fake Texture
+                draw_settings_label(db);
+            }
         }
-        
-        if (CAN_USE_MASK_SWAP)
-            draw_swap_item_icons(db, z64_file.items[Z64_SLOT_CHILD_TRADE], get_next_mask());
-        else if (CAN_USE_OCARINA_SWAP)
-            draw_swap_item_icons(db, z64_file.items[Z64_SLOT_OCARINA], z64_file.items[Z64_SLOT_OCARINA] == Z64_ITEM_FAIRY_OCARINA ? Z64_ITEM_OCARINA_OF_TIME : Z64_ITEM_FAIRY_OCARINA);
-        else if (CAN_USE_HOOKSHOT_SWAP)
-            draw_swap_item_icons(db, z64_file.items[Z64_SLOT_HOOKSHOT], z64_file.items[Z64_SLOT_HOOKSHOT] == Z64_ITEM_HOOKSHOT ? Z64_ITEM_LONGSHOT : Z64_ITEM_HOOKSHOT);
-        else if (CAN_USE_GIANTS_KNIFE_SWAP)
-            draw_swap_item_icons(db, z64_file.bgs_flag ? Z64_ITEM_BIGGORON_SWORD : Z64_ITEM_BROKEN_GORONS_SWORD , z64_file.bgs_flag ? Z64_ITEM_BROKEN_GORONS_SWORD : Z64_ITEM_BIGGORON_SWORD);
         
         if (z64_game.pause_ctxt.state != PAUSE_STATE_MAIN)
             options_alpha = 0;
@@ -314,7 +316,7 @@ void draw_dpad_icons(z64_disp_buf_t *db) {
     else if (OPTION_VALUE(1, 3, SAVE_SHOW_DPAD, CFG_DEFAULT_SHOW_DPAD)) {
         dpad_x = 35;
         dpad_y = 175;
-        if (z64_dungeon_scene != 0xFF)
+        if (z64_dungeon_scene != 0xFFFF)
             if (z64_file.dungeon_keys[z64_dungeon_scene] >= 0)
                 dpad_y = 158;
     }
@@ -341,7 +343,7 @@ void draw_dpad_icons(z64_disp_buf_t *db) {
     draw_dpad_actions(db, dpad_alpha);
 }
 
-void interface_enable_swimming() {
+/*void interface_enable_swimming() {
     bool refresh_interface = false;
     
     if (!z64_game.msgContext.msgMode)
@@ -392,4 +394,4 @@ void interface_enable_swimming() {
         if (!z64_game.scene_load_flag && !z64_game.transition_mode)
             interface_change_hud_visibility_mode(HUD_VISIBILITY_ALL);
     }
-}
+}*/

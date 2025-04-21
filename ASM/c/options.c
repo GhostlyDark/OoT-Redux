@@ -491,7 +491,7 @@ bool draw_settings_menu(z64_disp_buf_t* db) {
 }
 
 bool draw_abilities_info(z64_disp_buf_t* db) {
-    if (!OPTION_ACTIVE(2, SAVE_EXTRA_ABILITIES, CFG_DEFAULT_EXTRA_ABILITIES) || !IS_PAUSE_SCREEN_CURSOR || z64_game.pause_ctxt.pageIndex != SUBSCREEN_QUEST_STATUS || !z64_game.common.input[0].raw.pad.a)
+    if (!OPTION_ACTIVE(2, SAVE_EXTRA_ABILITIES, CFG_DEFAULT_EXTRA_ABILITIES) || !IS_PAUSE_SCREEN_CURSOR || z64_game.pause_ctxt.state != PAUSE_STATE_MAIN || z64_game.pause_ctxt.pageIndex != SUBSCREEN_QUEST_STATUS || !z64_game.common.input[0].raw.pad.a)
         return false;
     
     u8 show;
@@ -531,33 +531,32 @@ bool draw_abilities_info(z64_disp_buf_t* db) {
             text_print("Run, hold L and",               left, info1);
             text_print("press A to jump",               left, info2);
             text_print("Requires the Kokiri Boots",     left, info3);
-            text_print("for it to be effective",        left, info4);
+            text_print("for it to activate",            left, info4);
             break;
         
         case 1: // Forest Medallion
-            text_print("Restores some magic when hit",  left, info1);
-            text_print("Replaces the Kokiri Tunic and", left, info2);
-            text_print("requires to be equipped",       left, info3);
+            text_print("Restores magic when hit",       left, info1);
+            text_print("Replaces the Kokiri Tunic and", left, info3);
+            text_print("requires to be equipped",       left, info4);
             break;
                 
         case 2: // Fire Medallion
             text_print("Reduces damage taken by half",  left, info1);
-            text_print("Replaces the Goron Tunic and",  left, info2);
-            text_print("requires to be equipped",       left, info3);
+            text_print("Replaces the Goron Tunic and",  left, info3);
+            text_print("requires to be equipped",       left, info4);
             break;
         
         case 3: // Water Medallion
-            text_print("Increases damage done by",      left, info1);
-            text_print("sword slashes by +1",           left, info2);
+            text_print("Increases sword slash damage",  left, info1);
             text_print("Replaces the Zora Tunic and",   left, info3);
             text_print("requires to be equipped",       left, info4);
             break;
         
         case 4: // Shadow Medallion
-            text_print("Restores some health over",     left, info1);
-            text_print("time at the cost of magic",     left, info2);
-            text_print("Unequip the tunic with C-Up",   left, info3);
-            text_print("for it to be effective",        left, info4);
+            text_print("Restores health over time",     left, info1);
+            text_print("through magic cost",            left, info2);
+            text_print("Requires to unequip the tunic", left, info3);
+            text_print("to activate",                   left, info4);
             break;
         
         case 5: // Spirit Medallion
@@ -570,7 +569,7 @@ bool draw_abilities_info(z64_disp_buf_t* db) {
             text_print("Hold L when running to dash",   left, info1);
             text_print("Consumes magic",                left, info2);
             text_print("Requires the Kokiri Boots",     left, info3);
-            text_print("for it to be effective",        left, info4);
+            text_print("for it to activate",            left, info4);
             break;
         
         case 7: // Goron's Ruby

@@ -13,13 +13,15 @@
 #define ICON_SIZE     12
 #define ROWS          10
 
-#define EVENT         0xF9
-#define ITEM          0xFA
-#define INFTABLE      0xFB
-#define SCENE_CLEAR   0xFC
-#define CARPENTERS    0xFD
-#define NABOORU       0xFE
-#define MASK          0xFF
+#define EVENT         0xF7
+#define ITEM          0xF8
+#define INFTABLE      0xF9
+#define SCENE_CLEAR   0xFA
+#define CARPENTERS    0xFB
+#define NABOORU       0xFC
+#define MASK          0xFD
+#define WELL          0xFE
+#define SHADOW        0xFF
 
 #define WARPS         0
 #define UPGRADES      1
