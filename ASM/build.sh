@@ -8,7 +8,7 @@ tool_dir="$toplvl_dir/tools"
 
 ./build.py --compile-c
 
-if [[ "$OSTYPE" == "msys"* ]]; then
-    rm -f $rom_dir/redux.ppf
-    cmd //c $tool_dir/MakePPF3 c $rom_dir/base.z64 $rom_dir/patched.z64 $rom_dir/redux.ppf
+if [[ $(uname -s) = MINGW32* ]]; then
+    rm -f "$rom_dir"/redux.ppf
+    "$tool_dir"/MakePPF3 c "$rom_dir"/base.z64 "$rom_dir"/patched.z64 "$rom_dir"/redux.ppf
 fi
